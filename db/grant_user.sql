@@ -1,0 +1,2 @@
+GRANT ALL PRIVILEGES ON *.* TO 'umbrella'@'%';
+FLUSH PRIVILEGES;
