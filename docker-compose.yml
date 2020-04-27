@@ -4,7 +4,7 @@ services:
     build:
       context: .
     env_file:
-      - ./containers/mysql/mysql.env
+      - ./docker/environments/mysql.env
     volumes:
       - .:/umbrellanotice
       - public-data:/umbrellanotice/public
@@ -16,12 +16,12 @@ services:
   mysql:
     image: mysql:5.7
     env_file:
-      - ./containers/mysql/mysql.env
+      - ./docker/environments/mysql.env
     volumes:
       - mysql-data:/var/lib/mysql
   nginx:
     build:
-      context: containers/nginx
+      context: docker/nginx
     volumes:
       - public-data:/umbrellanotice/public
       - tmp-data:/umbrellanotice/tmp
