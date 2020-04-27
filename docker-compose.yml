@@ -4,8 +4,7 @@ services:
     build:
       context: .
     env_file:
-      - ./environments/mysql.env
-    command: bundle exec puma -C config/puma.rb
+      - ./containers/mysql/mysql.env
     volumes:
       - .:/umbrellanotice
       - public-data:/umbrellanotice/public
@@ -13,10 +12,11 @@ services:
       - log-data:/umbrellanotice/log
     depends_on:
       - mysql
+    tty: true
   mysql:
     image: mysql:5.7
     env_file:
-      - ./environments/mysql.env
+      - ./containers/mysql/mysql.env
     volumes:
       - mysql-data:/var/lib/mysql
   nginx:
