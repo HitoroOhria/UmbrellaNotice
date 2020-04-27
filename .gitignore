@@ -8,7 +8,7 @@
 /.idea
 
 # Ignore environments
-/environments
+/docker/environments
 
 # Ignore bundler config.
 /.bundle
