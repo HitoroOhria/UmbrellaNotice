@@ -5,6 +5,7 @@ services:
       context: .
     env_file:
       - ./docker/environments/mysql.env
+      - ./docker/environments/omn_facebook.env
     volumes:
       - .:/umbrellanotice
       - public-data:/umbrellanotice/public
