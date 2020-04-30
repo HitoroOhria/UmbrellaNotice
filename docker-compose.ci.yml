@@ -1,38 +1,30 @@
-version: '3'
+version: "3"
+
 services:
   umbrellanotice:
     build:
       context: .
-    env_file:
-      - ./docker/environments/mysql.env
-      - ./docker/environments/omni_facebook.env
+    environment:
+      MYSQL_ROOT_PASSWORD: password
     volumes:
       - .:/umbrellanotice
       - public-data:/umbrellanotice/public
       - tmp-data:/umbrellanotice/tmp
       - log-data:/umbrellanotice/log
+    ports:
+      - '3000:3000'
     depends_on:
       - mysql
-    tty: true
+      - nginx
+    command: bundle exec unicorn_rails -c /umbrellanotice/config/unicorn.rb -E development
   mysql:
     image: mysql:8.0
     env_file:
       - ./docker/environments/mysql.env
-    volumes:
-      - mysql-data:/var/lib/mysql
+    ports:
+      - '33306:3306'
   nginx:
     build:
       context: docker/nginx
-    volumes:
-      - public-data:/umbrellanotice/public
-      - tmp-data:/umbrellanotice/tmp
     ports:
       - 80:80
-    depends_on:
-      - umbrellanotice
-
-volumes:
-  public-data:
-  tmp-data:
-  log-data:
-  mysql-data:
