@@ -66,6 +66,7 @@ workflows:
             - rspec
             - rubocop
       - aws-ecs/deploy-service-update:
+          name: ecs_update_umbrellanotice
           family: 'umbrellanotice_task'
           cluster-name: 'umbrellanotice-Cruster'
           container-image-name-updates: "container=umbrellanotice,tag=${CIRCLE_SHA1}"
@@ -85,6 +86,7 @@ workflows:
             - rspec
             - rubocop
       - aws-ecs/deploy-service-update:
+          name: ecs_update_nginx
           family: 'umbrellanotice_task'
           cluster-name: 'umbrellanotice-Cruster'
           container-image-name-updates: "container=nginx,tag=${CIRCLE_SHA1}"
