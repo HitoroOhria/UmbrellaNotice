@@ -20,6 +20,7 @@ services:
       - ./docker/environments/mysql.env
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./docker/mysql/mysql-confd:/etc/mysql/conf.d
   nginx:
     build:
       context: docker/nginx

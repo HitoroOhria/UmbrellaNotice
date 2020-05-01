@@ -18,6 +18,8 @@ services:
       - ./docker/environments/mysql.env
     ports:
       - '33306:3306'
+    volumes:
+      - ./docker/myslq/mysql-confd:/etc/mysql/conf.d
   nginx:
     build:
       context: docker/nginx

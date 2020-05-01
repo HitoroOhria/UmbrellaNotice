@@ -23,7 +23,6 @@ jobs:
       - run:
           name: Run rspec
           command: docker-compose exec umbrellanotice rspec
-
   rubocop:
     working_directory: ~/umbrellanotice
     docker:
