@@ -4,6 +4,7 @@ services:
   umbrellanotice:
     build:
       context: .
+      dockerfile: Dockerfile.ci
     environment:
       MYSQL_ROOT_PASSWORD: password
     ports:
