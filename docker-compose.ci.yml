@@ -14,8 +14,8 @@ services:
       - nginx
   mysql:
     image: mysql:8.0
-    env_file:
-      - ./docker/environments/mysql.env
+    environment:
+      MYSQL_ROOT_PASSWORD: password
     ports:
       - '33306:3306'
     volumes:
