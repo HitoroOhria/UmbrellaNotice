@@ -12,11 +12,10 @@ jobs:
           command: |
             echo "export COMPOSE_FILE=docker-compose.ci.yml" >> $BASH_ENV
       - run:
-          name: Start containers and verify it is working
+          name: Start containers
           command: |
             set -x
             docker-compose up -d
-            docker-compose exec umbrellanotice curl -4 --retry 10 --retry-delay 3 --retry-connrefused http://localhost:3000
       - run:
           name: Setup database
           command: |

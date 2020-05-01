@@ -6,11 +6,6 @@ services:
       context: .
     environment:
       MYSQL_ROOT_PASSWORD: password
-    volumes:
-      - .:/umbrellanotice
-      - public-data:/umbrellanotice/public
-      - tmp-data:/umbrellanotice/tmp
-      - log-data:/umbrellanotice/log
     ports:
       - '3000:3000'
     depends_on:
