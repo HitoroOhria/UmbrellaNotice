@@ -61,7 +61,7 @@ workflows:
 #      - rspec
 #      - rubocop
       - aws-ecr/build-and-push-image:
-          name: ecr_push_umbrellanotice
+          name: ECR_push_umbrellanotice
           account-url: AWS_ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
@@ -74,19 +74,20 @@ workflows:
 #            - rspec
 #            - rubocop
       - aws-ecs/deploy-service-update:
-          name: ecs_update_umbrellanotice
+          name: ECS_update_umbrellanotice
           family: 'umbrellanotice_task'
-          cluster-name: 'umbrellanotice-Cruster'
+          cluster-name: $AWS_ECS_ARN
+          service-name: 'umbrellanotice-Service'
           container-image-name-updates: "container=umbrellanotice,tag=${CIRCLE_SHA1}"
           requires:
-            - ecr_push_umbrellanotice
+            - ECR_push_umbrellanotice
       - aws-ecr/build-and-push-image:
-          name: ecr_push_nginx
+          name: ECR_push_nginx
           account-url: AWS_ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           create-repo: true
-          dockerfile: ./docker/nginx/Dockerfile
+          dockerfile: ./docker/nginx/Dockerfile.ci
           region: AWS_REGION
           repo: umbrellanotice-app
           tag: "${CIRCLE_SHA1}"
@@ -94,9 +95,10 @@ workflows:
 #            - rspec
 #            - rubocop
       - aws-ecs/deploy-service-update:
-          name: ecs_update_nginx
+          name: ECS_update_nginx
           family: 'umbrellanotice_task'
-          cluster-name: 'umbrellanotice-Cruster'
+          cluster-name: $AWS_ECS_ARN
+          service-name: 'umbrellanotice-Service'
           container-image-name-updates: "container=nginx,tag=${CIRCLE_SHA1}"
           requires:
-            - ecr_push_nginx
+            - ECR_push_nginx
