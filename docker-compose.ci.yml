@@ -11,7 +11,6 @@ services:
     depends_on:
       - mysql
       - nginx
-    command: bundle exec unicorn_rails -c /umbrellanotice/config/unicorn.rb -E development
   mysql:
     image: mysql:8.0
     env_file:

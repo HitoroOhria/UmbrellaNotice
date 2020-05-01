@@ -15,11 +15,7 @@ jobs:
           name: Start containers
           command: |
             set -x
-            docker-compose up -d
-      - run:
-          name: Setup database
-          command: |
-            docker-compose exec umbrellanotice bash -c 'yes n | bundle exec rails db:setup'
+            docker-compose up
       - run:
           name: Run rspec
           command: docker-compose exec umbrellanotice rspec
@@ -46,9 +42,25 @@ jobs:
           paths:
             - vendor/bundle
 
+orbs:
+  aws-ecr: circleci/aws-ecr@6.8.2
+  aws-ecs: circleci/aws-ecs@1.1.0
+
 workflows:
   version: 2.1
   test_and_deploy:
     jobs:
       - rspec
       - rubocop
+      - aws-ecr/build-and-push-image:
+          account-url: AWS_ECR_ACCOUNT_URL_ENV_VAR_NAME
+          aws-access-key-id: ACCESS_KEY_ID_ENV_VAR_NAME
+          aws-secret-access-key: SECRET_ACCESS_KEY_ENV_VAR_NAME
+          context: myContext
+          create-repo: true
+          dockerfile: myDockerfile
+          path: pathToMyDockerfile
+          profile-name: myProfileName
+          region: AWS_REGION_ENV_VAR_NAME
+          repo: myECRRepository
+          tag: 'latest,myECRRepoTag'
