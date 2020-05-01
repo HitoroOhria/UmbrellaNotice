@@ -48,13 +48,12 @@ orbs:
 
 workflows:
   version: 2.1
-  test:
+  test_and_deploy:
     jobs:
       - rspec
       - rubocop
-  umbrellanotice-deploy:
-    jobs:
       - aws-ecr/build-and-push-image:
+          name: ecr_push_umbrellanotice
           account-url: AWS_ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
@@ -71,10 +70,9 @@ workflows:
           cluster-name: 'umbrellanotice-Cruster'
           container-image-name-updates: "container=umbrellanotice,tag=${CIRCLE_SHA1}"
           requires:
-            - aws-ecr/build-and-push-image
-  nginx-deploy:
-    jobs:
+            - ecr_push_umbrellanotice
       - aws-ecr/build-and-push-image:
+          name: ecr_push_nginx
           account-url: AWS_ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
@@ -91,4 +89,4 @@ workflows:
           cluster-name: 'umbrellanotice-Cruster'
           container-image-name-updates: "container=nginx,tag=${CIRCLE_SHA1}"
           requires:
-            - aws-ecr/build-and-push-image
+            - ecr_push_nginx
