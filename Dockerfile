@@ -25,8 +25,8 @@ ADD . /umbrellanotice
 
 ENTRYPOINT [ \
   "prehook", "bundle install", "--", \
-  "prehook", "echo sleep 30 seconds for mysql Start Up Comprete", "--", \
-  "prehook", "sleep 30", "--", \
+  "prehook", "echo sleep 45 seconds for mysql Start Up Comprete", "--", \
+  "prehook", "sleep 45", "--", \
   "prehook", "echo finish sleep", "--", \
   "prehook", "bundle exec rails db:create", "--", \
   "prehook", "bundle exec rails db:migrate", "--", \
