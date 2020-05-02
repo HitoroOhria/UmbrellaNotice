@@ -61,12 +61,12 @@ workflows:
 #      - rspec
 #      - rubocop
       - aws-ecr/build-and-push-image:
-          name: ECR_push_umbrellanotice
+          name: Build_and_push_umbrellanotice_to_ECR
           account-url: AWS_ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           create-repo: true
-          dockerfile: ./Dockerfile
+          dockerfile: ./Dockerfile.pro
           region: AWS_REGION
           repo: umbrellanotice-app
           tag: "${CIRCLE_SHA1}"
@@ -74,31 +74,31 @@ workflows:
 #            - rspec
 #            - rubocop
       - aws-ecs/deploy-service-update:
-          name: ECS_update_umbrellanotice
+          name: Update_umbrellanotice_of_ECS
           family: 'umbrellanotice_task'
           cluster-name: $AWS_ECS_ARN
-          service-name: 'umbrellanotice-Service'
+          service-name: 'umbrellanotice_Apprication_Service'
           container-image-name-updates: "container=umbrellanotice,tag=${CIRCLE_SHA1}"
           requires:
-            - ECR_push_umbrellanotice
+            - Build_and_push_umbrellanotice_to_ECR
       - aws-ecr/build-and-push-image:
-          name: ECR_push_nginx
+          name: Build_and_push_nginx_to_ECR
           account-url: AWS_ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           create-repo: true
-          dockerfile: ./docker/nginx/Dockerfile.ci
+          dockerfile: ./docker/nginx/Dockerfile.pro
           region: AWS_REGION
-          repo: umbrellanotice-app
+          repo: umbrellanotice-nginx
           tag: "${CIRCLE_SHA1}"
 #          requires:
 #            - rspec
 #            - rubocop
       - aws-ecs/deploy-service-update:
-          name: ECS_update_nginx
+          name: Update_nginx_of_ECS
           family: 'umbrellanotice_task'
           cluster-name: $AWS_ECS_ARN
-          service-name: 'umbrellanotice-Service'
+          service-name: 'umbrellanotice_Apprication_Service'
           container-image-name-updates: "container=nginx,tag=${CIRCLE_SHA1}"
           requires:
-            - ECR_push_nginx
+            - Build_and_push_nginx_to_ECR

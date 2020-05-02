@@ -18,10 +18,8 @@ RUN apt-get update \
 
 RUN mkdir /umbrellanotice
 WORKDIR /umbrellanotice
-ADD Gemfile /umbrellanotice/Gemfile
-ADD Gemfile.lock /umbrellanotice/Gemfile.lock
-RUN bundle install
 ADD . /umbrellanotice
+RUN bundle install
 
 ENTRYPOINT [ \
   "prehook", "bundle install", "--", \
