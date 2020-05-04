@@ -22,6 +22,8 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
       - ./docker/mysql/mysql-confd:/etc/mysql/conf.d
+    cap_add:
+      - SYS_NICE
   nginx:
     build:
       context: docker/nginx
