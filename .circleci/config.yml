@@ -58,8 +58,8 @@ workflows:
   version: 2.1
   test_and_deploy:
     jobs:
-#      - rspec
-#      - rubocop
+      - rspec
+      - rubocop
       - aws-ecr/build-and-push-image:
           name: Build_and_push_umbrellanotice_to_ECR
           account-url: AWS_ECR_ACCOUNT_URL
@@ -70,9 +70,9 @@ workflows:
           region: AWS_REGION
           repo: umbrellanotice-app
           tag: "${CIRCLE_SHA1}"
-#          requires:
-#            - rspec
-#            - rubocop
+          requires:
+            - rspec
+            - rubocop
       - aws-ecs/deploy-service-update:
           name: Update_umbrellanotice_of_ECS
           family: 'umbrellanotice_task'
@@ -91,9 +91,9 @@ workflows:
           region: AWS_REGION
           repo: umbrellanotice-nginx
           tag: "${CIRCLE_SHA1}"
-#          requires:
-#            - rspec
-#            - rubocop
+          requires:
+            - rspec
+            - rubocop
       - aws-ecs/deploy-service-update:
           name: Update_nginx_of_ECS
           family: 'umbrellanotice_task'
