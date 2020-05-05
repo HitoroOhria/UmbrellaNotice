@@ -63,6 +63,18 @@ Rails.application.configure do
   # config.active_job.queue_adapter     = :resque
   # config.active_job.queue_name_prefix = "webapp_#{Rails.env}"
 
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.default_url_options = { host: 'www.umbrellanorice.work' }
+  ActionMailer::Base.smtp_settings = {
+    address:        'smtp.gmail.com',
+    domain:         'gmail.com',
+    port:           587,
+    authentication: :login,
+    user_name:      Rails.application.credentials.gmail[:user_email],
+    password:       Rails.application.credentials.gmail[:user_password],
+    enable_starttls_auto: true
+  }
+
   config.action_mailer.perform_caching = false
 
   # Ignore bad email addresses and do not raise email delivery errors.
