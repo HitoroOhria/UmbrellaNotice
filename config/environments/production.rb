@@ -47,7 +47,8 @@ Rails.application.configure do
   # config.action_cable.allowed_request_origins = [ 'http://example.com', /http:\/\/example.*/ ]
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  # cliant => HTTPSでALBに通信 => HTTPでRailsに通信 という構成のため、以下設定はfalseにする
+  config.force_ssl = false
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
@@ -64,7 +65,7 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "webapp_#{Rails.env}"
 
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.default_url_options = { host: 'www.umbrellanorice.work' }
+  config.action_mailer.default_url_options = { host: 'www.umbrellanorice.work', protocol: 'https' }
   ActionMailer::Base.smtp_settings = {
     address:        'smtp.gmail.com',
     domain:         'gmail.com',
