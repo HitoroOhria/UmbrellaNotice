@@ -65,7 +65,7 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "webapp_#{Rails.env}"
 
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.default_url_options = { host: 'www.umbrellanorice.work', protocol: 'https' }
+  config.action_mailer.default_url_options = { host: 'www.umbrellanotice.work', protocol: 'https' }
   ActionMailer::Base.smtp_settings = {
     address:        'smtp.gmail.com',
     domain:         'gmail.com',
