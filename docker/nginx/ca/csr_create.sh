@@ -17,7 +17,7 @@ expect -regexp \"Organization Name (eg, company) \[.*\]:\"
 send \"UmbrellaNotice\r\"
 
 expect -regexp \"Organizational Unit Name (eg, section) \[.*\]:\"
-send \"umbrellanotice team\r\"
+send \"development team\r\"
 
 expect -regexp \"Common Name (e.g. server FQDN or YOUR name) \[.*\]:\"
 send \"www.umbrellanotice.work\r\"
