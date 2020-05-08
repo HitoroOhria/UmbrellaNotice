@@ -18,8 +18,7 @@ RUN apt-get update \
 
 ADD . /umbrellanotice
 WORKDIR /umbrellanotice
-RUN bundle install \
-  && ln -s /dev/stdout /umbrellanotice/log/development.log
+RUN bundle install
 
 ENTRYPOINT [ \
   "prehook", "bundle install", "--", \
