@@ -9,9 +9,6 @@ services:
       - ./docker/environments/omni_facebook.env
     volumes:
       - .:/umbrellanotice
-      - public-data:/umbrellanotice/public
-      - tmp-data:/umbrellanotice/tmp
-      - log-data:/umbrellanotice/log
     depends_on:
       - mysql
     tty: true
@@ -20,23 +17,13 @@ services:
     env_file:
       - ./docker/environments/mysql.env
     volumes:
-      - mysql-data:/var/lib/mysql
       - ./docker/mysql/mysql-confd:/etc/mysql/conf.d
     cap_add:
       - SYS_NICE
   nginx:
     build:
       context: docker/nginx
-    volumes:
-      - public-data:/umbrellanotice/public
-      - tmp-data:/umbrellanotice/tmp
     ports:
       - 80:80
     depends_on:
       - umbrellanotice
-
-volumes:
-  public-data:
-  tmp-data:
-  log-data:
-  mysql-data:
