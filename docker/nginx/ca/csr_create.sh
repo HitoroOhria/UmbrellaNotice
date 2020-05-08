@@ -1,33 +1,33 @@
 #!/bin/sh
 
 expect -c "
-set timeout 1
+set timeout 5
 spawn openssl req -new -key server.key -out server.csr
 
-expect \"Country Name (2 letter code) \[AU\]:\"
+expect -regexp \"Country Name \(2 letter code\) \[.*\]:\"
 send \"JP\r\"
 
-expect \"State or Province Name (full name) \[Some-State\]\"
-send \"Fukushiama\r\"
+expect -regexp \"State or Province Name (full name) \[.*\]\"
+send \"Fukushima\r\"
 
-expect \"Locality Name (eg, city) \[\]:\"
+expect -regexp \"Locality Name (eg, city) \[.*\]:\"
 send \"Iwaki\r\"
 
-expect \"Organization Name (eg, company) \[Internet Widgits Pty Ltd\]:\"
+expect -regexp \"Organization Name (eg, company) \[.*\]:\"
 send \"UmbrellaNotice\r\"
 
-expect \"Organizational Unit Name (eg, section) \[\]:\"
+expect -regexp \"Organizational Unit Name (eg, section) \[.*\]:\"
 send \"umbrellanotice team\r\"
 
-expect \"Common Name (e.g. server FQDN or YOUR name) \[\]:\"
+expect -regexp \"Common Name (e.g. server FQDN or YOUR name) \[.*\]:\"
 send \"www.umbrellanotice.work\r\"
 
-expect \"Email Address \[\]:\"
+expect -regexp \"Email Address \[.*\]:\"
 send \"\r\"
 
-expect \"A challenge password \[\]:\"
+expect -regexp \"A challenge password \[.*\]:\"
 send \"notice\r\"
 
-expect \"An optional company name \[\]:\"
+expect -regexp \"An optional company name \[.*\]:\"
 send \"\r\"
 "

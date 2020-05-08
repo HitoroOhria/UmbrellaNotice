@@ -1,0 +1,43 @@
+#!/usr/bin/expect
+
+set timeout 5
+
+spawn openssl req -new -key server.key -out server.csr
+expect {
+    -regexp "Country Name \(2 letter code\) \[.*\]:" {
+        send "JP\r\n"
+        exp_continue
+    }
+    -regexp "State or Province Name \(full name\) \[.*\]" {
+        send "Fukushiama\r\n"
+        exp_continue
+    }
+    -regexp "Locality Name \(eg, city\) \[.*\]:" {
+        send "Iwaki\r\n"
+        exp_continue
+    }
+    -regexp "Organization Name \(eg, company\) \[.*\]:" {
+        send "UmbrellaNotice\r\n"
+        exp_continue
+    }
+    -regexp "Organizational Unit Name \(eg, section\) \[.*\]:" {
+        send "development team\r\n"
+        exp_continue
+    }
+    -regexp "Common Name \(e.g. server FQDN or YOUR name\) \[.*\]:" {
+        send "www.umbrellanotice.work\r\n"
+        exp_continue
+    }
+    -regexp "Email Address \[.*\]:" {
+        send "\r\n"
+        exp_continue
+    }
+    -regexp "A challenge password \[.*\]:" {
+        send "\r\n"
+        exp_continue
+    }
+    -regexp "An optional company name \[.*\]:" {
+        send "\r\n"
+        exp_continue
+    }
+}

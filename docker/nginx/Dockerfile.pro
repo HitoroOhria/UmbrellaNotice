@@ -1,10 +1,5 @@
 FROM nginx:1.15.8
 
-# openssl.cnf - 環境変数
-ENV EMAIL $EMAIL
-ENV PREFECTURE $PREFECTURE
-ENV CITY $CITY
-
 RUN rm -f /etc/nginx/conf.d/*
 ADD docker/nginx/nginx.pro.conf /etc/nginx/conf.d/umbrellanotice.conf
 
