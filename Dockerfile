@@ -16,10 +16,10 @@ RUN apt-get update \
        build-essential \
        nodejs
 
-RUN mkdir /umbrellanotice
-WORKDIR /umbrellanotice
 ADD . /umbrellanotice
-RUN bundle install
+WORKDIR /umbrellanotice
+RUN bundle install \
+  && ln -s /dev/stdout /umbrellanotice/log/development.log
 
 ENTRYPOINT [ \
   "prehook", "bundle install", "--", \
