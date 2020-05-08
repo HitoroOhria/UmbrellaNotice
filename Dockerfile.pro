@@ -5,10 +5,10 @@ RUN apt-get update \
        build-essential \
        nodejs
 
-RUN mkdir /umbrellanotice
-WORKDIR /umbrellanotice
 ADD . /umbrellanotice
-RUN mkdir tmp tmp/sockets log
-RUN bundle install
+WORKDIR /umbrellanotice
+RUN mkdir tmp tmp/sockets log \
+  && bundle install
+  && ln -s /dev/stdout /umbrellanotice/log/production.log
 
 CMD unicorn_rails -c /umbrellanotice/config/unicorn.rb -E production
