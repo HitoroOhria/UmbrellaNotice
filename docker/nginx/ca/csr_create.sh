@@ -1,7 +1,7 @@
 #!/bin/sh
 
 expect -c "
-set timeout 5
+set timeout 1
 spawn openssl req -new -key server.key -out server.csr
 
 expect -regexp \"Country Name \(2 letter code\) \[.*\]:\"
@@ -26,8 +26,10 @@ expect -regexp \"Email Address \[.*\]:\"
 send \"\r\"
 
 expect -regexp \"A challenge password \[.*\]:\"
-send \"notice\r\"
+send \"\r\"
 
 expect -regexp \"An optional company name \[.*\]:\"
 send \"\r\"
+
+expect .*
 "
