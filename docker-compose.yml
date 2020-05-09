@@ -4,9 +4,8 @@ services:
   umbrellanotice:
     build:
       context: .
-    env_file:
-      - ./docker/environments/mysql.env
-      - ./docker/environments/omni_facebook.env
+    environment:
+      MYSQL_ROOT_PASSWORD: password
     volumes:
       - .:/umbrellanotice
       - public-data:/umbrellanotice/public
@@ -17,8 +16,8 @@ services:
     tty: true
   mysql:
     image: mysql:8.0
-    env_file:
-      - ./docker/environments/mysql.env
+    environment:
+      MYSQL_ROOT_PASSWORD: password
     volumes:
       - mysql-data:/var/lib/mysql
       - ./docker/mysql/mysql-confd:/etc/mysql/conf.d
