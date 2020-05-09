@@ -69,6 +69,11 @@ RSpec.configure do |config|
   config.include Capybara::DSL
   config.include FactoryBot::Syntax::Methods
 
+  # use DeviseHelper
+  config.include Devise::Test::ControllerHelpers,  type: :controller
+  config.include Devise::Test::ControllerHelpers,  type: :view
+  config.include Devise::Test::IntegrationHelpers, type: :feature
+
   # Setting Database-Cleaner
   config.before(:suite) do
     DatabaseCleaner.strategy = :transaction

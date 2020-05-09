@@ -13,3 +13,11 @@ development:
 test:
   <<: *default
   database: umbrellanotice_test
+
+production:
+  <<: *default
+  database: umbrellanotice_production
+  username: <%= ENV['DB_USER_NAME'] %>
+  password: <%= ENV['DB_PASSWORD'] %>
+  host:     <%= ENV['DB_HOST'] %>
+  port:     <%= ENV['DB_PORT'] %>

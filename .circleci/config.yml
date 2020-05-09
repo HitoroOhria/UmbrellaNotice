@@ -1,0 +1,104 @@
+version: 2.1
+jobs:
+  rspec:
+    working_directory: ~/umbrellanotice
+    docker:
+      - image: circleci/ruby
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Setup environment variable
+          command: |
+            echo "export COMPOSE_FILE=docker-compose.ci.yml" >> $BASH_ENV
+      - run:
+          name: Build images
+          command: |
+            set -x
+            docker-compose build
+      - run:
+          name: Start containers
+          command: |
+            docker-compose up -d
+      - run:
+          name: Wait 120 seconds for Setup containers
+          command: |
+            sleep 120
+      - run:
+          name: Run rspec
+          command: docker-compose exec umbrellanotice rspec
+  rubocop:
+    working_directory: ~/umbrellanotice
+    docker:
+      - image: circleci/ruby:2.5.1
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - gemfiles-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gemfiles-{{ .Branch }}-
+            - gemfiles-master-
+      - run: bundle config --local path vendor/bundle
+      - run:
+          name: bundle install
+          command: bundle check || bundle install --jobs=8 --clean
+      - run:
+          name: Run rubocop
+          command: bundle exec rubocop --parallel
+      - save_cache:
+          key: gemfiles-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
+orbs:
+  aws-ecr: circleci/aws-ecr@6.8.2
+  aws-ecs: circleci/aws-ecs@1.1.0
+
+workflows:
+  version: 2.1
+  test_and_deploy:
+    jobs:
+      - rspec
+      - rubocop
+      - aws-ecr/build-and-push-image:
+          name: Build_and_push_umbrellanotice_to_ECR
+          account-url: AWS_ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          create-repo: true
+          dockerfile: ./Dockerfile.pro
+          region: AWS_REGION
+          repo: umbrellanotice-app
+          tag: "${CIRCLE_SHA1}"
+          requires:
+            - rspec
+            - rubocop
+      - aws-ecs/deploy-service-update:
+          name: Update_umbrellanotice_of_ECS
+          family: 'umbrellanotice_task'
+          cluster-name: $AWS_ECS_ARN
+          service-name: 'umbrellanotice_Application_Service'
+          container-image-name-updates: "container=umbrellanotice,tag=${CIRCLE_SHA1}"
+          requires:
+            - Build_and_push_umbrellanotice_to_ECR
+      - aws-ecr/build-and-push-image:
+          name: Build_and_push_nginx_to_ECR
+          account-url: AWS_ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          create-repo: true
+          dockerfile: ./docker/nginx/Dockerfile.pro
+          region: AWS_REGION
+          repo: umbrellanotice-nginx
+          tag: "${CIRCLE_SHA1}"
+          requires:
+            - rspec
+            - rubocop
+      - aws-ecs/deploy-service-update:
+          name: Update_nginx_of_ECS
+          family: 'umbrellanotice_task'
+          cluster-name: $AWS_ECS_ARN
+          service-name: 'umbrellanotice_Application_Service'
+          container-image-name-updates: "container=nginx,tag=${CIRCLE_SHA1}"
+          requires:
+            - Build_and_push_nginx_to_ECR

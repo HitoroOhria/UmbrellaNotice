@@ -13,18 +13,17 @@ RUN apt-get update \
   && chmod +x /bin/entrykit \
   && entrykit --symlink \
   && apt-get install -y \
-       build-essential \
-       nodejs
+         build-essential \
+         nodejs
 
-ADD . /umbrellanotice
+RUN mkdir /umbrellanotice
 WORKDIR /umbrellanotice
+COPY . /umbrellanotice
 RUN bundle install
 
 ENTRYPOINT [ \
-  "prehook", "bundle install", "--", \
-  "prehook", "echo sleep 45 seconds for mysql Start Up Comprete", "--", \
-  "prehook", "sleep 45", "--", \
-  "prehook", "echo finish sleep", "--", \
+  "prehook", "echo sleep 60 seconds for mysql Start Up Comprete", "--", \
+  "prehook", "sleep 60", "--", \
   "prehook", "bundle exec rails db:create", "--", \
   "prehook", "bundle exec rails db:migrate", "--", \
   "prehook", "bundle exec unicorn_rails -c /umbrellanotice/config/unicorn.rb -E development", "--" \

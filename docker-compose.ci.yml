@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  umbrellanotice:
+    build:
+      context: .
+      dockerfile: Dockerfile.ci
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mysql
+  mysql:
+    build:
+      context: ./docker/mysql
+      dockerfile: Dockerfile.ci
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - '33306:3306'
+  nginx:
+    build:
+      context: docker/nginx
+    ports:
+      - 80:80
+    depends_on:
+    - umbrellanotice
