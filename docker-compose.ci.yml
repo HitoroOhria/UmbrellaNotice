@@ -6,6 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile.ci
     environment:
+      TZ: Asia/Tokyo
       MYSQL_ROOT_PASSWORD: password
     ports:
       - '3000:3000'

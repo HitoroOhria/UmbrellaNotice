@@ -1,5 +1,8 @@
 require_relative 'boot'
 
+require 'json'
+require 'open-uri'
+
 require 'rails/all'
 
 # Require the gems listed in Gemfile, including any gems
@@ -22,5 +25,7 @@ module Webapp
                        helper_specs: false,
                        routing_specs: false
     end
+
+    config.time_zone = 'Asia/Tokyo'
   end
 end
