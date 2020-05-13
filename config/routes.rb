@@ -4,7 +4,6 @@ Rails.application.routes.draw do
   }
 
   root 'static_pages#home'
-  get 'line/callback', to: 'lines#callback'
-
-  resources :weathers, only: [:new]
+  get  'weathers/notice',  to: 'weathers#notice'
+  post 'line/webhock',     to: 'lines#webhock'
 end

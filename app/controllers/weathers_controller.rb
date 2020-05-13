@@ -1,5 +1,5 @@
 class WeathersController < ApplicationController
-  def new
+  def notice
     # OpenWeatherAPI から、天気予報を取得
     city = Zipang.to_slug('おしゃまんべ').gsub(/\-/, '').to_kunrei.gsub(/m(?!(a|i|u|e|o|m))/, 'n')
     base_url = 'http://api.openweathermap.org/data/2.5/forecast'
