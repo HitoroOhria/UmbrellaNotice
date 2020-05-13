@@ -106,6 +106,8 @@ GEM
       activesupport (>= 5.0.0)
     jwt (2.2.1)
     kgio (2.11.3)
+    kuromoji (0.0.1)
+      rjb
     launchy (2.5.0)
       addressable (~> 2.7)
     listen (3.1.5)
@@ -209,6 +211,10 @@ GEM
       actionpack (>= 5.0)
       railties (>= 5.0)
     rexml (3.2.4)
+    rjb (1.6.1)
+    romaji (0.2.4)
+      rake (>= 0.8.0)
+    romkan (0.4.0)
     rspec-core (3.9.1)
       rspec-support (~> 3.9.1)
     rspec-expectations (3.9.1)
@@ -302,6 +308,9 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yard (0.9.24)
+    zipang (0.0.1)
+      kuromoji
+      romaji
 
 PLATFORMS
   ruby
@@ -326,6 +335,8 @@ DEPENDENCIES
   rails (~> 5.2.0)
   rails-controller-testing
   rails-erd
+  rjb
+  romkan
   rspec-rails
   rubocop
   sass-rails (~> 5.0)
@@ -339,6 +350,7 @@ DEPENDENCIES
   unicorn-worker-killer
   web-console (>= 3.3.0)
   webdrivers
+  zipang
 
 RUBY VERSION
    ruby 2.5.1p57

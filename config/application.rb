@@ -2,6 +2,7 @@ require_relative 'boot'
 
 require 'json'
 require 'open-uri'
+require 'romkan'
 
 require 'rails/all'
 

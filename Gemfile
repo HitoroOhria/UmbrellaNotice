@@ -17,6 +17,7 @@ gem 'devise'
 gem 'omniauth-facebook'
 gem 'rjb'
 gem 'zipang'
+gem 'romkan'
 
 group :development, :test do
   gem 'faker'

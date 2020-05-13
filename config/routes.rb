@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   }
 
   root 'static_pages#home'
+  get 'line/callback', to: 'lines#callback'
 
   resources :weathers, only: [:new]
 end
