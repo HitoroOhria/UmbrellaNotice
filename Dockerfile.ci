@@ -4,6 +4,8 @@ ENV ENTRYKIT_VERSION 0.4.0
 ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk-amd64
 
 RUN apt-get update \
+&& apt-get install -y \
+       openssl \
   && rm -rf /var/cache/apk/* \
   && wget https://github.com/progrium/entrykit/releases/download/v${ENTRYKIT_VERSION}/entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz \
   && tar -xvzf entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz \
@@ -12,17 +14,16 @@ RUN apt-get update \
   && chmod +x /bin/entrykit \
   && entrykit --symlink \
   && apt-get install -y \
-         build-essential \
-         nodejs \
-         openjdk-8-jdk
+       build-essential \
+       nodejs \
+       openjdk-8-jdk
 
-RUN mkdir /umbrellanotice
+ADD . /umbrellanotice
 WORKDIR /umbrellanotice
-COPY . /umbrellanotice
 RUN bundle install
 
 ENTRYPOINT [ \
-  "prehook", "echo sleep 60 seconds for mysql Start Up Comprete", "--", \
+  "prehook", "echo sleep 60 seconds for mysql Start Up Complete", "--", \
   "prehook", "sleep 60", "--", \
   "prehook", "bundle exec rails db:create", "--", \
   "prehook", "bundle exec rails db:migrate", "--", \

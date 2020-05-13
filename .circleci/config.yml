@@ -38,6 +38,11 @@ jobs:
             - gemfiles-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
             - gemfiles-{{ .Branch }}-
             - gemfiles-master-
+      - run:
+          name: install openjdk-8-jdk
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y openjdk-8-jdk
       - run: bundle config --local path vendor/bundle
       - run:
           name: bundle install
