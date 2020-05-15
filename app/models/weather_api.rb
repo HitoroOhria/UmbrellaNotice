@@ -1,0 +1,2 @@
+class WeatherApi < ApplicationRecord
+end
