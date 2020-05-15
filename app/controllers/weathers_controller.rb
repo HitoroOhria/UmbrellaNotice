@@ -1,4 +1,4 @@
-class WeathersController < ApplicationController
+class WeatherAPIController < ApplicationController
   def notice
     @weather_forecast = json_weather_infomation('おしゃまんべ')
     @rain_notice = today_is_rainy?(@weather_forecast)
