@@ -15,6 +15,9 @@ gem 'jbuilder', '~> 2.5'
 gem 'bootsnap', '>= 1.1.0', require: false
 gem 'devise'
 gem 'omniauth-facebook'
+gem 'rjb'
+gem 'zipang'
+gem 'romkan'
 
 group :development, :test do
   gem 'faker'

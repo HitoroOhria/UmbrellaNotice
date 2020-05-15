@@ -21,9 +21,9 @@ jobs:
           command: |
             docker-compose up -d
       - run:
-          name: Wait 120 seconds for Setup containers
+          name: Wait 90 seconds for Setup containers
           command: |
-            sleep 120
+            sleep 90
       - run:
           name: Run rspec
           command: docker-compose exec umbrellanotice rspec
@@ -38,6 +38,11 @@ jobs:
             - gemfiles-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
             - gemfiles-{{ .Branch }}-
             - gemfiles-master-
+      - run:
+          name: install openjdk-8-jdk
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y openjdk-8-jdk
       - run: bundle config --local path vendor/bundle
       - run:
           name: bundle install

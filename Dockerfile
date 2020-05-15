@@ -1,9 +1,10 @@
 FROM ruby:2.5.1
 
 ENV ENTRYKIT_VERSION 0.4.0
+ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk-amd64
 
 RUN apt-get update \
-  && apt-get install \
+  && apt-get install -y \
        openssl \
   && rm -rf /var/cache/apk/* \
   && wget https://github.com/progrium/entrykit/releases/download/v${ENTRYKIT_VERSION}/entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz \
@@ -14,7 +15,8 @@ RUN apt-get update \
   && entrykit --symlink \
   && apt-get install -y \
        build-essential \
-       nodejs
+       nodejs \
+       openjdk-8-jdk
 
 ADD . /umbrellanotice
 WORKDIR /umbrellanotice

@@ -5,6 +5,7 @@ services:
     build:
       context: .
     environment:
+      TZ: Asia/Tokyo
       MYSQL_ROOT_PASSWORD: password
     volumes:
       - .:/umbrellanotice
