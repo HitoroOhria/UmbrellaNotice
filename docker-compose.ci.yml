@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile.ci
     environment:
       TZ: Asia/Tokyo
+      RAILS_MASTER_KEY: $RAILS_MASTER_KEY
       MYSQL_ROOT_PASSWORD: password
     ports:
       - '3000:3000'

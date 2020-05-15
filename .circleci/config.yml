@@ -21,9 +21,9 @@ jobs:
           command: |
             docker-compose up -d
       - run:
-          name: Wait 120 seconds for Setup containers
+          name: Wait 90 seconds for Setup containers
           command: |
-            sleep 120
+            sleep 90
       - run:
           name: Run rspec
           command: docker-compose exec umbrellanotice rspec
