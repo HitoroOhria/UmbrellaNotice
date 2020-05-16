@@ -10,7 +10,7 @@ class User < ApplicationRecord
   alias_method :line, :line_api
 
   def self.find_or_create_user(line_id)
-    User.line.find_by(line_id: line_id) || User.create.line.create(line_id: line_id)
+    Line.find_or_create_line(line_id).user || Line.find_or_create_line(line_id).user.create
   end
 
   def self.from_omniauth(auth)
