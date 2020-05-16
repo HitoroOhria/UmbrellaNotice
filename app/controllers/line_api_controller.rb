@@ -5,7 +5,7 @@ class LineApiController < ApplicationController
   def webhock
     event = request_event
     message = event[:message]
-    user = User.find_or_create_user(event[:source][:user_id])
+    user = User.find_or_create_user_line(event[:source][:user_id])
 
     case message[:type]
     when 'text'

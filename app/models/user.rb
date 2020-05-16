@@ -9,8 +9,9 @@ class User < ApplicationRecord
   alias_method :weather, :weather_api
   alias_method :line, :line_api
 
-  def self.find_or_create_user(line_id)
-    Line.find_or_create_line(line_id).user || Line.find_or_create_line(line_id).user.create
+  def self.find_or_create_user_line(line_id)
+    line = Line.find_or_create_line(line_id)
+    line.user || line.user.create
   end
 
   def self.from_omniauth(auth)
