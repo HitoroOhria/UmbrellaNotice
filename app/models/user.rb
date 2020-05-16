@@ -3,6 +3,16 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :confirmable, :omniauthable
 
+  belongs_to :weather_api, dependent: :destroy
+  belongs_to :line_api,    dependent: :destroy
+
+  alias_method :weather, :weather_api
+  alias_method :line, :line_api
+
+  def self.find_or_create_user(line_id)
+    User.line.find_by(line_id: line_id) || User.create.line.create(line_id: line_id)
+  end
+
   def self.from_omniauth(auth)
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
       user.email = auth.info.email

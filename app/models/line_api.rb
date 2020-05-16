@@ -1,0 +1,2 @@
+class LineApi < ApplicationRecord
+end
