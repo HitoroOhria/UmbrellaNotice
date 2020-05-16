@@ -10,7 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_15_110511) do
+ActiveRecord::Schema.define(version: 2020_05_16_031639) do
+
+  create_table "line_apis", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.boolean "locatable", default: false, null: false
+    t.integer "notice_time"
+    t.string "line_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["line_id"], name: "index_line_apis_on_line_id"
+  end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -35,8 +44,8 @@ ActiveRecord::Schema.define(version: 2020_05_15_110511) do
 
   create_table "weather_apis", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "city"
-    t.integer "lat"
-    t.integer "lon"
+    t.decimal "lat", precision: 5, scale: 2
+    t.decimal "lon", precision: 6, scale: 2
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

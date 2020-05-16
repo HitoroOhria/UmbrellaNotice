@@ -7,7 +7,7 @@ class CreateLineApis < ActiveRecord::Migration[5.2]
 
       t.timestamps
     end
-  end
 
-  add_index :line_apis, :line_id
+    add_index :line_apis, :line_id
+  end
 end
