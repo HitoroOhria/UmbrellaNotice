@@ -18,6 +18,7 @@ gem 'omniauth-facebook'
 gem 'rjb'
 gem 'zipang'
 gem 'romkan'
+gem 'line-bot-api'
 
 group :development, :test do
   gem 'faker'
