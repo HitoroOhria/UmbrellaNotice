@@ -9,9 +9,11 @@ class User < ApplicationRecord
   alias_method :weather, :weather_api
   alias_method :line,    :line_api
 
-  def self.find_or_create_user_line(line_id)
+  def self.find_or_create_temporary_user(line_id)
     line = Line.find_or_create_line(line_id)
-    line.user || line.user.create
+    line.user || User.create(email: "#{SecureRandom.alphanumeric}@example.com",
+                             password: SecureRandom.base64,
+                             line_api: line)
   end
 
   def self.from_omniauth(auth)
