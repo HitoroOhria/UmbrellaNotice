@@ -3,8 +3,11 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :confirmable, :omniauthable
 
-  has_one :weather, dependent: :destroy, class_name: 'WeatherApi'
-  has_one :line,    dependent: :destroy, class_name: 'LineApi'
+  has_one :weather_api, dependent: :destroy, class_name: 'WeatherApi'
+  has_one :line_api,    dependent: :destroy, class_name: 'LineApi'
+
+  alias_method :weather, :weather_api
+  alias_method :line,    :line_api
 
   def self.find_or_create_user_line(line_id)
     line = Line.find_or_create_line(line_id)
