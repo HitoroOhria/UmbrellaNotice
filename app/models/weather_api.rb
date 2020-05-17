@@ -1,8 +1,8 @@
 class WeatherApi < ApplicationRecord
   belongs_to :user
 
-  validates :lat, numericality: { greater_than_or_equal_to: -45, less_than_or_equal_to: 45 }
-  validates :lon, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
+  validates :lat, numericality: {greater_than_or_equal_to: -45, less_than_or_equal_to: 45}
+  validates :lon, numericality: {greater_than_or_equal_to: -180, less_than_or_equal_to: 180}
 
   def city_varidation
     self.city = to_romaji(city)
@@ -25,11 +25,10 @@ class WeatherApi < ApplicationRecord
 
     begin
       response = OpenURI.open_uri(base_url + request_query \
-                                   + "&appid=#{Rails.application.credentials.open_weather_api[:app_key]}")
+                                    + "&appid=#{Rails.application.credentials.open_weather_api[:app_key]}")
       JSON.parse(response.read, symbolize_names: true)
-    end
     rescue OpenURI::HTTPError
-      # invalid_city
+      false
     end
   end
 end
