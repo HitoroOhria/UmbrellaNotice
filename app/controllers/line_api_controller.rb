@@ -1,50 +1,46 @@
 class LineApiController < ApplicationController
-  before_action :signature_validation, :event_validatin, only: [:webhock]
-  # before_action: :request_headers_logging, only: [:webhock]
+  before_action :validate_signature, only: [:webhock]
 
-  def webhock
-    event = request_event
-    message = event[:message]
-    user = User.find_or_create_temporary_user(event[:source][:user_id])
-
-    case message[:type]
-    when 'text'
-      weather = user.weather.new(city: message[:text])
-      unless weather.city_validation(message[:text]).save
-        # 市名が不正な時の処理
-      end
-    when 'location'
-      user.weather.create(lat: message[:latitude], lon: message[:longitude])
-    end
-
-    render json: { status: 200, message: 'Request Success' }
+  def client
+    @client ||= Line::Bot::Client.new { |config|
+      config.channel_id = Rails.application.credentials.line_api[:channel_id]
+      config.channel_secret = Rails.application.credentials.line_api[:channel_secret_id]
+      config.channel_token = Rails.application.credentials.line_api[:channel_token]
+    }
   end
 
-  def failure
-    render json: { status: 400, message: 'Bad Request' }
+  def webhock
+    body = request.body.read
+    events = client.parse_events_from(body)
+
+    events.each do |event|
+      case event
+      when Line::Bot::Event::Message
+        user = User.find_or_create_temporary_user(event[:source][:userId])
+        case event.type
+        when Line::Bot::Event::MessageType::Text
+          weather = user.weather.new(city: event.message[:text])
+          unless weather.city_validation(event.message[:text]).save
+            message = { type: 'text', text: '市名を読み取れませんでした！ひらがなで再送信するか、付近の市名を送信して下さい！' }
+            client.reply_message(event[:replyToken], message)
+          end
+        when Line::Bot::Event::MessageType::Location
+          user.weather.create(lat: event.message[:latitude], lon: event.message[:longitude])
+        end
+      end
+    end
+
+    message = { type: 'text', text: '位置情報の設定に成功しました!' }
+    client.reply_message(event[:replyToken], message)
+
+    render status: 200
   end
 
   private
 
-  def request_event
-    request_json = JSON.parse(request.body.read, symbolize_names: true)
-    request_json[:events][0]
-  end
-
-  def signature_validation
-    channel_secret = Rails.application.credentials.line_api[:channel_secret_id]
-    http_request_body = request.raw_post
-    hash = OpenSSL::HMAC.digest(OpenSSL::Digest::SHA256.new, channel_secret, http_request_body)
-    signature = Base64.strict_encode64(hash)
-    x_line_signature = request.headers[:X-Line-Signature]
-    failure if signature != x_line_signature
-  end
-
-  def event_validation
-    failure if request_event[:source][:type] != 'user'
-  end
-
-  def request_headers_logging
-    request.headers.sort.map { |k, v| logger.info "#{k}:#{v}" }
+  def validate_signature
+    body = request.body.read
+    signature = request.env['HTTP_X_LINE_SIGNATURE']
+    render json: { status: 404, text: 'Bad Request' } unless client.validate_signature(body, signature)
   end
 end
