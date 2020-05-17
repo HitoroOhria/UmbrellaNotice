@@ -10,7 +10,7 @@ class LineApiController < ApplicationController
     case message[:type]
     when 'text'
       weather = user.weather.new(city: message[:text])
-      unless weather.city_varidation(message[:text]).save
+      unless weather.city_validation(message[:text]).save
         # 市名が不正な時の処理
       end
     when 'location'

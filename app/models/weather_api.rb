@@ -1,10 +1,10 @@
 class WeatherApi < ApplicationRecord
   belongs_to :user
 
-  validates :lat, numericality: {greater_than_or_equal_to: -45, less_than_or_equal_to: 45}
-  validates :lon, numericality: {greater_than_or_equal_to: -180, less_than_or_equal_to: 180}
+  validates :lat, numericality: { greater_than_or_equal_to: -45, less_than_or_equal_to: 45 }
+  validates :lon, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
 
-  def city_varidation
+  def city_validation
     self.city = to_romaji(city)
     forecast ? self : WeatherApi.new
   end
