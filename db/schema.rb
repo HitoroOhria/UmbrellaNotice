@@ -10,11 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_16_031639) do
+ActiveRecord::Schema.define(version: 2020_05_17_021834) do
 
   create_table "line_apis", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.boolean "locatable", default: false, null: false
-    t.integer "notice_time"
+    t.string "notice_time", default: "7:00"
     t.string "line_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
