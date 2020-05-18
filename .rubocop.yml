@@ -48,3 +48,6 @@ Style/FrozenStringLiteralComment:
 
 Style/AsciiComments:
   Enabled: false
+
+Style/Semicolon:
+  Enabled: false
