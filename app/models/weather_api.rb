@@ -4,9 +4,19 @@ class WeatherApi < ApplicationRecord
   validates :lat, numericality: { greater_than_or_equal_to: -45, less_than_or_equal_to: 45 }
   validates :lon, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
 
-  def city_validation
-    self.city = to_romaji(city)
-    forecast ? self : WeatherApi.new
+  def save_city(event)
+    self.city = to_romaji(event.message[:text])
+    return unless forecast
+
+    save
+    user.line.update_attribute(:located_at, Time.zone.now)
+  end
+
+  def save_location(event)
+    self.lat = event.message[:latitude]
+    self.lon = event.message[:longitude]
+    save
+    user.line.update_attribute(:located_at, Time.zone.now)
   end
 
   # OpenWeatherAPI から、天気予報を取得
@@ -17,7 +27,7 @@ class WeatherApi < ApplicationRecord
     rescue OpenURI::HTTPError => e
       retry_count += 1
       retry_message(e, retry_count)
-      retry_count <= 3 ? (sleep 10; retry) : false
+      retry_count <= 3 ? (sleep 5; retry) : false
     end
   end
 
@@ -38,7 +48,7 @@ class WeatherApi < ApplicationRecord
   def retry_message(exception, retry_count)
     if retry_count <= 3
       puts "#{exception.class} が発生しました。"
-      puts '10sec待機後に再接続します。'
+      puts '5sec 待機後に再接続します。'
       puts "この処理は3回まで繰り返されます。(現在: #{retry_count}回目)"
     else
       puts "#{exception.class} の再接続に失敗しました。"

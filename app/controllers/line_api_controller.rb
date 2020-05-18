@@ -34,28 +34,17 @@ class LineApiController < ApplicationController
   end
 
   def locate_setting(event, user)
+    weather = user.weather.new
     case event.type
     when Line::Bot::Event::MessageType::Text
-      save_or_alert_city(event, user)
+      invalid_city unless weather.save_city(event)
     when Line::Bot::Event::MessageType::Location
-      save_location(event, user)
+      weather.save_location(event)
     end
 
     message = { type: 'text', text: '位置設定が完了しました！' }
     client.reply_message(event[:replyToken], message)
     render status: 200
-  end
-
-  def save_or_alert_city(event, user)
-    message_text = event.message[:text]
-    weather = user.weather.new(city: message_text)
-    invalid_city unless weather.city_validation(message_text).save
-    user.line.update_attribute(:located_at, Time.zone.now)
-  end
-
-  def save_location(event, user)
-    user.weather.create(lat: event.message[:latitude], lon: event.message[:longitude])
-    user.line.update_attribute(:located_at, Time.zone.now)
   end
 
   def invalid_city
