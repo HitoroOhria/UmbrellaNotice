@@ -3,9 +3,7 @@ require_relative 'boot'
 require 'json'
 require 'open-uri'
 require 'romkan'
-require 'sinatra'
 require 'line/bot'
-
 require 'rails/all'
 
 # Require the gems listed in Gemfile, including any gems
