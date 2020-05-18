@@ -17,7 +17,7 @@ class LineApiController < ApplicationController
   def webhock
     events.each do |event|
       user = User.find_or_create_temporary_user(event[:source][:userId])
-      if user.located_at
+      if user.line.located_at
         interactive(event)
       else
         locate_setting(event, user)
@@ -36,9 +36,10 @@ class LineApiController < ApplicationController
   def locate_setting(event, user)
     case event.type
     when Line::Bot::Event::MessageType::Text
-      save_or_alert_city
+      save_or_alert_city(event, user)
     when Line::Bot::Event::MessageType::Location
       user.weather.create(lat: event.message[:latitude], lon: event.message[:longitude])
+      user.line.update_attribute(:located_at, Time.zone.now)
     end
 
     message = { type: 'text', text: '位置設定が完了しました！' }
@@ -46,10 +47,11 @@ class LineApiController < ApplicationController
     render status: 200
   end
 
-  def save_or_alert_city
+  def save_or_alert_city(event, user)
     message_text = event.message[:text]
     weather = user.weather.new(city: message_text)
     invalid_city unless weather.city_validation(message_text).save
+    user.line.update_attribute(:located_at, Time.zone.now)
   end
 
   def invalid_city
