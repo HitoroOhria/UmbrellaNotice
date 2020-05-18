@@ -6,8 +6,8 @@ class User < ApplicationRecord
   has_one :weather_api, dependent: :destroy, class_name: 'WeatherApi'
   has_one :line_api,    dependent: :destroy, class_name: 'LineApi'
 
-  alias :weather, :weather_api
-  alias :line,    :line_api
+  alias weather weather_api
+  alias line line_api
 
   def self.find_or_create_temporary_user(line_id)
     line = Line.find_or_create_line(line_id)
