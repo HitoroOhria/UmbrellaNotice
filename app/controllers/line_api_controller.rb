@@ -38,8 +38,7 @@ class LineApiController < ApplicationController
     when Line::Bot::Event::MessageType::Text
       save_or_alert_city(event, user)
     when Line::Bot::Event::MessageType::Location
-      user.weather.create(lat: event.message[:latitude], lon: event.message[:longitude])
-      user.line.update_attribute(:located_at, Time.zone.now)
+      save_location(event, user)
     end
 
     message = { type: 'text', text: '位置設定が完了しました！' }
@@ -51,6 +50,11 @@ class LineApiController < ApplicationController
     message_text = event.message[:text]
     weather = user.weather.new(city: message_text)
     invalid_city unless weather.city_validation(message_text).save
+    user.line.update_attribute(:located_at, Time.zone.now)
+  end
+
+  def save_location(event, user)
+    user.weather.create(lat: event.message[:latitude], lon: event.message[:longitude])
     user.line.update_attribute(:located_at, Time.zone.now)
   end
 
