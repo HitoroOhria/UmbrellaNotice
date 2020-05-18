@@ -6,7 +6,7 @@ class CreateWeatherApis < ActiveRecord::Migration[5.2]
       t.decimal :lon, precision: 6, scale: 2
       t.references :user
 
-      t.timestamps
+      t.timestamps null: false
     end
   end
 end
