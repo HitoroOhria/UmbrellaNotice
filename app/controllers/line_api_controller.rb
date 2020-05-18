@@ -1,5 +1,6 @@
 class LineApiController < ApplicationController
-  before_action :validate_signature, :validate_event_type, :validate_source_type, only: [:webhock]
+  before_action :validate_signature, :validate_event_type, :validate_source_type, :validate_message_type,
+                only: [:webhock]
 
   def client
     @client ||= Line::Bot::Client.new { |config|
@@ -69,7 +70,7 @@ class LineApiController < ApplicationController
 
   def validate_event_type
     events.each do |event|
-      next if event.class != Line::Bot::Event::Message
+      next if event.class == Line::Bot::Event::Message
 
       render json: { status: 400, message: 'Not supported EventType' }
     end
@@ -77,11 +78,20 @@ class LineApiController < ApplicationController
 
   def validate_source_type
     events.each do |event|
-      next if event[:source][:type] != 'user'
+      next if event[:source][:type] == 'user'
 
       message = { type: 'text', text: 'グループトークには対応していません！退出させて下さい！' }
       client.reply_message(event[:replyToken], message)
       render json: { status: 400, message: 'Not allowed SourceType' }
+    end
+  end
+
+  def validate_message_type
+    events.each do |event|
+      message_type = event[:message][:type]
+      next if %w[text location].include?(message_type)
+
+      render json: { status: 400, message: 'Not supported MessageType' }
     end
   end
 end
