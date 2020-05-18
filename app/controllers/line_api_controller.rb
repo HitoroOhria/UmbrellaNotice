@@ -1,5 +1,5 @@
 class LineApiController < ApplicationController
-  before_action :validate_signature, only: [:webhock]
+  before_action :validate_signature, :validate_event_type, :validate_source_type, only: [:webhock]
 
   def client
     @client ||= Line::Bot::Client.new { |config|
@@ -9,30 +9,51 @@ class LineApiController < ApplicationController
     }
   end
 
-  def webhock
-    body = request.body.read
-    events = client.parse_events_from(body)
+  def events
+    @events ||= client.parse_events_from(request.body.read)
+  end
 
+  def webhock
     events.each do |event|
-      case event
-      when Line::Bot::Event::Message
-        user = User.find_or_create_temporary_user(event[:source][:userId])
-        case event.type
-        when Line::Bot::Event::MessageType::Text
-          weather = user.weather.new(city: event.message[:text])
-          unless weather.city_validation(event.message[:text]).save
-            message = { type: 'text', text: '市名を読み取れませんでした！ひらがなで再送信するか、付近の市名を送信して下さい！' }
-            client.reply_message(event[:replyToken], message)
-          end
-        when Line::Bot::Event::MessageType::Location
-          user.weather.create(lat: event.message[:latitude], lon: event.message[:longitude])
-        end
+      user = User.find_or_create_temporary_user(event[:source][:userId])
+      if user.located_at
+        interactive(event)
+      else
+        locate_setting(event, user)
       end
     end
 
-    message = { type: 'text', text: '位置情報の設定に成功しました!' }
-    client.reply_message(event[:replyToken], message)
+    render status: 200
+  end
 
+  def interactive(event)
+    message = { type: 'text', text: 'interacticeです！' }
+    client.reply_message(event[:replyToken], message)
+    render status: 200
+  end
+
+  def locate_setting(event, user)
+    case event.type
+    when Line::Bot::Event::MessageType::Text
+      save_or_alert_city
+    when Line::Bot::Event::MessageType::Location
+      user.weather.create(lat: event.message[:latitude], lon: event.message[:longitude])
+    end
+
+    message = { type: 'text', text: '位置設定が完了しました！' }
+    client.reply_message(event[:replyToken], message)
+    render status: 200
+  end
+
+  def save_or_alert_city
+    message_text = event.message[:text]
+    weather = user.weather.new(city: message_text)
+    invalid_city unless weather.city_validation(message_text).save
+  end
+
+  def invalid_city
+    message = { type: 'text', text: '市名を読み取れませんでした！ひらがなで再送信するか、付近の市名を送信して下さい！' }
+    client.reply_message(event[:replyToken], message)
     render status: 200
   end
 
@@ -41,6 +62,26 @@ class LineApiController < ApplicationController
   def validate_signature
     body = request.body.read
     signature = request.env['HTTP_X_LINE_SIGNATURE']
-    render json: { status: 404, text: 'Bad Request' } unless client.validate_signature(body, signature)
+    return if client.validate_signature(body, signature)
+
+    render json: { status: 400, message: 'Bad Request' }
+  end
+
+  def validate_event_type
+    events.each do |event|
+      next if event.class != Line::Bot::Event::Message
+
+      render json: { status: 400, message: 'Not supported EventType' }
+    end
+  end
+
+  def validate_source_type
+    events.each do |event|
+      next if event[:source][:type] != 'user'
+
+      message = { type: 'text', text: 'グループトークには対応していません！退出させて下さい！' }
+      client.reply_message(event[:replyToken], message)
+      render json: { status: 400, message: 'Not allowed SourceType' }
+    end
   end
 end
