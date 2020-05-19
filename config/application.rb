@@ -4,6 +4,7 @@ require 'json'
 require 'open-uri'
 require 'romkan'
 require 'line/bot'
+
 require 'rails/all'
 
 # Require the gems listed in Gemfile, including any gems
