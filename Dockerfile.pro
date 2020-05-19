@@ -24,7 +24,6 @@ RUN mkdir tmp tmp/sockets log \
   && bundle install
 
 ENTRYPOINT [ \
-  "prehook", "bundle exec rails db:create RAILS_ENV=production", "--", \
-  "prehook", "bundle exec rails db:migrate RAILS_ENV=production", "--", \
+  "prehook", "sh ./docker/umbrellanotice/db_setup.sh", "--", \
   "prehook", "bundle exec unicorn_rails -c /umbrellanotice/config/unicorn.rb -E production", "--" \
 ]
