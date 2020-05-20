@@ -75,7 +75,8 @@ class LineApiController < ApplicationController
   end
 
   def validate_event_type
-    events.each do |event|
+    events.each do |item|
+      self.event = item
       # next if event.class == Line::Bot::Event::Message
       if event.class == Line::Bot::Event::Message
         reply('validate_event_type に成功しました！')
@@ -87,7 +88,8 @@ class LineApiController < ApplicationController
   end
 
   def validate_source_type
-    events.each do |event|
+    events.each do |item|
+      self.event = item
       # next if event['source']['type'] == 'user'
       if event['source']['type'] == 'user'
         reply('validate_source_type に成功しました！')
@@ -101,7 +103,8 @@ class LineApiController < ApplicationController
   end
 
   def validate_message_type
-    events.each do |event|
+    events.each do |item|
+      self.event = item
       message_type = event['message']['type']
       # next if %w[text location].include?(message_type)
       if %w[text location].include?(message_type)
