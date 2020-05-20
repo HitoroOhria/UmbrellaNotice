@@ -16,7 +16,7 @@ class LineApiController < ApplicationController
 
   def webhock
     events.each do |event|
-      user = User.find_or_create_temporary_user(event[:source][:userId])
+      user = User.find_or_create_temporary_user(event['source']['userId'])
       if user.line.located_at
         interactive(event)
       else
@@ -29,7 +29,7 @@ class LineApiController < ApplicationController
 
   def interactive(event)
     message = { type: 'text', text: 'interacticeです！' }
-    client.reply_message(event[:replyToken], message)
+    client.reply_message(event['replyToken'], message)
     render status: 200
   end
 
@@ -43,13 +43,13 @@ class LineApiController < ApplicationController
     end
 
     message = { type: 'text', text: '位置設定が完了しました！' }
-    client.reply_message(event[:replyToken], message)
+    client.reply_message(event['replyToken'], message)
     render status: 200
   end
 
   def invalid_city
     message = { type: 'text', text: '市名を読み取れませんでした！ひらがなで再送信するか、付近の市名を送信して下さい！' }
-    client.reply_message(event[:replyToken], message)
+    client.reply_message(event['replyToken'], message)
     render status: 200
   end
 
@@ -73,17 +73,17 @@ class LineApiController < ApplicationController
 
   def validate_source_type
     events.each do |event|
-      next if event[:source][:type] == 'user'
+      next if event['source']['type'] == 'user'
 
       message = { type: 'text', text: 'グループトークには対応していません！退出させて下さい！' }
-      client.reply_message(event[:replyToken], message)
+      client.reply_message(event['replyToken'], message)
       render status: 400, json: { status: 400, message: 'Not allowed SourceType' }
     end
   end
 
   def validate_message_type
     events.each do |event|
-      message_type = event[:message][:type]
+      message_type = event['message']['type']
       next if %w[text location].include?(message_type)
 
       render status: 400, json: { status: 400, message: 'Not supported MessageType' }

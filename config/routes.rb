@@ -5,5 +5,5 @@ Rails.application.routes.draw do
 
   root 'static_pages#home'
   get  'weather/notice',  to: 'weather_api#notice'
-  post 'line/webhock',     to: 'line_api#webhock'
+  post 'line/webhock',    to: 'line_api#webhock'
 end
