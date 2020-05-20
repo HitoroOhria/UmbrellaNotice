@@ -25,37 +25,33 @@ class LineApiController < ApplicationController
       if user.line.located_at
         interactive
       else
-        reply('locate_setting に入ります')
         locate_setting(user)
       end
     end
 
-    render status: 200
+    render_success
   end
 
   def interactive
-    message = { type: 'text', text: 'interacticeです！' }
-    client.reply_message(event['replyToken'], message)
-    render status: 200
+    reply('interacticeです！')
   end
 
   def locate_setting(user)
-    weather = user.weather.new
+    weather = WeatherApi.new(user: user)
     case event.type
     when Line::Bot::Event::MessageType::Text
-      invalid_city(event) unless weather.save_city(event)
+      invalid_city unless weather.save_city(event)
     when Line::Bot::Event::MessageType::Location
       weather.save_location(event)
     end
 
     reply('位置設定が完了しました！')
-    render status: 200
   end
 
   def invalid_city
-    message = { type: 'text', text: '市名を読み取れませんでした！ひらがなで再送信するか、付近の市名を送信して下さい！' }
-    client.reply_message(event['replyToken'], message)
-    render status: 200
+    reply('市名を読み取れませんでした！ひらがなで再送信するか、付近の市名を送信して下さい！')
+    render_success
+    exit
   end
 
   private
@@ -69,34 +65,25 @@ class LineApiController < ApplicationController
     signature = request.env['HTTP_X_LINE_SIGNATURE']
     return if client.validate_signature(body, signature)
 
-    render json: { status: 400, message: 'Bad Request' }
+    render_bad_request('Bad Request')
   end
 
   def validate_event_type
     events.each do |item|
       self.event = item
-      # next if event.class == Line::Bot::Event::Message
-      if event.class == Line::Bot::Event::Message
-        reply('validate_event_type に成功しました！')
-        next
-      end
+      next if event.class == Line::Bot::Event::Message
 
-      render status: 400, json: { status: 400, message: 'Not supported EventType' }
+      render_bad_request('Not supported EventType')
     end
   end
 
   def validate_source_type
     events.each do |item|
       self.event = item
-      # next if event['source']['type'] == 'user'
-      if event['source']['type'] == 'user'
-        reply('validate_source_type に成功しました！')
-        next
-      end
+      next if event['source']['type'] == 'user'
 
-      message = { type: 'text', text: 'グループトークには対応していません！退出させて下さい！' }
-      client.reply_message(event['replyToken'], message)
-      render status: 400, json: { status: 400, message: 'Not allowed SourceType' }
+      reply('グループトークには対応していません！退出させて下さい！')
+      render_bad_request('Not allowed SourceType')
     end
   end
 
@@ -104,13 +91,17 @@ class LineApiController < ApplicationController
     events.each do |item|
       self.event = item
       message_type = event['message']['type']
-      # next if %w[text location].include?(message_type)
-      if %w[text location].include?(message_type)
-        reply('validate_message_type に成功しました！')
-        next
-      end
+      next if %w[text location].include?(message_type)
 
-      render status: 400, json: { status: 400, message: 'Not supported MessageType' }
+      render_bad_request('Not supported MessageType')
     end
+  end
+
+  def render_success
+    render status: 200, json: { status: 200, massage: 'Success Request' }
+  end
+
+  def render_bad_request(message)
+    render status: 400, json: { status: 400, message: message }
   end
 end
