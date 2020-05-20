@@ -67,11 +67,7 @@ class LineApiController < ApplicationController
   def validate_signature
     body = request.body.read
     signature = request.env['HTTP_X_LINE_SIGNATURE']
-    # return if client.validate_signature(body, signature)
-    if client.validate_signature(body, signature)
-      reply('validate_signature に成功しました！')
-      return
-    end
+    return if client.validate_signature(body, signature)
 
     render json: { status: 400, message: 'Bad Request' }
   end
