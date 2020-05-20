@@ -1,5 +1,6 @@
 class WeatherApi < ApplicationRecord
   belongs_to :user
+  belongs_to :line_user
 
   validates :lat, numericality: { greater_than_or_equal_to: -45, less_than_or_equal_to: 45 }
   validates :lon, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
