@@ -8,13 +8,6 @@ class User < ApplicationRecord
   alias weather weather_api
   alias line line_api
 
-  def self.find_or_create_temporary_user(line_id)
-    line = LineApi.find_or_create_line(line_id)
-    line.user || User.create(email: "#{SecureRandom.alphanumeric}@example.com",
-                             password: SecureRandom.base64,
-                             line_api: line)
-  end
-
   def self.from_omniauth(auth)
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
       user.email = auth.info.email

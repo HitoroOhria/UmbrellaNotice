@@ -21,11 +21,11 @@ class LineApiController < ApplicationController
   def webhock
     events.each do |item|
       self.event = item
-      user = User.find_or_create_temporary_user(event['source']['userId'])
-      if user.line.located_at
+      line_user = LineUser.find_or_create(event['source']['userId'])
+      if line_user.located_at
         interactive
       else
-        locate_setting(user)
+        locate_setting(line_user)
       end
     end
 
@@ -36,8 +36,8 @@ class LineApiController < ApplicationController
     reply('interacticeです！')
   end
 
-  def locate_setting(user)
-    weather = WeatherApi.new(user: user)
+  def locate_setting(line_user)
+    weather = WeatherApi.new(line_user: line_user)
     case event.type
     when Line::Bot::Event::MessageType::Text
       invalid_city unless weather.save_city(event)
