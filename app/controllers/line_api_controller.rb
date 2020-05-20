@@ -2,6 +2,8 @@ class LineApiController < ApplicationController
   before_action :validate_signature, :validate_event_type, :validate_source_type, :validate_message_type,
                 only: [:webhock]
 
+  attr_accessor :event
+
   def client
     @client ||= Line::Bot::Client.new { |config|
       config.channel_id = Rails.application.credentials.line_api[:channel_id]
@@ -16,28 +18,30 @@ class LineApiController < ApplicationController
 
   def webhock
     events.each do |event|
+      self.event = event
       user = User.find_or_create_temporary_user(event['source']['userId'])
       if user.line.located_at
-        interactive(event)
+        interactive
       else
-        locate_setting(event, user)
+        reply('locate_setting に入ります')
+        locate_setting(user)
       end
     end
 
     render status: 200
   end
 
-  def interactive(event)
+  def interactive
     message = { type: 'text', text: 'interacticeです！' }
     client.reply_message(event['replyToken'], message)
     render status: 200
   end
 
-  def locate_setting(event, user)
+  def locate_setting(user)
     weather = user.weather.new
     case event.type
     when Line::Bot::Event::MessageType::Text
-      invalid_city unless weather.save_city(event)
+      invalid_city(event) unless weather.save_city(event)
     when Line::Bot::Event::MessageType::Location
       weather.save_location(event)
     end
@@ -55,17 +59,29 @@ class LineApiController < ApplicationController
 
   private
 
+  def reply(message)
+    client.reply_message(event['replyToken'], { type: 'text', text: message })
+  end
+
   def validate_signature
     body = request.body.read
     signature = request.env['HTTP_X_LINE_SIGNATURE']
-    return if client.validate_signature(body, signature)
+    # return if client.validate_signature(body, signature)
+    if client.validate_signature(body, signature)
+      reply('validate_signature に成功しました！')
+      return
+    end
 
     render json: { status: 400, message: 'Bad Request' }
   end
 
   def validate_event_type
     events.each do |event|
-      next if event.class == Line::Bot::Event::Message
+      # next if event.class == Line::Bot::Event::Message
+      if event.class == Line::Bot::Event::Message
+        reply('validate_event_type に成功しました！')
+        next
+      end
 
       render status: 400, json: { status: 400, message: 'Not supported EventType' }
     end
@@ -73,7 +89,11 @@ class LineApiController < ApplicationController
 
   def validate_source_type
     events.each do |event|
-      next if event['source']['type'] == 'user'
+      # next if event['source']['type'] == 'user'
+      if event['source']['type'] == 'user'
+        reply('validate_source_type に成功しました！')
+        next
+      end
 
       message = { type: 'text', text: 'グループトークには対応していません！退出させて下さい！' }
       client.reply_message(event['replyToken'], message)
@@ -84,7 +104,11 @@ class LineApiController < ApplicationController
   def validate_message_type
     events.each do |event|
       message_type = event['message']['type']
-      next if %w[text location].include?(message_type)
+      # next if %w[text location].include?(message_type)
+      if %w[text location].include?(message_type)
+        reply('validate_message_type に成功しました！')
+        next
+      end
 
       render status: 400, json: { status: 400, message: 'Not supported MessageType' }
     end
