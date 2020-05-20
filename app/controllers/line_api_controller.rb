@@ -17,8 +17,8 @@ class LineApiController < ApplicationController
   end
 
   def webhock
-    events.each do |event|
-      self.event = event
+    events.each do |item|
+      self.event = item
       user = User.find_or_create_temporary_user(event['source']['userId'])
       if user.line.located_at
         interactive
@@ -46,8 +46,7 @@ class LineApiController < ApplicationController
       weather.save_location(event)
     end
 
-    message = { type: 'text', text: '位置設定が完了しました！' }
-    client.reply_message(event['replyToken'], message)
+    reply('位置設定が完了しました！')
     render status: 200
   end
 
