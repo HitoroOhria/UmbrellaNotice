@@ -2,6 +2,8 @@ class LineApiController < ApplicationController
   before_action :validate_signature, :validate_event_type, :validate_source_type, :validate_message_type,
                 only: [:webhock]
 
+  protect_from_forgery except: :webhock
+
   attr_accessor :event
 
   def client
