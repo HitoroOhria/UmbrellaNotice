@@ -66,6 +66,19 @@ workflows:
       - rspec
       - rubocop
       - aws-ecr/build-and-push-image:
+          name: Build_and_push_db_migration_to_ECR
+          account-url: AWS_ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          create-repo: true
+          dockerfile: ./docker/umbrellanotice/db/Dockerfile.pro
+          region: AWS_REGION
+          repo: umbrellanotice-db-migration
+          tag: "${CIRCLE_SHA1}"
+          requires:
+            - rspec
+            - rubocop
+      - aws-ecr/build-and-push-image:
           name: Build_and_push_umbrellanotice_to_ECR
           account-url: AWS_ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
