@@ -10,17 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_16_031639) do
+ActiveRecord::Schema.define(version: 2020_05_23_081029) do
 
-  create_table "line_apis", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "notice_time", default: "7:00"
+  create_table "line_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "line_id"
+    t.string "notice_time", default: "7:00"
     t.datetime "located_at"
-    t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["line_id"], name: "index_line_apis_on_line_id"
-    t.index ["user_id"], name: "index_line_apis_on_user_id"
+    t.index ["line_id"], name: "index_line_users_on_line_id"
   end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -51,7 +49,10 @@ ActiveRecord::Schema.define(version: 2020_05_16_031639) do
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "line_user_id"
+    t.index ["line_user_id"], name: "index_weather_apis_on_line_user_id"
     t.index ["user_id"], name: "index_weather_apis_on_user_id"
   end
 
+  add_foreign_key "weather_apis", "line_users"
 end
