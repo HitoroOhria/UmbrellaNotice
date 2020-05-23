@@ -3,10 +3,9 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :confirmable, :omniauthable
 
-  belongs_to :weather_api, dependent: :destroy
+  belongs_to :weather_api, dependent: :destroy, optional: true
 
   alias weather weather_api
-  alias line line_api
 
   def self.from_omniauth(auth)
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|

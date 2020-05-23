@@ -1,5 +1,5 @@
 class LineUser < ApplicationRecord
-  belongs_to :weather_api
+  belongs_to :weather_api, dependent: :destroy, optional: true
 
   validates :notice_time, format: { with: /\d{1,2}:\d{2}/,
                                     message: '"7:00"のような時刻表現にする必要があります' }
