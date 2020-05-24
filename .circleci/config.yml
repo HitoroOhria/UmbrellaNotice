@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  rspec:
+  RSpec:
     working_directory: ~/umbrellanotice
     docker:
       - image: circleci/ruby
@@ -25,9 +25,9 @@ jobs:
           command: |
             sleep 90
       - run:
-          name: Run rspec
+          name: Run RSpec
           command: docker-compose exec umbrellanotice rspec
-  rubocop:
+  RuboCop:
     working_directory: ~/umbrellanotice
     docker:
       - image: circleci/ruby:2.5.1
@@ -54,53 +54,29 @@ jobs:
           key: gemfiles-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
-
-orbs:
-  aws-ecr: circleci/aws-ecr@6.8.2
-  aws-ecs: circleci/aws-ecs@1.1.0
-
-workflows:
-  version: 2.1
-  test_and_deploy:
-    jobs:
-      - rspec
-      - rubocop
+  Push-umbrellanotice-image:
+    docker:
+      - image: 'circleci/python:3.7.1'
+    steps:
+      - checkout
+      - setup_remote_docker
+      - aws-cli/install
       - aws-ecr/build-and-push-image:
-          name: Build_and_push_db_migration_to_ECR
-          account-url: AWS_ECR_ACCOUNT_URL
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          create-repo: true
-          dockerfile: ./docker/umbrellanotice/db/Dockerfile.pro
-          region: AWS_REGION
-          repo: umbrellanotice-db-migration
-          tag: "${CIRCLE_SHA1}"
-          requires:
-            - rspec
-            - rubocop
-      - aws-ecr/build-and-push-image:
-          name: Build_and_push_umbrellanotice_to_ECR
           account-url: AWS_ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           create-repo: true
           dockerfile: ./Dockerfile.pro
-          region: AWS_REGION
           repo: umbrellanotice-app
           tag: "${CIRCLE_SHA1}"
-          requires:
-            - rspec
-            - rubocop
-      - aws-ecs/deploy-service-update:
-          name: Update_umbrellanotice_of_ECS
-          family: 'umbrellanotice_task'
-          cluster-name: $AWS_ECS_ARN
-          service-name: 'umbrellanotice_Application_Service'
-          container-image-name-updates: "container=umbrellanotice,tag=${CIRCLE_SHA1}"
-          requires:
-            - Build_and_push_umbrellanotice_to_ECR
+  Push-nginx-image:
+    docker:
+      - image: 'circleci/python:3.7.1'
+    steps:
+      - checkout
+      - setup_remote_docker
+      - aws-cli/install
       - aws-ecr/build-and-push-image:
-          name: Build_and_push_nginx_to_ECR
           account-url: AWS_ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
@@ -109,14 +85,80 @@ workflows:
           region: AWS_REGION
           repo: umbrellanotice-nginx
           tag: "${CIRCLE_SHA1}"
+  Push-db-migrate-image:
+    docker:
+      - image: 'circleci/python:3.7.1'
+    steps:
+      - checkout
+      - setup_remote_docker
+      - aws-cli/install
+      - aws-ecr/build-and-push-image:
+          account-url: AWS_ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          create-repo: true
+          dockerfile: ./docker/umbrellanotice/db/Dockerfile.pro
+          region: AWS_REGION
+          repo: umbrellanotice-db-migration
+          tag: "${CIRCLE_SHA1}"
+  Run-db-migrate-task:
+    docker:
+      - image: 'circleci/python:3.7.1'
+    environment:
+      AWS_PAGER: ""
+    steps:
+      - setup_remote_docker
+      - aws-cli/install
+      - aws-ecs/update-task-definition:
+          family: umbrellanotice_db_migrate
+          container-image-name-updates: "container=db_migrate,tag=${CIRCLE_SHA1}"
+      - aws-ecs/run-task:
+          cluster: $AWS_ECS_ARN
+          task-definition: umbrellanotice_db_migrate
+          awsvpc: false
+          launch-type: EC2
+
+orbs:
+  aws-cli: circleci/aws-cli@1.0.0
+  aws-ecr: circleci/aws-ecr@6.8.2
+  aws-ecs: circleci/aws-ecs@1.1.0
+
+workflows:
+  version: 2.1
+  test_and_deploy:
+    jobs:
+      - RSpec
+      - RuboCop
+      - Push-umbrellanotice-image:
           requires:
-            - rspec
-            - rubocop
+            - RSpec
+            - RuboCop
+      - Push-nginx-image:
+          requires:
+            - RSpec
+            - RuboCop
+      - Push-db-migrate-image:
+          requires:
+            - RSpec
+            - RuboCop
+      - Run-db-migrate-task:
+          requires:
+            - Push-db-migrate-image
       - aws-ecs/deploy-service-update:
-          name: Update_nginx_of_ECS
+          name: Update-umbrellanotice-container-of-ECS
+          family: 'umbrellanotice_task'
+          cluster-name: $AWS_ECS_ARN
+          service-name: 'umbrellanotice_Application_Service'
+          container-image-name-updates: "container=umbrellanotice,tag=${CIRCLE_SHA1}"
+          requires:
+            - Run-db-migrate-task
+            - Push-umbrellanotice-image
+      - aws-ecs/deploy-service-update:
+          name: Update-nginx-container-of-ECS
           family: 'umbrellanotice_task'
           cluster-name: $AWS_ECS_ARN
           service-name: 'umbrellanotice_Application_Service'
           container-image-name-updates: "container=nginx,tag=${CIRCLE_SHA1}"
           requires:
-            - Build_and_push_nginx_to_ECR
+            - Run-db-migrate-task
+            - Push-nginx-image
