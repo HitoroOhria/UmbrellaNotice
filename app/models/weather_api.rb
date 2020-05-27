@@ -6,7 +6,7 @@ class WeatherApi < ApplicationRecord
   validates :lon, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
 
   def save_city(event)
-    self.city = to_romaji(event.message[:text])
+    self.city = to_romaji(event.message['text'])
     return unless forecast
 
     save
@@ -14,8 +14,8 @@ class WeatherApi < ApplicationRecord
   end
 
   def save_location(event)
-    self.lat = event.message[:latitude]
-    self.lon = event.message[:longitude]
+    self.lat = event.message['latitude']
+    self.lon = event.message['longitude']
     save
     user.line.update_attribute(:located_at, Time.zone.now)
   end

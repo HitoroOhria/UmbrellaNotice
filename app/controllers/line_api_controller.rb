@@ -25,7 +25,7 @@ class LineApiController < ApplicationController
       if line_user.located_at
         interactive
       else
-        locate_setting(line_user)
+        location_setting(line_user)
       end
     end
 
@@ -36,11 +36,11 @@ class LineApiController < ApplicationController
     reply('interacticeです！')
   end
 
-  def locate_setting(line_user)
+  def location_setting(line_user)
     weather = WeatherApi.new(line_user: line_user)
     case event.type
     when Line::Bot::Event::MessageType::Text
-      invalid_city unless weather.save_city(event)
+      weather.save_city(event) || invalid_city
     when Line::Bot::Event::MessageType::Location
       weather.save_location(event)
     end
