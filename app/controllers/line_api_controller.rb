@@ -42,9 +42,9 @@ class LineApiController < ApplicationController
     weather = Weather.new(line_user: line_user)
     case event.type
     when Line::Bot::Event::MessageType::Text
-      city_setting(content)
+      city_setting(weather, content)
     when Line::Bot::Event::MessageType::Location
-      weather.save_location(content[:lat], content[lon])
+      weather.save_location(content[:lat], content[:lon])
     end
 
     reply('位置設定が完了しました！')
@@ -52,7 +52,7 @@ class LineApiController < ApplicationController
 
   private
 
-  def city_setting(text)
+  def city_setting(weather, text)
     if weather.validate_city(text)
       weather.save_city
     else
