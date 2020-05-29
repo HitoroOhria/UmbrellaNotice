@@ -4,7 +4,7 @@ class Weather < ApplicationRecord
 
   validates :lat, numericality: { greater_than_or_equal_to: -45, less_than_or_equal_to: 45 },
                   allow_nil: true
-  validates :lon, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180},
+  validates :lon, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 },
                   allow_nil: true
 
   def save_city(event)
