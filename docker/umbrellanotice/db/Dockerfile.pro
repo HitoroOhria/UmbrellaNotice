@@ -14,6 +14,7 @@ RUN echo "gem 'mysql2', '0.5.3'" >> Gemfile \
   && rm -r config/database.yml
 ADD config/database.yml config/database.yml
 ADD db/migrate db/migrate
-ADD docker/umbrellanotice/db/db_migrate.sh db_migrate.sh
+ADD db/schema.rb db/schema.rb
+ADD docker/umbrellanotice/db/db_setup.sh db_setup.sh
 
-CMD sh ./db_migrate.sh
+CMD sh ./db_setup.sh
