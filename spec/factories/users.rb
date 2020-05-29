@@ -1,12 +1,11 @@
 FactoryBot.define do
-  factory :user do
+  factory :user, class: User do
     sequence(:email) { |n| "example_#{n}@example.com" }
     password { 'foobar' }
     confirmed_at { Time.zone.now }
 
     factory :user_with_weather do
-      located_at { Time.zone.now }
-      association :weather
+      association :base_weather
     end
   end
 end
