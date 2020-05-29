@@ -1,7 +1,7 @@
 class WeatherApiController < ApplicationController
   def notice
-    user = LineApi.find_by(line_id: params[:hash_line_id])
-    @weather_forecast = user.weather_api.forecast
+    line_user = LineUser.first
+    @weather_forecast = line_user.weather_api.take_forecast
     @rain_notice = today_is_rainy?(@weather_forecast)
   end
 

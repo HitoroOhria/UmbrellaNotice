@@ -13,13 +13,6 @@
 </p>
 <h3>リクエスト時刻は、[<%= Time.zone.now %>] です。</h3>
 <p>今日は雨降りますか？ => <%= @rain_notice %></p>
-<p><%= Zipang.to_slug('長万部') %></p>
-<p><%= Zipang.to_slug('長万部').gsub(/\-/, '') %></p>
-<p><%= Zipang.to_slug('長万部').gsub(/\-/, '').to_kunrei %></p>
-<p><%= Zipang.to_slug('おしゃまんべ') %></p>
-<p><%= Zipang.to_slug('おしゃまんべ').gsub(/\-/, '') %></p>
-<p><%= Zipang.to_slug('おしゃまんべ').gsub(/\-/, '').to_kunrei %></p>
-<p><%= 'おしゃまんべ'.to_roma.to_kunrei %></p>
 
 <% @weather_forecast[:list].each do |list_item| %>
   <% time_jst = Time.zone.at(list_item[:dt]) %>
