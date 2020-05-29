@@ -40,7 +40,7 @@ class LineApiController < ApplicationController
     weather = WeatherApi.new(line_user: line_user)
     case event.type
     when Line::Bot::Event::MessageType::Text
-      weather.save_city(event) || invalid_city
+      weather.save_city(event) || invalid_city_message
     when Line::Bot::Event::MessageType::Location
       weather.save_location(event)
     end
@@ -48,13 +48,11 @@ class LineApiController < ApplicationController
     reply('位置設定が完了しました！')
   end
 
-  def invalid_city
-    reply('市名を読み取れませんでした！ひらがなで再送信するか、付近の市名を送信して下さい！')
-    render_success
-    exit
-  end
-
   private
+
+  def invalid_city_message
+    reply('市名を読み取れませんでした！ひらがなで再送信するか、付近の市名を送信して下さい！')
+  end
 
   def reply(message)
     client.reply_message(event['replyToken'], { type: 'text', text: message })
