@@ -44,8 +44,8 @@ ActiveRecord::Schema.define(version: 2020_05_23_081029) do
 
   create_table "weather_apis", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "city"
-    t.decimal "lat", precision: 5, scale: 2
-    t.decimal "lon", precision: 6, scale: 2
+    t.decimal "lat", precision: 4, scale: 2
+    t.decimal "lon", precision: 5, scale: 2
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
