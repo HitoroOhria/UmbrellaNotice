@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_23_081029) do
+ActiveRecord::Schema.define(version: 2020_05_23_072104) do
 
   create_table "line_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "line_id"
@@ -42,17 +42,16 @@ ActiveRecord::Schema.define(version: 2020_05_23_081029) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  create_table "weather_apis", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "weathers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "city"
     t.decimal "lat", precision: 4, scale: 2
     t.decimal "lon", precision: 5, scale: 2
     t.bigint "user_id"
+    t.bigint "line_user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "line_user_id"
-    t.index ["line_user_id"], name: "index_weather_apis_on_line_user_id"
-    t.index ["user_id"], name: "index_weather_apis_on_user_id"
+    t.index ["line_user_id"], name: "index_weathers_on_line_user_id"
+    t.index ["user_id"], name: "index_weathers_on_user_id"
   end
 
-  add_foreign_key "weather_apis", "line_users"
 end
