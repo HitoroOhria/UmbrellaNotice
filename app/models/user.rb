@@ -3,7 +3,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :confirmable, :omniauthable
 
-  belongs_to :weather_api, dependent: :destroy, optional: true
+  has_one :weather_api, dependent: :destroy
 
   alias weather weather_api
 
