@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe LineUser, type: :model do
   describe '.find_or_create(line_id)' do
-
     subject(:find_or_create) { LineUser.find_or_create(line_id) }
 
     context '引数に対応するLineユーザーが存在しないとき' do
