@@ -7,17 +7,25 @@ class Weather < ApplicationRecord
   validates :lon, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 },
                   allow_nil: true
 
-  def save_city(event)
-    self.city = to_romaji(event.message['text'])
-    return unless take_forecast
+  def validate_city(text)
+    city_name = text.slice(/(.+)[市区]/, 1) || text
+    self.city = to_romaji(city_name)
+    take_forecast
+  end
 
+  def to_romaji(text)
+    Zipang.to_slug(text).gsub(/\-/, '').gsub(/m(?!(a|i|u|e|o|m))/, 'n').to_kunrei
+          .gsub(/si/, 'shi').gsub(/ti/, 'chi').gsub(/tu/, 'tsu')
+  end
+
+  def save_city
     save!
     line_user.update_attribute(:located_at, Time.zone.now)
   end
 
-  def save_location(event)
-    self.lat = event.message['latitude'].round(2)
-    self.lon = event.message['longitude'].round(2)
+  def save_location(lat, lon)
+    self.lat = lat.round(2)
+    self.lon = lon.round(2)
     save!
     line_user.update_attribute(:located_at, Time.zone.now)
   end
@@ -35,10 +43,6 @@ class Weather < ApplicationRecord
   end
 
   private
-
-  def to_romaji(text)
-    Zipang.to_slug(text).gsub(/\-/, '').gsub(/m(?!(a|i|u|e|o|m))/, 'n').to_kunrei
-  end
 
   def call_weather_api
     base_url = 'http://api.openweathermap.org/data/2.5/forecast'
