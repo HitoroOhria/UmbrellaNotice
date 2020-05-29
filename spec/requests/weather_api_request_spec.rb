@@ -1,4 +1,5 @@
 require 'rails_helper'
 
-RSpec.describe "Weathers", type: :request do
+RSpec.describe "WeatherApiController", type: :request do
+  pending
 end
