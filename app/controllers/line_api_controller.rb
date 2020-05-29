@@ -37,7 +37,7 @@ class LineApiController < ApplicationController
   end
 
   def location_setting(line_user)
-    weather = WeatherApi.new(line_user: line_user)
+    weather = Weather.new(line_user: line_user)
     case event.type
     when Line::Bot::Event::MessageType::Text
       weather.save_city(event) || invalid_city_message

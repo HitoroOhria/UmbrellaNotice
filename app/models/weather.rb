@@ -1,4 +1,4 @@
-class WeatherApi < ApplicationRecord
+class Weather < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :line_user, optional: true
 
