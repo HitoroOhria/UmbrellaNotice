@@ -1,4 +1,8 @@
 class WeathersController < ApplicationController
+  def trigger
+
+  end
+
   def notice
     line_user = LineUser.first
     @weather_forecast = line_user.weather_api.take_forecast

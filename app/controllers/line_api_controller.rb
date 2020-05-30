@@ -21,7 +21,7 @@ class LineApiController < ApplicationController
   def webhock
     events.each do |item|
       self.event = item
-      line_user = LineUser.find_or_create(event['source']['userId'])
+      line_user = LineUser.find_or_create_by(line_id: event['source']['userId'])
       if line_user.located_at
         interactive
       else
@@ -50,8 +50,6 @@ class LineApiController < ApplicationController
     reply('位置設定が完了しました！')
   end
 
-  private
-
   def city_setting(weather, text)
     if weather.validate_city(text)
       weather.save_city
@@ -59,6 +57,8 @@ class LineApiController < ApplicationController
       reply('市名を読み取れませんでした！ひらがなで再送信するか、付近の市名を送信して下さい！')
     end
   end
+
+  private
 
   def reply(message)
     client.reply_message(event['replyToken'], { type: 'text', text: message })
