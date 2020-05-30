@@ -97,7 +97,7 @@ jobs:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           create-repo: true
-          dockerfile: ./docker/umbrellanotice/db/Dockerfile.pro
+          dockerfile: ./docker/db_migrate/Dockerfile.pro
           region: AWS_REGION
           repo: umbrellanotice-db-migration
           tag: "${CIRCLE_SHA1}"
