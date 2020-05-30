@@ -1,4 +1,4 @@
-class WeatherApiController < ApplicationController
+class WeathersController < ApplicationController
   def notice
     line_user = LineUser.first
     @weather_forecast = line_user.weather_api.take_forecast
