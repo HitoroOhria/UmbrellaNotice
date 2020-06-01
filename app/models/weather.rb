@@ -2,6 +2,7 @@ class Weather < ApplicationRecord
   TAKE_WEATHER_FORECAST_COUNT = 5
   RETRY_CALL_API_COUNT = 3
   RETRY_CALL_API_WAIT_TIME = 5
+  RAIN_FALL_JUDGMENT = 2
 
   belongs_to :user, optional: true
   belongs_to :line_user, optional: true
@@ -32,6 +33,13 @@ class Weather < ApplicationRecord
     self.lon = lon.round(2)
     save!
     line_user.update_attribute(:located_at, Time.zone.now)
+  end
+
+  def today_is_rainy?
+    rain_falls = take_forecast[:list].map do |weather|
+      weather[:rain].present? ? weather[:rain][:'3h'] : nil
+    end
+    rain_falls.compact.find { |rain_fall| rain_fall >= RAIN_FALL_JUDGMENT } .present?
   end
 
   # OpenWeatherAPI から、天気予報を取得

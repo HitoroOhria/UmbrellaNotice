@@ -2,7 +2,6 @@ class WeathersController < ApplicationController
   before_action :validate_notice_time, only: [:trigger]
   before_action :authenticate,         only: [:notice]
 
-  RAIN_FALL_JUDGMENT = 2
   TOLERANCE_TIME = 3
 
   def trigger
@@ -15,22 +14,14 @@ class WeathersController < ApplicationController
 
   def notice
     line_user = LineUser.find_by(line_id: params[:line_id])
-    weather_forecast = line_user.weather.take_forecast
-    umbrella_notice(line_user.line_id) if today_is_rainy?(weather_forecast)
+    notice_umbrella(line_user.line_id) if line_user.weather.today_is_rainy?
     render_success
   end
 
   private
 
-  def today_is_rainy?(json_weathers)
-    rain_falls = json_weathers[:list].map do |weather|
-      weather[:rain].present? ? weather[:rain][:'3h'] : nil
-    end
-    rain_falls.compact.find { |rain_fall| rain_fall >= RAIN_FALL_JUDGMENT } .present?
-  end
-
-  def umbrella_notice(line_id)
-    message = { type: 'text', text: read_message('umbrella_notice') }
+  def notice_umbrella(line_id)
+    message = { type: 'text', text: read_message('notice_umbrella') }
     client.push_message(line_id, message)
   end
 
