@@ -8,12 +8,12 @@ class ApplicationController < ActionController::Base
   end
 
   def read_message(file_name)
-    file = File.open(Dir[Rails.root + "lib/line_messages/#{file_name}.*"][0])
-    case file.extname
+    file_path = Dir[Rails.root + "lib/line_messages/#{file_name}.*"][0]
+    case File.extname(file_path)
     when 'txt'
-      file.read
+      File.open(file_path).read
     when 'erb'
-      ERB.new(file.read).result
+      ERB.new(File.open(file_path).read).result
     end
   end
 
