@@ -13,4 +13,4 @@ WORKDIR /umbrellanotice
 RUN mkdir -p tmp/sockets log \
   && bundle install
 
-CMD sh ./docker/umbrellanotice/setup_production.sh
+CMD bundle exec unicorn_rails -c /umbrellanotice/config/unicorn.rb -E production
