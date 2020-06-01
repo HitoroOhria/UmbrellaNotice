@@ -8,8 +8,7 @@ class WeathersController < ApplicationController
   def trigger
     line_users = LineUser.where(notice_time: params[:notice_time])
     line_users.each do |line_user|
-      post weathers_notice_url, headers: { 'Authorization': "Token #{line_user.token}" },
-                                params:  { line_id: line_user.line_id }
+      PostNoticeJob.perform_later(line_user.line_id, line_user.token)
     end
     render_success
   end
