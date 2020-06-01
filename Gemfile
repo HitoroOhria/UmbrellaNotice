@@ -19,6 +19,7 @@ gem 'rjb'
 gem 'zipang'
 gem 'romkan'
 gem 'line-bot-api'
+gem 'sidekiq'
 
 group :development, :test do
   gem 'faker'
