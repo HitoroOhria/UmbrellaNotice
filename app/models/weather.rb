@@ -68,12 +68,12 @@ class Weather < ApplicationRecord
 
   def retry_message(exception, retry_count)
     if retry_count <= RETRY_CALL_API_COUNT
-      puts "#{exception.class} が発生しました。"
-      puts "#{RETRY_CALL_API_WAIT_TIME}sec 待機後に再接続します。"
-      puts "この処理は#{RETRY_CALL_API_COUNT}回まで繰り返されます。(現在: #{retry_count}回目)"
+      logger.error "[Error] #{exception.class} が発生しました。"
+      logger.error "#{RETRY_CALL_API_WAIT_TIME}sec 待機後に再接続します。"
+      logger.error "この処理は#{RETRY_CALL_API_COUNT}回まで繰り返されます。(現在: #{retry_count}回目)"
     else
-      puts "#{exception.class} の再接続に失敗しました。"
-      puts exception.backtrase
+      logger.error "[Error]#{exception.class} の再接続に失敗しました。"
+      logger.error exception.backtrase
     end
   end
 end
