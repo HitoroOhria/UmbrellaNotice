@@ -1,4 +1,8 @@
 class Weather < ApplicationRecord
+  TAKE_WEATHER_FORECAST_COUNT = 5
+  RETRY_CALL_API_COUNT = 3
+  RETRY_CALL_API_WAIT_TIME = 5
+
   belongs_to :user, optional: true
   belongs_to :line_user, optional: true
 
@@ -38,7 +42,7 @@ class Weather < ApplicationRecord
     rescue OpenURI::HTTPError => e
       retry_count += 1
       retry_message(e, retry_count)
-      retry_count <= 3 ? (sleep 5; retry) : false
+      retry_count <= RETRY_CALL_API_COUNT ? (sleep RETRY_CALL_API_WAIT_TIME; retry) : false
     end
   end
 
@@ -46,18 +50,19 @@ class Weather < ApplicationRecord
 
   def call_weather_api
     base_url = 'http://api.openweathermap.org/data/2.5/forecast'
-    request_query = city ? "?cnt=8&q=#{city},jp" : "?cnt=8&lat=#{lat}&lon=#{lon}"
+    forecast_count = "?cnt=#{TAKE_WEATHER_FORECAST_COUNT}"
+    request_query = city ? "&q=#{city},jp" : "&lat=#{lat}&lon=#{lon}"
     app_id = "&appid=#{Rails.application.credentials.open_weather_api[:app_key]}"
 
-    response = OpenURI.open_uri(base_url + request_query + app_id)
+    response = OpenURI.open_uri(base_url + forecast_count + request_query + app_id)
     JSON.parse(response.read, symbolize_names: true)
   end
 
   def retry_message(exception, retry_count)
-    if retry_count <= 3
+    if retry_count <= RETRY_CALL_API_COUNT
       puts "#{exception.class} が発生しました。"
-      puts '5sec 待機後に再接続します。'
-      puts "この処理は3回まで繰り返されます。(現在: #{retry_count}回目)"
+      puts "#{RETRY_CALL_API_WAIT_TIME}sec 待機後に再接続します。"
+      puts "この処理は#{RETRY_CALL_API_COUNT}回まで繰り返されます。(現在: #{retry_count}回目)"
     else
       puts "#{exception.class} の再接続に失敗しました。"
       puts exception.backtrase
