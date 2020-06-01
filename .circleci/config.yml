@@ -149,10 +149,10 @@ workflows:
           requires:
             - RSpec
             - RuboCop
-      - Push-nginx-image:
-          requires:
-            - RSpec
-            - RuboCop
+#      - Push-nginx-image:
+#          requires:
+#            - RSpec
+#            - RuboCop
       - Push-sidekiq-image:
           requires:
             - RSpec
@@ -173,15 +173,15 @@ workflows:
           requires:
             - Run-db-migrate-task
             - Push-umbrellanotice-image
-      - aws-ecs/deploy-service-update:
-          name: Update-nginx-container-of-ECS
-          family: 'umbrellanotice_task'
-          cluster-name: $AWS_ECS_ARN
-          service-name: 'umbrellanotice_Application_Service'
-          container-image-name-updates: "container=nginx,tag=${CIRCLE_SHA1}"
-          requires:
-            - Run-db-migrate-task
-            - Push-nginx-image
+#      - aws-ecs/deploy-service-update:
+#          name: Update-nginx-container-of-ECS
+#          family: 'umbrellanotice_task'
+#          cluster-name: $AWS_ECS_ARN
+#          service-name: 'umbrellanotice_Application_Service'
+#          container-image-name-updates: "container=nginx,tag=${CIRCLE_SHA1}"
+#          requires:
+#            - Run-db-migrate-task
+#            - Push-nginx-image
       - aws-ecs/deploy-service-update:
           name: Update-sidekiq-container-of-ECS
           family: 'umbrellanotice_task'
