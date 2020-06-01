@@ -5,7 +5,7 @@ services:
     build:
       context: .
     environment:
-      TZ: Asia/Tokyo
+      TZ:        Asia/Tokyo
       MYSQL_ROOT_PASSWORD: password
     volumes:
       - .:/umbrellanotice
@@ -14,8 +14,23 @@ services:
       - log-data:/umbrellanotice/log
     depends_on:
       - mysql
+      - redis
     tty: true
     stdin_open: true
+  sidekiq:
+    build: .
+    volumes:
+      - .:/umbrellanotice
+    depends_on:
+      - umbrellanotice
+      - redis
+    entrypoint: bundle exec sidekiq -q sidekiq
+  redis:
+    image: redis:alpine
+    ports:
+      - '36379:6379'
+    volumes:
+      - redis-data:/var/lib/redis
   mysql:
     image: mysql:8.0
     environment:
@@ -39,3 +54,4 @@ volumes:
   tmp-data:
   log-data:
   mysql-data:
+  redis-data:
