@@ -8,7 +8,7 @@ class WeathersController < ApplicationController
   def trigger
     line_users = LineUser.where(notice_time: params[:notice_time])
     line_users.each do |line_user|
-      PostNoticeJob.perform_later(line_user.line_id, line_user.token)
+      PostWeathersNoticeWorker.perform_async(line_user.line_id, line_user.token)
     end
     render_success
   end
