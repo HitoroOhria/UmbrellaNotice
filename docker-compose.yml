@@ -24,7 +24,7 @@ services:
     depends_on:
       - umbrellanotice
       - redis
-    entrypoint: bundle exec sidekiq -q sidekiq
+    command: sidekiq
   redis:
     image: redis:alpine
     ports:

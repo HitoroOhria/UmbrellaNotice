@@ -24,6 +24,8 @@ RUN bundle install
 
 ENTRYPOINT [ \
   "prehook", "bundle install", "--", \
+  "switch", \
+      "sidekiq=bundle exec sidekiq -q sidekiq", \
   "prehook", "echo sleep 45 seconds for mysql Start Up Comprete", "--", \
   "prehook", "sleep 45", "--", \
   "prehook", "echo finish sleep", "--", \
