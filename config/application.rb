@@ -32,5 +32,8 @@ module Webapp
 
     # production環境でのlibディレクトリの読み込みを設定
     config.paths.add 'lib', eager_load: true
+
+    # キューイングバックエンドを設定
+    config.active_job.queue_adapter = :sidekiq
   end
 end
