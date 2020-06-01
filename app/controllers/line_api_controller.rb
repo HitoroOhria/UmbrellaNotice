@@ -39,14 +39,14 @@ class LineApiController < ApplicationController
       weather.save_location(content[:lat], content[:lon])
     end
 
-    reply('位置設定が完了しました！')
+    reply(read_message('completed_location_setting'))
   end
 
   def city_setting(weather, text)
     if weather.validate_city(text)
       weather.save_city
     else
-      reply('市名を読み取れませんでした！ひらがなで再送信するか、付近の市名を送信して下さい！')
+      reply(read_message('failed_save_city'))
     end
   end
 
@@ -78,7 +78,7 @@ class LineApiController < ApplicationController
       self.event = item
       next if event['source']['type'] == 'user'
 
-      reply('グループトークには対応していません！退出させて下さい！')
+      reply(read_message('invalid_source_type'))
       render_bad_request
     end
   end
