@@ -14,8 +14,9 @@ ActiveRecord::Schema.define(version: 2020_05_23_072104) do
 
   create_table "line_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "line_id"
-    t.string "notice_time", default: "7:00"
+    t.string "notice_time", default: "07:00"
     t.datetime "located_at"
+    t.string "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["line_id"], name: "index_line_users_on_line_id"
