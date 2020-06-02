@@ -2,8 +2,7 @@ version: '3'
 
 services:
   umbrellanotice:
-    build:
-      context: .
+    build: .
     environment:
       TZ:        Asia/Tokyo
       MYSQL_ROOT_PASSWORD: password
@@ -12,6 +11,7 @@ services:
       - public-data:/umbrellanotice/public
       - tmp-data:/umbrellanotice/tmp
       - log-data:/umbrellanotice/log
+      - socket-data:/umbrellanotice/tmp/sockets
     depends_on:
       - mysql
       - redis
@@ -21,22 +21,26 @@ services:
     build: .
     volumes:
       - .:/umbrellanotice
+      - public-data:/umbrellanotice/public
+      - tmp-data:/umbrellanotice/tmp
+      - log-data:/umbrellanotice/log
+      - socket-data:/umbrellanotice/tmp/sockets
     depends_on:
       - umbrellanotice
       - redis
     command: sidekiq
   redis:
-    image: redis:alpine
+    build:
+      context: docker/redis
     ports:
-      - '36379:6379'
+      - '6379:6379'
     volumes:
-      - redis-data:/var/lib/redis
+      - socket-data:/run/redis
   mysql:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: password
     volumes:
-      - mysql-data:/var/lib/mysql
       - ./docker/mysql/mysql-confd:/etc/mysql/conf.d
   nginx:
     build:
@@ -53,5 +57,4 @@ volumes:
   public-data:
   tmp-data:
   log-data:
-  mysql-data:
-  redis-data:
+  socket-data:

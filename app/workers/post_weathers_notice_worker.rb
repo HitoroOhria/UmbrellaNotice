@@ -3,7 +3,7 @@ class PostWeathersNoticeWorker
   sidekiq_options queue: :sidekiq, retry: false
 
   def perform(line_id, token)
-    post weathers_notice_url,
+    post 'http://www.umbrellanotice.work/weathers/notice',
          headers: { 'Authorization': "Token #{token}" },
          params: { line_id: line_id }
   end
