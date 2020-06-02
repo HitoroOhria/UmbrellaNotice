@@ -4,7 +4,7 @@ services:
   umbrellanotice:
     build: .
     environment:
-      TZ:        Asia/Tokyo
+      TZ: Asia/Tokyo
       MYSQL_ROOT_PASSWORD: password
     volumes:
       - .:/umbrellanotice
@@ -32,8 +32,6 @@ services:
   redis:
     build:
       context: docker/redis
-    ports:
-      - '6379:6379'
     volumes:
       - socket-data:/run/redis
   mysql:
@@ -46,8 +44,7 @@ services:
     build:
       context: docker/nginx
     volumes:
-      - public-data:/umbrellanotice/public
-      - tmp-data:/umbrellanotice/tmp
+      - socket-data:/umbrellanotice/tmp/sockets
     ports:
       - 80:80
     depends_on:
