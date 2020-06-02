@@ -18,6 +18,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.ci
+    environment:
+      TZ: Asia/Tokyo
+      RAILS_MASTER_KEY: $RAILS_MASTER_KEY
     depends_on:
       - umbrellanotice
       - redis
@@ -31,11 +34,11 @@ services:
     volumes:
       - socket-data:/run/redis
   mysql:
-    image: mysql:8.0
+    build:
+      context: ./docker/mysql
+      dockerfile: Dockerfile.ci
     environment:
       MYSQL_ROOT_PASSWORD: password
-    volumes:
-      - ./docker/mysql/mysql-confd:/etc/mysql/conf.d
     ports:
       - '33306:3306'
   nginx:
