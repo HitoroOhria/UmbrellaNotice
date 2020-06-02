@@ -27,14 +27,15 @@ services:
   redis:
     build:
       context: docker/redis
+      dockerfile: Dockerfile.ci
     volumes:
       - socket-data:/run/redis
   mysql:
-    build:
-      context: ./docker/mysql
-      dockerfile: Dockerfile.ci
+    image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - ./docker/mysql/mysql-confd:/etc/mysql/conf.d
     ports:
       - '33306:3306'
   nginx:
