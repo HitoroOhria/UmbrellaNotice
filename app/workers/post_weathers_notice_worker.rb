@@ -1,6 +1,3 @@
-require 'uri'
-require 'net/http'
-
 class PostWeathersNoticeWorker
   include Sidekiq::Worker
 
