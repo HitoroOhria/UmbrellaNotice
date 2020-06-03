@@ -10,7 +10,7 @@ RUN apt-get update \
 
 ADD . /umbrellanotice
 WORKDIR /umbrellanotice
-RUN mkdir -p tmp/sockets log \
+RUN mkdir -p tmp/sockets/task tmp/sockets/host log \
   && bundle install
 
 CMD bundle exec unicorn_rails -c /umbrellanotice/config/unicorn.rb -E production

@@ -1,7 +1,20 @@
+dev_redis_setting = { path: (Rails.root + 'tmp/sockets/redis.sock').to_s }
+pro_redis_setting = { path: (Rails.root + 'tmp/sockets/host/redis.sock').to_s }
+
 Sidekiq.configure_server do |config|
-  config.redis = {path: (Rails.root + 'tmp/sockets/redis.sock').to_s}
+  case Rails.env
+  when 'production'
+    config.redis = pro_redis_setting
+  else
+    config.redis = dev_redis_setting
+  end
 end
 
 Sidekiq.configure_client do |config|
-  config.redis = {path: (Rails.root + 'tmp/sockets/redis.sock').to_s}
+  case Rails.env
+  when 'production'
+    config.redis = pro_redis_setting
+  else
+    config.redis = dev_redis_setting
+  end
 end
