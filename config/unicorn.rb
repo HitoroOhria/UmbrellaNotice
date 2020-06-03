@@ -1,4 +1,4 @@
-case Rails.env
+case ENV['RAILS_ENV']
 when 'production'
   $listen  = File.expand_path 'tmp/sockets/task/unicorn.sock', $app_dir
 else
