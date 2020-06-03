@@ -2,6 +2,8 @@ class WeathersController < ApplicationController
   before_action :validate_notice_time, only: [:trigger]
   before_action :authenticate,         only: [:notice]
 
+  protect_from_forgery except: :trigger
+
   TOLERANCE_TIME = 3
 
   def trigger
@@ -40,8 +42,9 @@ class WeathersController < ApplicationController
 
   def authenticate
     line_user = LineUser.find_by(line_id: params[:line_id])
-    authenticate_or_request_with_http_token do |token|
-      ActiveSupport::SecurityUtils.secure_compare(token, line_user.token)
+    token = line_user.try(:token) || Rails.application.credentials.http[:trigger_token]
+    authenticate_or_request_with_http_token do |request_token, _options|
+      ActiveSupport::SecurityUtils.secure_compare(request_token, token)
     end
   end
 end
