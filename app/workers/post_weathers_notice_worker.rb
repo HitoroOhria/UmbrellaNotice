@@ -1,10 +1,20 @@
+require 'uri'
+require 'net/http'
+
 class PostWeathersNoticeWorker
   include Sidekiq::Worker
+
   sidekiq_options queue: :sidekiq, retry: false
 
   def perform(line_id, token)
-    post 'http://www.umbrellanotice.work/weathers/notice',
-         headers: { 'Authorization': "Token #{token}" },
-         params: { line_id: line_id }
+    uri = URI.parse('https://www.umbrellanotice.work/weathers/notice')
+    req = Net::HTTP::Post.new(uri)
+
+    req['Authorization'] = "Token #{token}"
+    req.set_form_data('line_id': line_id)
+
+    Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+      http.request(req)
+    end
   end
 end
