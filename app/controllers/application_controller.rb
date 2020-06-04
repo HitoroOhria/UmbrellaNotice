@@ -10,11 +10,23 @@ class ApplicationController < ActionController::Base
   def read_message(file_name)
     file_path = Dir[Rails.root + "lib/line_messages/#{file_name}.*"][0]
     case File.extname(file_path)
-    when 'txt'
+    when '.txt'
       File.open(file_path).read
-    when 'erb'
-      ERB.new(File.open(file_path).read).result
+    when '.erb'
+      ERB.new(File.open(file_path).read).result.gsub(/^\s+/, '')
     end
+  end
+
+  def emoji
+    {
+      thunderstorm: '\u{26C8}',
+      drizzle:      '\u{1F327}',
+      rain:         '\u{2614}',
+      snow:         '\u{1F328}',
+      atmosphere:   '\u{1F32B}',
+      clear:        '\u{2600}',
+      clouds:       '\u{2601}'
+    }
   end
 
   def render_success
