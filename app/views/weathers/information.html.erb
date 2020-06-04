@@ -1,0 +1,21 @@
+<p><%= link_to 'home', root_path %></p>
+
+<h3>リクエスト時刻は、[<%= Time.zone.now %>] です。</h3>
+<p>取得データ個数は、【<%= @weather_forecast[:hourly].count %>】個です。</p>
+<p>今日は雨降りますか？ => <%= @rain_notice %></p>
+
+<p>TZ => <%= @weather_forecast[:timezone] %></p>
+<p>TZオフセット => <%= @weather_forecast[:timezone_offset] %></p>
+
+<% @weather_forecast[:hourly].each do |item| %>
+  <% time_jst = Time.zone.at(item[:dt]) %>
+
+　<p>------------------------------------------------------------------------</p>
+  <p>時刻 =>【 <%= time_jst %> 】</p>
+
+  <p>雨量 =>【 <%= item[:rain].present? ? item[:rain][:'1h'] : 'なし' %> 】</p>
+  <% item[:weather].each do |weather| %>
+    <p>天気 =>【 <%= weather[:main] %> 】</p>
+  <% end %>
+  <p></p>
+<% end %>

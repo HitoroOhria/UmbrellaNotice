@@ -6,6 +6,12 @@ class WeathersController < ApplicationController
 
   TOLERANCE_TIME = 3
 
+  def information
+    weather = Weather.first
+    @weather_forecast = weather.take_forecast
+    render 'information'
+  end
+
   def trigger
     line_users = LineUser.where(notice_time: params[:notice_time])
     line_users.each do |line_user|
