@@ -12,6 +12,9 @@ AllCops:
 Layout/LineLength:
   Max: 105
 
+Layout/HashAlignment:
+  Enabled: false
+
 Metrics/BlockLength:
   Max: 65
 
