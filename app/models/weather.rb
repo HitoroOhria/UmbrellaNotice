@@ -1,10 +1,10 @@
 class Weather < ApplicationRecord
-  RAIN_FALL_JUDGMENT = 3
-  WEATHER_TARGET_HOUR = 15
-  RETRY_CALL_API_COUNT = 3
+  RAIN_FALL_JUDGMENT       = 3
+  TAKE_WEATHER_HOUR        = 15
+  RETRY_CALL_API_COUNT     = 3
   RETRY_CALL_API_WAIT_TIME = 5
 
-  belongs_to :user, optional: true
+  belongs_to :user,      optional: true
   belongs_to :line_user, optional: true
 
   validates :lat, numericality: { greater_than_or_equal_to: -45, less_than_or_equal_to: 45 },
@@ -12,12 +12,16 @@ class Weather < ApplicationRecord
   validates :lon, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 },
                   allow_nil: true
 
+  # text が OpenWeatherApi の city に対応しているか検証する
+  # 対応している場合 => 天気予報Hash
+  # 対応していない場合 => false
   def validate_city(text)
     city_name = text.slice(/(.+)[市区]/, 1) || text
     self.city = to_romaji(city_name)
     take_forecast
   end
 
+  # OpenWeatherApi の city に対応するローマ字に変換する
   def to_romaji(text)
     kunrei = Zipang.to_slug(text).gsub(/\-/, '').gsub(/m(?!(a|i|u|e|o|m))/, 'n').to_kunrei
     kunrei.gsub(/si/, 'shi').gsub(/ti/, 'chi').gsub(/tu/, 'tsu')
@@ -35,15 +39,19 @@ class Weather < ApplicationRecord
     line_user.update_attribute(:located_at, Time.zone.now)
   end
 
+  # 今日の天気が雨である場合 => 天気予報Hash
+  # 今日の天気が雨ではない場合 => false
   def today_is_rainy?
     forecast = take_forecast
-    rain_falls = forecast[:hourly][0...WEATHER_TARGET_HOUR].map do |hourly|
+    rain_falls = forecast[:hourly][0...TAKE_WEATHER_HOUR].map do |hourly|
       hourly[:rain].present? ? hourly[:rain][:'1h'] : nil
     end
     rain_falls.compact.find { |rain_fall| rain_fall >= RAIN_FALL_JUDGMENT }.present? && forecast
   end
 
-  # OpenWeatherAPI から、天気予報を取得
+  # OpenWeatherAPI から、天気予報を取得する
+  # 取得できた場合 => 天気予報Hash
+  # 取得できない場合 => false
   def take_forecast
     retry_count = 0
     begin
