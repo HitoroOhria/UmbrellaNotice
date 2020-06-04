@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 2020_06_04_084655) do
     t.string "token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "silent_notice", default: false, null: false
     t.index ["line_id"], name: "index_line_users_on_line_id"
   end
 
@@ -51,7 +52,6 @@ ActiveRecord::Schema.define(version: 2020_06_04_084655) do
     t.bigint "line_user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "silent_notice", default: false
     t.index ["line_user_id"], name: "index_weathers_on_line_user_id"
     t.index ["user_id"], name: "index_weathers_on_user_id"
   end
