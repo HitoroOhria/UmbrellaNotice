@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
   # lib/line_messages から、file_name に対応するファイルを読み込む
   def read_message(file_name)
     file_path = Dir[Rails.root + "lib/line_messages/#{file_name}.*"][0]
+
     case File.extname(file_path)
     when '.txt'
       File.open(file_path).read

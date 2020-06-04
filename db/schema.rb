@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_23_072104) do
+ActiveRecord::Schema.define(version: 2020_06_04_084655) do
 
   create_table "line_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "line_id"
@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(version: 2020_05_23_072104) do
     t.bigint "line_user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "silent_notice", default: false
     t.index ["line_user_id"], name: "index_weathers_on_line_user_id"
     t.index ["user_id"], name: "index_weathers_on_user_id"
   end

@@ -2,7 +2,7 @@ class WeathersController < ApplicationController
   before_action :authenticate,         only: %i[trigger line_notice]
   before_action :validate_notice_time, only: [:trigger]
 
-  protect_from_forgery except: :trigger, :line_notice
+  protect_from_forgery except: %i[trigger line_notice]
 
   TOLERANCE_TIME = 3
 
@@ -20,10 +20,14 @@ class WeathersController < ApplicationController
     render_success
   end
 
+  # インスタンス変数は lib/line_messages/notice_weather.txt.erb で使用する
   def line_notice
     line_user = LineUser.find_by(line_id: params[:line_id])
-    @rainy    = line_user.weather.today_is_rainy? # lib/line_messages/notice_weather.txt.erb 用の変数
-    @forecast = line_user.weather.take_forecast   # lib/line_messages/notice_weather.txt.erb 用の変数
+    weather   = line_user.weather
+
+    @rainy    = weather.today_is_rainy?
+    @forecast = weather.take_forecast
+    @silent   = weather.silent_notice
     message   = { type: 'text', text: read_message('notice_weather') }
 
     client.push_message(line_user.line_id, message)
