@@ -9,7 +9,6 @@ class WeathersController < ApplicationController
   def information
     weather = Weather.first
     @weather_forecast = weather.take_forecast
-    render 'information'
   end
 
   def trigger
@@ -20,16 +19,16 @@ class WeathersController < ApplicationController
     render_success
   end
 
-  def notice
+  def line_notice
     line_user = LineUser.find_by(line_id: params[:line_id])
-    notice_umbrella(line_user.line_id) if line_user.weather.today_is_rainy?
+    notice_weather(line_user.line_id) if line_user.weather.today_is_rainy?
     render_success
   end
 
   private
 
-  def notice_umbrella(line_id)
-    message = { type: 'text', text: read_message('notice_umbrella') }
+  def notice_weather(line_id)
+    message = { type: 'text', text: read_message('notice_weather') }
     client.push_message(line_id, message)
   end
 
