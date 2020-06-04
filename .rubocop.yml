@@ -21,6 +21,9 @@ Metrics/BlockLength:
 Metrics/MethodLength:
   Max: 13
 
+CyclomaticComplexity:
+  Max: 9
+
 Lint/NonDeterministicRequireOrder:
   Exclude:
     - 'spec/rails_helper.rb'
