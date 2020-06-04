@@ -18,6 +18,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # OpenWeatherAPI の weather.main と対応する絵文字の Unicode の Hash
   def emoji
     {
       thunderstorm: '\u{26C8}',

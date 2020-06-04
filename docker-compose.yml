@@ -4,7 +4,9 @@ services:
   umbrellanotice:
     build: .
     environment:
-      TZ: Asia/Tokyo
+      TZ:         Asia/Tokyo
+      LINE_ID:    $LINE_ID
+      LINE_TOKEN: $LINE_TOKEN
       MYSQL_ROOT_PASSWORD: password
     volumes:
       - .:/umbrellanotice
