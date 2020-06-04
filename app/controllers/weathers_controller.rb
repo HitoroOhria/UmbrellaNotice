@@ -21,16 +21,14 @@ class WeathersController < ApplicationController
 
   def line_notice
     line_user = LineUser.find_by(line_id: params[:line_id])
-    notice_weather(line_user.line_id) if line_user.weather.today_is_rainy?
+    @forecast = line_user.weather.today_is_rainy?
+    message   = { type: 'text', text: read_message('notice_weather') }
+
+    client.push_message(line_user.line_id, message)
     render_success
   end
 
   private
-
-  def notice_weather(line_id)
-    message = { type: 'text', text: read_message('notice_weather') }
-    client.push_message(line_id, message)
-  end
 
   def validate_notice_time
     current_time = Time.zone.now

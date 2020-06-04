@@ -1,7 +1,8 @@
 class Weather < ApplicationRecord
+  RAIN_FALL_JUDGMENT = 3
+  WEATHER_TARGET_HOUR = 15
   RETRY_CALL_API_COUNT = 3
   RETRY_CALL_API_WAIT_TIME = 5
-  RAIN_FALL_JUDGMENT = 2
 
   belongs_to :user, optional: true
   belongs_to :line_user, optional: true
@@ -35,10 +36,11 @@ class Weather < ApplicationRecord
   end
 
   def today_is_rainy?
-    rain_falls = take_forecast[:list].map do |weather|
-      weather[:rain].present? ? weather[:rain][:'3h'] : nil
+    forecast = take_forecast
+    rain_falls = forecast[:hourly][0...WEATHER_TARGET_HOUR].map do |hourly|
+      hourly[:rain].present? ? hourly[:rain][:'1h'] : nil
     end
-    rain_falls.compact.find { |rain_fall| rain_fall >= RAIN_FALL_JUDGMENT } .present?
+    rain_falls.compact.find { |rain_fall| rain_fall >= RAIN_FALL_JUDGMENT }.present? && forecast
   end
 
   # OpenWeatherAPI から、天気予報を取得
