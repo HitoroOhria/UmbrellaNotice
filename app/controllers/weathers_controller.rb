@@ -20,18 +20,21 @@ class WeathersController < ApplicationController
     render_success
   end
 
-  # インスタンス変数は lib/line_messages/notice_weather.txt.erb で使用する
+  # インスタンス変数は lib/line_messages/notice_weather.txt.erb で使用するものである
   def line_notice
-    line_user = LineUser.find_by(line_id: params[:line_id])
-    weather   = line_user.weather
-
-    @rainy    = weather.today_is_rainy?
-    @forecast = weather.forecast
-    @silent   = line_user.silent_notice
-    message   = { type: 'text', text: read_message('notice_weather') }
+    @date      = notice_date
+    @line_user = LineUser.find_by(line_id: params[:line_id])
+    @weather   = @line_user.weather
+    message    = { type: 'text', text: read_message('notice_weather') }
 
     client.push_message(line_user.line_id, message)
     render_success
+  end
+
+  def notice_date
+    current_time    = Time.zone.now
+    day_of_the_week = %w[日 月 火 水 木 金 土][current_time.wday]
+    "#{current_time.month}/#{current_time.day} (#{day_of_the_week})"
   end
 
   private
