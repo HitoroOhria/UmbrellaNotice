@@ -19,17 +19,17 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # OpenWeatherAPI の weather.main と対応する絵文字の Unicode の Hash
-  def emoji
-    {
-      thunderstorm: '\u{26C8}',
-      drizzle:      '\u{1F327}',
-      rain:         '\u{2614}',
-      snow:         '\u{1F328}',
-      atmosphere:   '\u{1F32B}',
-      clear:        '\u{2600}',
-      clouds:       '\u{2601}'
-    }
+  def emoji(weather_json)
+    case weather_json[:weather][0][:main].downcase
+    when 'thunderstorm' then '\u{26C8}'
+    when 'drizzle'      then '\u{1F327}'
+    when 'snow'         then '\u{1F328}'
+    when 'atmosphere'   then '\u{1F32B}'
+    when 'clear'        then '\u{2600}'
+    when 'clouds'       then '\u{2601}'
+    when 'rain'
+      weather_json[:rain][:'1h'] >= Weather::RAIN_FALL_JUDGMENT ? '\u{2614}' : '\u{2601}'
+    end
   end
 
   def render_success

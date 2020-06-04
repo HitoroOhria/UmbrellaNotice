@@ -11,11 +11,11 @@
   --------------------
   時刻     天気 雨量
   <% @forecast[:hourly][0...Weather::TAKE_WEATHER_HOUR].each do |hourly| %>
-    <% time      = Time.zone.at(hourly[:dt]).hour.to_s.rjust(2,'0') %>
-    <% weather   = hourly[:weather][0][:main].downcase %>
-    <% rain_fall = hourly[:rain].present? ? hourly[:rain][:'1h'] : 0 %>
+    <% hour_time  = Time.zone.at(hourly[:dt]).hour.to_s.rjust(2,'0') %>
+    <% emoji_code = emoji(hourly) %>
+    <% rain_fall  = hourly[:rain].present? ? hourly[:rain][:'1h'] : 0 %>
 
-    <%= time %>時 ･･･ <%= emoji[weather.to_sym] %> <%= rain_fall.round %>[mm]
+    <%= hour_time %>時 ･･･ <%= emoji_code %> <%= rain_fall.round %>[mm]
   <% end %>
   --------------------
 <% else %>
@@ -28,11 +28,11 @@
     --------------------
     時刻     天気 雨量
     <%  @forecast[:hourly][0...Weather::TAKE_WEATHER_HOUR].each do |hourly| %>
-      <% time      = Time.zone.at(hourly[:dt]).hour.to_s.rjust(2,'0') %>
-      <% weather   = hourly[:weather][0][:main].downcase %>
-      <% rain_fall = hourly[:rain].present? ? hourly[:rain][:'1h'] : 0 %>
+      <% hour_time  = Time.zone.at(hourly[:dt]).hour.to_s.rjust(2,'0') %>
+      <% emoji_code = emoji(hourly) %>
+      <% rain_fall  = hourly[:rain].present? ? hourly[:rain][:'1h'] : 0 %>
 
-      <%= time %>時 ･･･ <%= emoji[weather.to_sym] %> <%= rain_fall.round %>[mm]
+      <%= hour_time %>時 ･･･ <%= emoji_code %> <%= rain_fall.round %>[mm]
     <% end %>
     --------------------
   <% end %>
