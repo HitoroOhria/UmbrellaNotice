@@ -39,14 +39,13 @@ class Weather < ApplicationRecord
     line_user.update_attribute(:located_at, Time.zone.now)
   end
 
-  # 今日の天気が雨である場合 => 天気予報Hash
+  # 今日の天気が雨である場合 => true
   # 今日の天気が雨ではない場合 => false
   def today_is_rainy?
-    forecast = take_forecast
-    rain_falls = forecast[:hourly][0...TAKE_WEATHER_HOUR].map do |hourly|
+    rain_falls = take_forecast[:hourly][0...TAKE_WEATHER_HOUR].map do |hourly|
       hourly[:rain].present? ? hourly[:rain][:'1h'] : nil
     end
-    rain_falls.compact.find { |rain_fall| rain_fall >= RAIN_FALL_JUDGMENT }.present? && forecast
+    rain_falls.compact.find { |rain_fall| rain_fall >= RAIN_FALL_JUDGMENT }.present?
   end
 
   # OpenWeatherAPI から、天気予報を取得する

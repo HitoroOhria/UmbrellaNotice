@@ -1,34 +1,37 @@
-<% current_time = Time.zone.now %>
+<% current_time    = Time.zone.now %>
 <% day_of_the_week = %w[日 月 火 水 木 金 土][current_time.wday] %>
-<% date = "#{current_time.month}/#{current_time.day} (#{day_of_the_week})" %>
-<% if @forecast %>
+<% date            = "#{current_time.month}/#{current_time.day} (#{day_of_the_week})" %>
+
+<% if @rainy %>
   <%= date %>
 
   今日は雨が降ります！
   傘を持てば何とやら！
 
-  -----------------
+  --------------------
   時刻     天気 雨量
-  <%  @forecast[:hourly][0...Weather::TAKE_WEATHER_HOUR].each do |hourly| %>
-    <% time = Time.zone.at(hourly[:dt]).hour.to_s.rjust(2,'0') %>
-    <% weather = hourly[:weather][0][:main].downcase %>
+  <% @forecast[:hourly][0...Weather::TAKE_WEATHER_HOUR].each do |hourly| %>
+    <% time      = Time.zone.at(hourly[:dt]).hour.to_s.rjust(2,'0') %>
+    <% weather   = hourly[:weather][0][:main].downcase %>
     <% rain_fall = hourly[:rain].present? ? hourly[:rain][:'1h'] : 0 %>
+
     <%= time %>時 ･･･ <%= emoji[weather.to_sym] %> <%= rain_fall.round %>[mm]
   <% end %>
-  -----------------
+  --------------------
 <% else %>
   <%= date %>
 
   今日は雨は降りません！
   良い一日をお過ごしください！
 
-  -----------------
+  --------------------
   時刻     天気 雨量
   <%  @forecast[:hourly][0...Weather::TAKE_WEATHER_HOUR].each do |hourly| %>
     <% time = Time.zone.at(hourly[:dt]).hour.to_s.rjust(2,'0') %>
     <% weather = hourly[:weather][0][:main].downcase %>
     <% rain_fall = hourly[:rain].present? ? hourly[:rain][:'1h'] : 0 %>
+
     <%= time %>時 ･･･ <%= emoji[weather.to_sym] %> <%= rain_fall.round %>[mm]
   <% end %>
-  -----------------
+  --------------------
 <% end %>

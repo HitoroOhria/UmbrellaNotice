@@ -22,7 +22,8 @@ class WeathersController < ApplicationController
 
   def line_notice
     line_user = LineUser.find_by(line_id: params[:line_id])
-    @forecast = line_user.weather.today_is_rainy? # lib/line_messages/notice_weather.txt.erb 用の変数
+    @rainy    = line_user.weather.today_is_rainy? # lib/line_messages/notice_weather.txt.erb 用の変数
+    @forecast = line_user.weather.take_forecast   # lib/line_messages/notice_weather.txt.erb 用の変数
     message   = { type: 'text', text: read_message('notice_weather') }
 
     client.push_message(line_user.line_id, message)
