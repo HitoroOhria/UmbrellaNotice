@@ -2,7 +2,7 @@ class WeathersController < ApplicationController
   before_action :authenticate,         only: %i[trigger line_notice]
   before_action :validate_notice_time, only: [:trigger]
 
-  protect_from_forgery except: :trigger
+  protect_from_forgery except: :trigger, :line_notice
 
   TOLERANCE_TIME = 3
 
