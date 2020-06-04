@@ -26,8 +26,8 @@ class WeathersController < ApplicationController
     weather   = line_user.weather
 
     @rainy    = weather.today_is_rainy?
-    @forecast = weather.take_forecast
-    @silent   = weather.silent_notice
+    @forecast = weather.forecast
+    @silent   = line_user.silent_notice
     message   = { type: 'text', text: read_message('notice_weather') }
 
     client.push_message(line_user.line_id, message)

@@ -12,13 +12,17 @@ class Weather < ApplicationRecord
   validates :lon, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 },
                   allow_nil: true
 
+  def forecast
+    @forecast ||= take_forecast
+  end
+
   # text が OpenWeatherApi の city に対応しているか検証する
   # 対応している場合 => 天気予報Hash
   # 対応していない場合 => false
   def validate_city(text)
     city_name = text.slice(/(.+)[市区]/, 1) || text
     self.city = to_romaji(city_name)
-    take_forecast
+    forecast
   end
 
   # OpenWeatherApi の city に対応するローマ字に変換する
@@ -42,7 +46,7 @@ class Weather < ApplicationRecord
   # 今日の天気が雨である場合 => true
   # 今日の天気が雨ではない場合 => false
   def today_is_rainy?
-    rain_falls = take_forecast[:hourly][0...TAKE_WEATHER_HOUR].map do |hourly|
+    rain_falls = forecast[:hourly][0...TAKE_WEATHER_HOUR].map do |hourly|
       hourly[:rain].present? ? hourly[:rain][:'1h'] : nil
     end
     rain_falls.compact.find { |rain_fall| rain_fall >= RAIN_FALL_JUDGMENT }.present?
