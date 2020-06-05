@@ -17,12 +17,11 @@ Layout/HashAlignment:
 
 Metrics/BlockLength:
   Max: 65
+  Exclude:
+    - 'spec/**/*.rb'
 
 Metrics/MethodLength:
   Max: 13
-
-CyclomaticComplexity:
-  Max: 9
 
 Lint/NonDeterministicRequireOrder:
   Exclude:

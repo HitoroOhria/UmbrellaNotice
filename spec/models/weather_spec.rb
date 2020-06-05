@@ -8,7 +8,7 @@ RSpec.describe Weather, type: :model do
 
       before do
         allow(exception_io).to receive_message_chain(:status, :[]).with(0).and_return('302')
-        allow(weather).to receive(:call_weather_api).and_raise(OpenURI::HTTPError.new('',exception_io))
+        allow(weather).to receive(:call_weather_api).and_raise(OpenURI::HTTPError.new('', exception_io))
       end
 
       it '3回までリトライし、falseを返すこと' do
