@@ -28,6 +28,10 @@ Lint/NonDeterministicRequireOrder:
   Exclude:
     - 'spec/rails_helper.rb'
 
+Lint/UnusedMethodArgument:
+  Exclude:
+    - 'app/controllers/application_controller.rb'
+
 Style/EmptyMethod:
   Exclude:
     - 'app/controllers/**/*'
