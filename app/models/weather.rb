@@ -91,8 +91,10 @@ class Weather < ApplicationRecord
       next if rain_fall.zero? || RAIN_FALL_JUDGMENT <= rain_fall
 
       hourly[:weather].each do |weather|
+        weather[:id]          = 804
         weather[:main]        = 'Clouds'
-        weather[:description] = 'clouds'
+        weather[:description] = 'overcast clouds'
+        weather[:icon]        = '04d'
       end
     end
     json_forecast

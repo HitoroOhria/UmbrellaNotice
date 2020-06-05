@@ -18,6 +18,34 @@ RSpec.describe Weather, type: :model do
     end
   end
 
+  describe '#today_is_rainy?' do
+    let(:weather_dir_path) { 'spec/fixtures/weather_api' }
+    let(:weather_file)     { File.open(Rails.root + weather_dir_path + 'clear_forecast.json') }
+
+    let!(:weather)          { build(:base_weather) }
+    let!(:weather_forecast) { JSON.parse(weather_file.read, symbolize_names: true) }
+
+    before do
+      allow(weather).to receive(:forecast).and_return(weather_forecast)
+    end
+
+    subject { weather.today_is_rainy? }
+
+    context '天気予報の雨量が 0[mm] の時' do
+      it { is_expected.to eq false }
+    end
+
+    context '天気予報の雨量が 2.9[mm] の時' do
+      it { is_expected.to eq false }
+    end
+
+    context '天気予報の雨量が 3[mm] の時' do
+      let(:weather_file) { File.open(Rails.root + weather_dir_path + 'rain_forecast.json') }
+
+      it { is_expected.to eq true }
+    end
+  end
+
   describe '#validate_city(text)' do
     let!(:weather) { create(:base_weather) }
 
