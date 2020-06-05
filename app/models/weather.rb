@@ -68,10 +68,10 @@ class Weather < ApplicationRecord
 
   # OpenWeatherAPI の OneCallAPI を呼び出す
   def call_weather_api
-    base_url      = 'https://api.openweathermap.org/data/2.5/onecall?lang=ja'
-    location      = "&lat=#{lat}&lon=#{lon}"
-    exclude       = '&exclude=current,minutely,daily'
-    app_id        = "&appid=#{Rails.application.credentials.open_weather_api[:app_key]}"
+    base_url = 'http://api.openweathermap.org/data/2.5/onecall?lang=ja'
+    location = "&lat=#{lat}&lon=#{lon}"
+    exclude  = '&exclude=current,minutely,daily'
+    app_id   = "&appid=#{Rails.application.credentials.open_weather_api[:app_key]}"
 
     api_response  = OpenURI.open_uri(base_url + location + exclude + app_id)
     json_forecast = JSON.parse(api_response.read, symbolize_names: true)
@@ -85,7 +85,7 @@ class Weather < ApplicationRecord
   #  - (2) 雨量が 0 < RAIN_FALL_JUDGMENT [mm] の場合、天気を雨から曇りに変更
   def refill_rain(json_forecast)
     json_forecast[:hourly].each do |hourly|
-      hourly[:rain] = { '1h': 0 }  if hourly[:rain].empty?
+      hourly[:rain] = { '1h': 0 }  if hourly[:rain].nil?
       rain_fall     = hourly[:rain][:'1h']
 
       next if rain_fall.zero? || RAIN_FALL_JUDGMENT <= rain_fall
@@ -95,6 +95,7 @@ class Weather < ApplicationRecord
         weather[:description] = 'clouds'
       end
     end
+    json_forecast
   end
 
   def retry_message(exception, retry_count)

@@ -1,6 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe Weather, type: :model do
+  describe '#take_forecast' do
+    context 'エラーが発生し続ける時' do
+      let(:weather)      { build(:base_weather) }
+      let(:exception_io) { double('Exception IO') }
+
+      before do
+        allow(exception_io).to receive_message_chain(:status, :[]).with(0).and_return('302')
+        allow(weather).to receive(:call_weather_api).and_raise(OpenURI::HTTPError.new('',exception_io))
+      end
+
+      it '3回までリトライし、falseを返すこと' do
+        expect(weather).to receive(:retry_message).exactly(4).times
+        expect(weather.take_forecast).to eq false
+      end
+    end
+  end
+
   describe '#validate_city(text)' do
     let!(:weather) { create(:base_weather) }
 
