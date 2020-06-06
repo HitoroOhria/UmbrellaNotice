@@ -16,14 +16,14 @@
       "wind_deg": 203,
       "weather": [
         {
-          "id": 804,
-          "main": "Clouds",
-          "description": "overcast clouds",
-          "icon": "04n"
+          "id": 800,
+          "main": "Clear",
+          "description": "clear sky",
+          "icon": "01n"
         }
       ],
       "rain": {
-        "1h": 2.92
+        "1h": 0
       }
     },
     {
@@ -38,14 +38,14 @@
       "wind_deg": 203,
       "weather": [
         {
-          "id": 501,
-          "main": "Rain",
-          "description": "moderate rain",
-          "icon": "10n"
+          "id": 800,
+          "main": "Clear",
+          "description": "clear sky",
+          "icon": "01n"
         }
       ],
       "rain": {
-        "1h": 2.99
+        "1h": 0
       }
     }
   ]

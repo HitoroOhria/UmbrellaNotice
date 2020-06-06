@@ -21,10 +21,7 @@
           "description": "clear sky",
           "icon": "01n"
         }
-      ],
-      "rain": {
-        "1h": 2.99
-      }
+      ]
     },
     {
       "dt": 1588935600,
@@ -43,10 +40,7 @@
           "description": "clear sky",
           "icon": "01n"
         }
-      ],
-      "rain": {
-        "1h": 0
-      }
+      ]
     }
   ]
 }
