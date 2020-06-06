@@ -33,7 +33,7 @@ RSpec.describe Weather, type: :model do
   end
 
   describe '#add_and_save_location(text)' do
-    let!(:weather)      { build(:base_weather) }
+    let!(:weather) { build(:base_weather) }
 
     before do
       allow(weather).to receive(:current_weather_api).and_return(api_response)
@@ -110,11 +110,11 @@ RSpec.describe Weather, type: :model do
     context 'エラーが発生し続ける時' do
       let(:weather)      { build(:base_weather) }
       let(:exception_io) { double('Exception IO') }
+      let(:http_error)   { OpenURI::HTTPError.new('', exception_io) }
 
       before do
         allow(exception_io).to receive_message_chain(:status, :[]).with(0).and_return('302')
-        allow(weather).to      receive(:call_weather_api).with(any_args)
-                                 .and_raise(OpenURI::HTTPError.new('', exception_io))
+        allow(weather).to      receive(:call_weather_api).with(any_args).and_raise(http_error)
       end
 
       it '3回までリトライし、falseを返すこと' do

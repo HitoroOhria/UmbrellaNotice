@@ -8,7 +8,7 @@ class WeathersController < ApplicationController
 
   def information
     weather           = Weather.first
-    @weather_forecast = weather.take_forecast
+    @weather_forecast = weather.forecast
   end
 
   def trigger
