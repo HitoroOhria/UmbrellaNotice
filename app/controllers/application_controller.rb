@@ -18,7 +18,9 @@ class ApplicationController < ActionController::Base
     when '.txt'
       File.open(file_path).read
     when '.erb'
-      ERB.new(File.open(file_path).read).result.gsub(/^\s+/, '')
+      ERB.new(File.open(file_path).read)
+         .result_with_hash(locals: locals, current_date: current_date, emoji: emoji)
+         .gsub(/^\s+/, '')
     end
   end
 
