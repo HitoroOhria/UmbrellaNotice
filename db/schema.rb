@@ -10,10 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_04_084655) do
+ActiveRecord::Schema.define(version: 2020_06_06_043641) do
 
   create_table "line_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "line_id"
+    t.string "line_id", null: false
     t.string "notice_time", default: "07:00"
     t.datetime "located_at"
     t.string "token"
@@ -46,8 +46,8 @@ ActiveRecord::Schema.define(version: 2020_06_04_084655) do
 
   create_table "weathers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "city"
-    t.decimal "lat", precision: 4, scale: 2
-    t.decimal "lon", precision: 5, scale: 2
+    t.decimal "lat", precision: 4, scale: 2, null: false
+    t.decimal "lon", precision: 5, scale: 2, null: false
     t.bigint "user_id"
     t.bigint "line_user_id"
     t.datetime "created_at", null: false
