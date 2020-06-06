@@ -38,8 +38,8 @@ class Weather < ApplicationRecord
   end
 
   def save_location(lat, lon)
-    self.lat = lat
-    self.lon = lon
+    self.lat = lat.round(2)
+    self.lon = lon.round(2)
     save && line_user.update_attribute(:located_at, Time.zone.now)
   end
 
@@ -80,7 +80,7 @@ class Weather < ApplicationRecord
 
     api_response  = OpenURI.open_uri(base_url + request_query + app_id)
     json_forecast = JSON.parse(api_response.read, symbolize_names: true)
-    refill_rain(json_forecast) if api_type == 'onecall'
+    api_type == 'onecall' ? refill_rain(json_forecast) : json_forecast
   end
 
   # OpenWeatherAPI の仕様により、天気が雨以外の場合は雨量が設定されていない
