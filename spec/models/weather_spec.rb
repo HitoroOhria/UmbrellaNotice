@@ -43,7 +43,7 @@ RSpec.describe Weather, type: :model do
     subject(:add_and_save_location) { weather.add_and_save_location('渋谷区') }
 
     context 'APIコールのレスポンスが有効なJSONの場合' do
-      let(:api_response) { { coord: { lat: 140.40841345, lon: 34.229085432 } } }
+      let(:api_response) { { coord: { lat: 34.408413, lon: 140.229085 } } }
 
       it '#save_location(lat, lon)を呼び出すこと' do
         expect(weather).to receive(:save_location).once
@@ -68,6 +68,18 @@ RSpec.describe Weather, type: :model do
 
       it '「し」「ち」「つ」は「shi」「chi」「tsu」に変換すること' do
         expect(weather.to_romaji('しちつ')).to eq 'shichitsu'
+      end
+
+      context '文字列の末尾に「市」がついていた時' do
+        it '「市」を除いたローマ字であること' do
+          expect(weather.to_romaji('かすみがうら市')).to eq 'kasumigaura'
+        end
+      end
+
+      context '文字列の末尾に「区」がついていた時' do
+        it '「区」を除いたローマ字であること' do
+          expect(weather.to_romaji('渋谷区')).to eq 'shibuya'
+        end
       end
     end
   end

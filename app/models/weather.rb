@@ -22,10 +22,10 @@ class Weather < ApplicationRecord
   end
 
   # CurrentWeatherAPI のレスポンスから、lat と lon を取得する
-  # 取得に成功した場合、 save_location を呼び出す
+  # 取得に成功した場合 => save_location を呼び出す
+  # 取得に失敗した場合 => nil を返す
   def add_and_save_location(text)
-    city_name = text.slice(/(.+)[市区]/, 1) || text
-    self.city = to_romaji(city_name)
+    self.city = to_romaji(text)
     return unless (location_json = current_weather_api.try(:[], :coord))
 
     save_location(location_json[:lat], location_json[:lon])
@@ -33,7 +33,8 @@ class Weather < ApplicationRecord
 
   # OpenWeatherApi の city に対応するローマ字に変換する
   def to_romaji(text)
-    kunrei_moji = Zipang.to_slug(text).gsub(/\-/, '').gsub(/m(?!(a|i|u|e|o|m))/, 'n').to_kunrei
+    city_name   = text.slice(/(.+)[市区]/, 1) || text
+    kunrei_moji = Zipang.to_slug(city_name).gsub(/\-/, '').gsub(/m(?!(a|i|u|e|o|m))/, 'n').to_kunrei
     kunrei_moji.gsub(/si/, 'shi').gsub(/ti/, 'chi').gsub(/tu/, 'tsu')
   end
 
