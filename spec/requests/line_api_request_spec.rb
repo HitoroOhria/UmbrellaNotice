@@ -2,13 +2,13 @@ require 'rails_helper'
 
 RSpec.describe "LinesApiController", type: :request do
   describe '#webhock' do
-    let(:take_forecast_response) { true }
-    let(:request_file)           { 'spec/fixtures/line_api/city_request.json.erb' }
-    let(:request_body)           { ERB.new(File.open(Rails.root + request_file).read).result }
-    let(:double_events)          { Line::Bot::Client.new.parse_events_from(request_body) }
+    let(:current_weather_api_response) { { coord: { lat: 34.539012, lon: 140.345897 } } }
+    let(:request_file)                 { 'spec/fixtures/line_api/city_request.json.erb' }
+    let(:request_body)                 { ERB.new(File.open(Rails.root + request_file).read).result }
+    let(:double_events)                { Line::Bot::Client.new.parse_events_from(request_body) }
 
     before do
-      allow_any_instance_of(Weather).to           receive(:take_forecast) { take_forecast_response }
+      allow_any_instance_of(Weather).to receive(:current_weather_api) { current_weather_api_response }
       allow_any_instance_of(LineApiController).to receive(:reply)
       allow_any_instance_of(LineApiController).to receive(:validate_signature)
       allow_any_instance_of(LineApiController).to receive(:events) { double_events }
@@ -31,7 +31,7 @@ RSpec.describe "LinesApiController", type: :request do
       end
 
       context '無効なテキストイベントを受け取った時' do
-        let(:take_forecast_response) { false }
+        let(:current_weather_api_response) { false }
 
         it 'Weatherを作成しないこと' do
           expect { post line_webhock_path }.to_not change(Weather, :count)
