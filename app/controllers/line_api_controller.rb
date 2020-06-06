@@ -28,31 +28,25 @@ class LineApiController < ApplicationController
     reply('interacticeです！')
   end
 
-  # 受け取ったイベントから、緯度・経度を保存する
-  # 市名を受け取った場合
-  #   => Weather#city_is_valid? で有効な市名か検証する
-  #   => Weather#save_location で緯度・経度を保存する
-  # GPS情報を受け取った場合
-  #   => Weather#save_location で緯度・経度を保存する
   def location_setting(line_user)
+    weather = Weather.new(line_user: line_user)
     message = event.message
     content = message['text'] || { lat: message['latitude'], lon: message['longitude'] }
-    weather = Weather.new(line_user: line_user)
 
-    validate_city(weather) if event.type == 'text'
-    weather.save_location(content)
+    case event.type
+    when 'text'
+      weather.add_and_save_location(content) || reply('invalid_city_name')
+    when 'location'
+      weather.save_location(content[:lat], content[:lon])
+    end
 
-    reply(read_message('completed_location_setting'))
-  end
-
-  def validate_city(weather)
-    weather.city_is_valid?(content) && reply(read_message('invalid_cityname'))
+    reply('completed_location_setting')
   end
 
   private
 
-  def reply(message)
-    client.reply_message(event['replyToken'], { type: 'text', text: message })
+  def reply(file_name)
+    client.reply_message(event['replyToken'], { type: 'text', text: read_message(file_name) })
   end
 
   def validate_signature
@@ -77,7 +71,7 @@ class LineApiController < ApplicationController
       self.event = item
       next if event['source']['type'] == 'user'
 
-      reply(read_message('invalid_source_type'))
+      reply('invalid_source_type')
       render_bad_request
     end
   end
