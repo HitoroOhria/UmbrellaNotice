@@ -2,9 +2,12 @@ require 'rails_helper'
 
 RSpec.describe "LinesApiController", type: :request do
   describe '#webhock' do
+    let(:request_file_dir)             { 'spec/fixtures/line_api' }
+    let(:request_file_name)            { 'city_request.json.erb' }
+    let(:request_file_path)            { Rails.root + request_file_dir + request_file_name }
+    let(:request_body)                 { ERB.new(File.open(request_file_path).read).result }
+
     let(:current_weather_api_response) { { coord: { lat: 34.539012, lon: 140.345897 } } }
-    let(:request_file)                 { 'spec/fixtures/line_api/city_request.json.erb' }
-    let(:request_body)                 { ERB.new(File.open(Rails.root + request_file).read).result }
     let(:double_events)                { Line::Bot::Client.new.parse_events_from(request_body) }
 
     before do
@@ -12,6 +15,16 @@ RSpec.describe "LinesApiController", type: :request do
       allow_any_instance_of(LineApiController).to receive(:reply)
       allow_any_instance_of(LineApiController).to receive(:validate_signature)
       allow_any_instance_of(LineApiController).to receive(:events) { double_events }
+    end
+
+    subject { response }
+
+    describe 'レスポンス' do
+      before do
+        post line_webhock_path
+      end
+
+      it { is_expected.to have_http_status 200 }
     end
 
     context '位置情報の設定が済んでない時' do
@@ -54,7 +67,16 @@ RSpec.describe "LinesApiController", type: :request do
     end
 
     context '位置情報の設定が済んでいる時' do
-      pending
+      let(:request_file_name) { 'absolute_user_id_request.json' }
+
+      before do
+        post line_webhock_path
+      end
+
+      it '' do
+        post line_webhock_path
+        is_expected.to have_http_status 200
+      end
     end
   end
 end
