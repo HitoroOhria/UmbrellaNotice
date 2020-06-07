@@ -25,7 +25,7 @@ class LineApiController < ApplicationController
   end
 
   def interactive
-    reply('interacticeです！')
+    reply('interactive')
   end
 
   def location_setting(line_user)
