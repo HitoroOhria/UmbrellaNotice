@@ -3,9 +3,9 @@ class ApplicationController < ActionController::Base
 
   def client
     @client ||= Line::Bot::Client.new { |config|
-      config.channel_id = Rails.application.credentials.line_api[:channel_id]
+      config.channel_id     = Rails.application.credentials.line_api[:channel_id]
       config.channel_secret = Rails.application.credentials.line_api[:channel_secret_id]
-      config.channel_token = Rails.application.credentials.line_api[:channel_token]
+      config.channel_token  = Rails.application.credentials.line_api[:channel_token]
     }
   end
 
