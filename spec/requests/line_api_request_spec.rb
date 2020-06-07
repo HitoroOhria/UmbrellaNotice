@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "LinesApiController", type: :request do
+RSpec.describe "LinesApiControllers", type: :request do
   describe '#webhock' do
     let(:request_file_dir)             { 'spec/fixtures/line_api' }
     let(:request_file_name)            { 'city_request.json.erb' }
@@ -73,7 +73,7 @@ RSpec.describe "LinesApiController", type: :request do
         post line_webhock_path
       end
 
-      it '' do
+      it 'HTTPステータス200を返すこと' do
         post line_webhock_path
         is_expected.to have_http_status 200
       end

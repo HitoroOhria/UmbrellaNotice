@@ -90,7 +90,7 @@ class Weather < ApplicationRecord
   #  - (2) 雨量が 0 < RAIN_FALL_JUDGMENT [mm] の場合、天気を雨から曇りに変更
   def refill_rain(json_forecast)
     json_forecast[:hourly].each do |hourly|
-      hourly[:rain] = { '1h': 0 }  if hourly[:rain].nil?
+      hourly[:rain] = { '1h': 0 } if hourly[:rain].nil?
       rain_fall     = hourly[:rain][:'1h']
 
       next if rain_fall.zero? || RAIN_FALL_JUDGMENT <= rain_fall

@@ -186,7 +186,7 @@ RSpec.describe Weather, type: :model do
     end
 
     it '関連するLineユーザーのlocated_atカラムが更新されること' do
-      expect(located_at).to_not eq line_user.reload.located_at
+      expect(line_user.reload.located_at).to_not eq located_at
     end
   end
 
@@ -237,7 +237,7 @@ RSpec.describe Weather, type: :model do
     end
   end
 
-  describe '#def refill_rain(json_forecast)' do
+  describe '#refill_rain(json_forecast)' do
     let(:weather_dir_path)  { 'spec/fixtures/weather_api' }
     let(:weather_file_name) { 'clear_forecast.json' }
     let(:weather_file)      { File.open(Rails.root + weather_dir_path + weather_file_name) }

@@ -36,7 +36,7 @@ RSpec.describe "lib/line_messages", type: :view do
     end
 
     it '天気予報が表示されていること' do
-      is_expected.to match(/\d{2}時 ･･･ .+\d+\[mm\]/)
+      is_expected.to match(/\d{2}時 +･･･ +. +\d+ +\[mm\]/)
     end
   end
 end
