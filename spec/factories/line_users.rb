@@ -4,8 +4,8 @@ FactoryBot.define do
     notice_time { '07:00' }
 
     factory :line_user_with_weather do
-      located_at { Time.zone.now }
-      association :base_weather
+      located_at  { Time.zone.now }
+      association :weather, factory: :base_weather
     end
   end
 end
