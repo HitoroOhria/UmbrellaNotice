@@ -13,13 +13,13 @@ module LineMessageHelper
   # OpenWeatherApi の気象条件と対応した絵文字の unicode の Hash
   def emoji
     {
-      thunderstorm: '\u{26C8}',
-      drizzle:      '\u{1F327}',
-      rain:         '\u{2601}',
-      snow:         '\u{1F328}',
-      atmosphere:   '\u{1F32B}',
-      clear:        '\u{2600}',
-      clouds:       '\u{2601}'
+      thunderstorm: "\u{26C8}",
+      drizzle:      "\u{1F327}",
+      rain:         "\u{2601}",
+      snow:         "\u{1F328}",
+      atmosphere:   "\u{1F32B}",
+      clear:        "\u{2600}",
+      clouds:       "\u{2601}"
     }
   end
 end
