@@ -2,9 +2,9 @@ require 'rails_helper'
 
 RSpec.describe "lib/line_messages", type: :view do
   describe '*.txt' do
-    let(:file_paths)      { Dir[Rails.root + "lib/line_messages/*.txt"] }
-    let(:txt_file_paths)  { file_paths.select { |file_path| File.extname(file_path) == '.txt' } }
-    let(:file_names)      { txt_file_paths.map { |file_path| file_path.slice(/line_messages\/(.+).txt/, 1) } }
+    let(:file_paths)     { Dir[Rails.root + "lib/line_messages/*.txt"] }
+    let(:txt_file_paths) { file_paths.select { |file_path| File.extname(file_path) == '.txt' } }
+    let(:file_names)     { txt_file_paths.map { |file_path| file_path[%r{line_messages/(.+).txt}, 1] } }
 
     it 'file の内容を文字列として取得できること' do
       file_names.each do |file_name|
@@ -14,9 +14,9 @@ RSpec.describe "lib/line_messages", type: :view do
   end
 
   describe 'notice_weather.txt.erb' do
-    let(:weather)   { build(:weather) }
-    let(:line_user) { weather.line_user }
-    let(:locals)    { [[:line_user, line_user], [:weather, weather]] }
+    let(:weather)       { build(:weather) }
+    let(:line_user)     { weather.line_user }
+    let(:locals)        { [[:line_user, line_user], [:weather, weather]] }
 
     let(:dir_path)      { 'spec/fixtures/weather_api' }
     let(:file_name)     { 'fixed_clear_forecast.json' }

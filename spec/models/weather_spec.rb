@@ -31,15 +31,6 @@ RSpec.describe Weather, type: :model do
     describe 'weathers.lat' do
       subject(:weather) { build(:base_weather, lat: latitude) }
 
-      context '値が小数点第十六位まである時' do
-        let(:latitude) { rand(-90.0...90.0) }
-
-        it '小数点第二位まで丸めて保存すること' do
-          weather.save
-          expect(weather.reload.lat).to eq latitude.round(2)
-        end
-      end
-
       context '値が -91 の時' do
         let(:latitude) { -91 }
 
@@ -67,15 +58,6 @@ RSpec.describe Weather, type: :model do
 
     describe 'weathers.lon' do
       subject(:weather) { build(:base_weather, lon: longitude) }
-
-      context '値が小数点第十六位まである時' do
-        let(:longitude) { rand(-180.0...180.0) }
-
-        it '小数点第二位まで丸めて保存すること' do
-          weather.save
-          expect(weather.reload.lon).to eq longitude.round(2)
-        end
-      end
 
       context '値が -181 の時' do
         let(:longitude) { -181 }
