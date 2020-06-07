@@ -1,6 +1,108 @@
 require 'rails_helper'
 
 RSpec.describe Weather, type: :model do
+  describe 'Factory' do
+    describe ':base_weather' do
+      subject { create(:base_weather) }
+
+      it { is_expected.to be_truthy }
+    end
+
+    describe ':weather' do
+      subject(:weather) { create(:weather) }
+
+      it { is_expected.to be_truthy }
+
+      it '関連したUserファクトリーを作成すること' do
+        expect(weather.user.persisted?).to be_truthy
+      end
+
+      it '関連したLineUserファクトリーを作成すること' do
+        expect(weather.line_user.persisted?).to be_truthy
+      end
+
+      it '関連したLineUserファクトリーのlocated_atカラムを更新すること' do
+        expect(weather.line_user.located_at).to be_present
+      end
+    end
+  end
+
+  describe 'Validates' do
+    describe 'weathers.lat' do
+      subject(:weather) { build(:base_weather, lat: latitude) }
+
+      context '値が小数点第十六位まである時' do
+        let(:latitude) { rand(-90.0...90.0) }
+
+        it '小数点第二位まで丸めて保存すること' do
+          weather.save
+          expect(weather.reload.lat).to eq latitude.round(2)
+        end
+      end
+
+      context '値が -91 の時' do
+        let(:latitude) { -91 }
+
+        it { is_expected.to_not be_valid }
+      end
+
+      context '値が -90 の時' do
+        let(:latitude) { -90 }
+
+        it { is_expected.to be_valid }
+      end
+
+      context '値が 90 の時' do
+        let(:latitude) { 90 }
+
+        it { is_expected.to be_valid }
+      end
+
+      context '値が 91 の時' do
+        let(:latitude) { 91 }
+
+        it { is_expected.to_not be_valid }
+      end
+    end
+
+    describe 'weathers.lon' do
+      subject(:weather) { build(:base_weather, lon: longitude) }
+
+      context '値が小数点第十六位まである時' do
+        let(:longitude) { rand(-180.0...180.0) }
+
+        it '小数点第二位まで丸めて保存すること' do
+          weather.save
+          expect(weather.reload.lon).to eq longitude.round(2)
+        end
+      end
+
+      context '値が -181 の時' do
+        let(:longitude) { -181 }
+
+        it { is_expected.to_not be_valid }
+      end
+
+      context '値が -180 の時' do
+        let(:longitude) { -180 }
+
+        it { is_expected.to be_valid }
+      end
+
+      context '値が 180 の時' do
+        let(:longitude) { 180 }
+
+        it { is_expected.to be_valid }
+      end
+
+      context '値が 181 の時' do
+        let(:longitude) { 181 }
+
+        it { is_expected.to_not be_valid }
+      end
+    end
+  end
+
   describe '#today_is_rainy?' do
     let(:weather_dir_path)  { 'spec/fixtures/weather_api' }
     let(:weather_file_name) { 'fixed_clear_forecast.json' }

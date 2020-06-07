@@ -39,7 +39,8 @@ class Weather < ApplicationRecord
   def save_location(lat, lon)
     self.lat = lat.round(2)
     self.lon = lon.round(2)
-    save && line_user.update_attribute(:located_at, Time.zone.now)
+    save
+    line_user.update_attribute(:located_at, Time.zone.now)
   end
 
   private
