@@ -10,7 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_28_052250) do
+ActiveRecord::Schema.define(version: 2020_06_06_043641) do
+
+  create_table "line_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "line_id", null: false
+    t.string "notice_time", default: "07:00"
+    t.datetime "located_at"
+    t.string "token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "silent_notice", default: false, null: false
+    t.index ["line_id"], name: "index_line_users_on_line_id"
+  end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -31,6 +42,18 @@ ActiveRecord::Schema.define(version: 2020_04_28_052250) do
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "weathers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "city"
+    t.decimal "lat", precision: 4, scale: 2, null: false
+    t.decimal "lon", precision: 5, scale: 2, null: false
+    t.bigint "user_id"
+    t.bigint "line_user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["line_user_id"], name: "index_weathers_on_line_user_id"
+    t.index ["user_id"], name: "index_weathers_on_user_id"
   end
 
 end

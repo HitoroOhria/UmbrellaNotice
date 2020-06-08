@@ -4,6 +4,8 @@ Rails.application.routes.draw do
   }
 
   root 'static_pages#home'
-  get  'weathers/notice',  to: 'weathers#notice'
-  post 'line/webhock',     to: 'lines#webhock'
+  get  'weathers/information', to: 'weathers#information'
+  post 'weathers/trigger',     to: 'weathers#trigger'
+  post 'weathers/line_notice', to: 'weathers#line_notice'
+  post 'line/webhock',         to: 'line_api#webhock'
 end

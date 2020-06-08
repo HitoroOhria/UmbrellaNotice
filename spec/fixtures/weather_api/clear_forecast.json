@@ -1,0 +1,46 @@
+{
+  "lat": 140.44,
+  "lon": 34.04,
+  "timezone": "Asia/Tokyo",
+  "timezone_offset": 32400,
+  "hourly": [
+    {
+      "dt": 1588932000,
+      "temp": 16.75,
+      "feels_like": 13.93,
+      "pressure": 1009,
+      "humidity": 93,
+      "dew_point": 15.61,
+      "clouds": 90,
+      "wind_speed": 6.66,
+      "wind_deg": 203,
+      "weather": [
+        {
+          "id": 800,
+          "main": "Clear",
+          "description": "clear sky",
+          "icon": "01n"
+        }
+      ]
+    },
+    {
+      "dt": 1588935600,
+      "temp": 16.75,
+      "feels_like": 13.93,
+      "pressure": 1009,
+      "humidity": 93,
+      "dew_point": 15.61,
+      "clouds": 90,
+      "wind_speed": 6.66,
+      "wind_deg": 203,
+      "weather": [
+        {
+          "id": 800,
+          "main": "Clear",
+          "description": "clear sky",
+          "icon": "01n"
+        }
+      ]
+    }
+  ]
+}

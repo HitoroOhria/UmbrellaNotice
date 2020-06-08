@@ -2,32 +2,51 @@ version: '3'
 
 services:
   umbrellanotice:
-    build:
-      context: .
+    build: .
     environment:
-      TZ: Asia/Tokyo
+      TZ:         Asia/Tokyo
+      LINE_ID:    $LINE_ID
+      LINE_TOKEN: $LINE_TOKEN
       MYSQL_ROOT_PASSWORD: password
     volumes:
       - .:/umbrellanotice
       - public-data:/umbrellanotice/public
       - tmp-data:/umbrellanotice/tmp
       - log-data:/umbrellanotice/log
+      - socket-data:/umbrellanotice/tmp/sockets
     depends_on:
       - mysql
+      - redis
     tty: true
+    stdin_open: true
+  sidekiq:
+    build: .
+    volumes:
+      - .:/umbrellanotice
+      - public-data:/umbrellanotice/public
+      - tmp-data:/umbrellanotice/tmp
+      - log-data:/umbrellanotice/log
+      - socket-data:/umbrellanotice/tmp/sockets
+    depends_on:
+      - umbrellanotice
+      - redis
+    command: sidekiq
+  redis:
+    build:
+      context: docker/redis
+    volumes:
+      - socket-data:/run/redis
   mysql:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: password
     volumes:
-      - mysql-data:/var/lib/mysql
       - ./docker/mysql/mysql-confd:/etc/mysql/conf.d
   nginx:
     build:
       context: docker/nginx
     volumes:
-      - public-data:/umbrellanotice/public
-      - tmp-data:/umbrellanotice/tmp
+      - socket-data:/umbrellanotice/tmp/sockets
     ports:
       - 80:80
     depends_on:
@@ -37,4 +56,4 @@ volumes:
   public-data:
   tmp-data:
   log-data:
-  mysql-data:
+  socket-data:

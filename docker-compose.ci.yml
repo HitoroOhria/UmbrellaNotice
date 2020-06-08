@@ -9,10 +9,30 @@ services:
       TZ: Asia/Tokyo
       RAILS_MASTER_KEY: $RAILS_MASTER_KEY
       MYSQL_ROOT_PASSWORD: password
-    ports:
-      - '3000:3000'
+    volumes:
+      - socket-data:/umbrellanotice/tmp/sockets
     depends_on:
       - mysql
+      - redis
+  sidekiq:
+    build:
+      context: .
+      dockerfile: Dockerfile.ci
+    environment:
+      TZ: Asia/Tokyo
+      RAILS_MASTER_KEY: $RAILS_MASTER_KEY
+    depends_on:
+      - umbrellanotice
+      - redis
+    volumes:
+      - socket-data:/umbrellanotice/tmp/sockets
+    command: sidekiq
+  redis:
+    build:
+      context: docker/redis
+      dockerfile: Dockerfile.ci
+    volumes:
+      - socket-data:/run/redis
   mysql:
     build:
       context: ./docker/mysql
@@ -24,7 +44,12 @@ services:
   nginx:
     build:
       context: docker/nginx
+    volumes:
+      - socket-data:/umbrellanotice/tmp/sockets
     ports:
       - 80:80
     depends_on:
     - umbrellanotice
+
+volumes:
+  socket-data:

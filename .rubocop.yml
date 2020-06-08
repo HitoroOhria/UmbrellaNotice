@@ -12,8 +12,13 @@ AllCops:
 Layout/LineLength:
   Max: 105
 
+Layout/HashAlignment:
+  Enabled: false
+
 Metrics/BlockLength:
   Max: 65
+  Exclude:
+    - 'spec/**/*.rb'
 
 Metrics/MethodLength:
   Max: 13
@@ -21,6 +26,10 @@ Metrics/MethodLength:
 Lint/NonDeterministicRequireOrder:
   Exclude:
     - 'spec/rails_helper.rb'
+
+Lint/UnusedMethodArgument:
+  Exclude:
+    - 'app/controllers/application_controller.rb'
 
 Style/EmptyMethod:
   Exclude:
@@ -47,4 +56,7 @@ Style/FrozenStringLiteralComment:
   Enabled: false
 
 Style/AsciiComments:
+  Enabled: false
+
+Style/Semicolon:
   Enabled: false

@@ -1,9 +1,5 @@
 require_relative 'boot'
 
-require 'json'
-require 'open-uri'
-require 'romkan'
-
 require 'rails/all'
 
 # Require the gems listed in Gemfile, including any gems
@@ -28,5 +24,11 @@ module Webapp
     end
 
     config.time_zone = 'Asia/Tokyo'
+
+    # production環境でのlibディレクトリの読み込みを設定
+    config.paths.add 'lib', eager_load: true
+
+    # キューイングバックエンドを設定
+    config.active_job.queue_adapter = :sidekiq
   end
 end

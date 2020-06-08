@@ -18,12 +18,16 @@ gem 'omniauth-facebook'
 gem 'rjb'
 gem 'zipang'
 gem 'romkan'
+gem 'line-bot-api'
+gem 'sidekiq'
+gem 'redis-namespace'
 
 group :development, :test do
   gem 'faker'
   gem 'pry-rails'
   gem 'pry-doc'
   gem 'pry-remote'
+  gem 'pry-byebug'
   gem 'rails-erd'
 end
 
@@ -37,6 +41,7 @@ end
 
 group :test do
   gem 'rspec-rails'
+  gem 'rspec-sidekiq'
   gem 'spring-commands-rspec'
   gem 'factory_bot_rails'
   gem 'capybara'

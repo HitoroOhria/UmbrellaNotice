@@ -1,25 +1,56 @@
 class WeathersController < ApplicationController
-  def notice
-    @weather_forecast = json_weather_infomation('おしゃまんべ')
-    @rain_notice = today_is_rainy?(@weather_forecast)
+  before_action :authenticate,         only: %i[trigger line_notice]
+  before_action :validate_notice_time, only: [:trigger]
+
+  protect_from_forgery except: %i[trigger line_notice]
+
+  TOLERANCE_TIME = 3
+
+  def information
+    weather           = Weather.first
+    @weather_forecast = weather.forecast
+  end
+
+  def trigger
+    line_users = LineUser.where(notice_time: params[:notice_time])
+
+    line_users.each do |line_user|
+      PostWeathersNoticeWorker.perform_async(line_user.line_id, line_user.token)
+    end
+    render_success
+  end
+
+  def line_notice
+    line_user = LineUser.find_by(line_id: params[:line_id])
+    weather   = line_user.weather
+    text      = read_message('notice_weather', line_user: line_user, weather: weather)
+    message   = { type: 'text', text: text }
+
+    client.push_message(line_user.line_id, message)
+    render_success
   end
 
   private
 
-  # OpenWeatherAPI から、引数の市名の天気予報を取得
-  def json_weather_infomation(city_name)
-    romaji_city_name = Zipang.to_slug(city_name).gsub(/\-/, '').gsub(/m(?!(a|i|u|e|o|m))/, 'n').to_kunrei
-    base_url = 'http://api.openweathermap.org/data/2.5/forecast'
-    response = OpenURI.open_uri(base_url + "?cnt=8&q=#{romaji_city_name},jp" \
-                                 + "&appid=#{Rails.application.credentials.open_weather_api[:app_key]}")
-    JSON.parse(response.read, symbolize_names: true)
+  def validate_notice_time
+    current_time = Time.zone.now
+    notice_time  = params[:notice_time].match(/(\d{2}):(\d{2})/)
+    minute_range = (current_time.min - TOLERANCE_TIME)..(current_time.min + TOLERANCE_TIME)
+    return if notice_time_is_valid?(current_time, notice_time, minute_range)
+
+    render_bad_request
   end
 
-  # 引数の天気予報の内容から、雨が降るか判定
-  def today_is_rainy?(json_weathers)
-    rainy_weathers = json_weathers[:list].select do |weather|
-      weather[:rain].present? ? weather[:rain][:'3h'] : nil
+  def notice_time_is_valid?(current_time, notice_time, minute_range)
+    current_time.hour == notice_time[1].to_i || minute_range.include?(notice_time[2].to_i)
+  end
+
+  def authenticate
+    line_user = LineUser.find_by(line_id: params[:line_id])
+    token     = line_user.try(:token) || Rails.application.credentials.http[:trigger_token]
+
+    authenticate_or_request_with_http_token do |request_token, _options|
+      ActiveSupport::SecurityUtils.secure_compare(request_token, token)
     end
-    rainy_weathers.find { |weather| weather[:rain][:'3h'] >= 2 } .present?
   end
 end

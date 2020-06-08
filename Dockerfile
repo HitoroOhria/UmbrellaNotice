@@ -24,10 +24,13 @@ RUN bundle install
 
 ENTRYPOINT [ \
   "prehook", "bundle install", "--", \
+  "switch", \
+      "sidekiq=bundle exec sidekiq -q sidekiq", \
   "prehook", "echo sleep 45 seconds for mysql Start Up Comprete", "--", \
   "prehook", "sleep 45", "--", \
   "prehook", "echo finish sleep", "--", \
   "prehook", "bundle exec rails db:create", "--", \
   "prehook", "bundle exec rails db:migrate", "--", \
+  "prehook", "bundle exec rails db:seed", "--", \
   "prehook", "bundle exec unicorn_rails -c /umbrellanotice/config/unicorn.rb -E development", "--" \
 ]

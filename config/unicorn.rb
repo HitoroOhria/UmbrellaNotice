@@ -1,9 +1,15 @@
+case ENV['RAILS_ENV']
+when 'production'
+  $listen  = File.expand_path 'tmp/sockets/task/unicorn.sock', $app_dir
+else
+  $listen  = File.expand_path 'tmp/sockets/unicorn.sock', $app_dir
+end
+
 $worker  = 2
 $timeout = 120
-$app_dir = "/umbrellanotice"
-$listen  = File.expand_path 'tmp/sockets/unicorn.sock', $app_dir
+$app_dir = '/umbrellanotice'
 $pid     = File.expand_path 'tmp/pids/unicorn.pid', $app_dir
-$std_log = File.expand_path 'log/unicorn.log', $app_dir
+$std_log = '/dev/stdout'
 
 worker_processes  $worker
 working_directory $app_dir
@@ -12,6 +18,7 @@ stdout_path $std_log
 timeout $timeout
 listen  $listen
 pid $pid
+logger Logger.new($stdout)
 
 preload_app true
 
