@@ -21,6 +21,7 @@ gem 'romkan'
 gem 'line-bot-api'
 gem 'sidekiq'
 gem 'redis-namespace'
+gem 'google-api-client', '~> 0.34'
 
 group :development, :test do
   gem 'faker'
