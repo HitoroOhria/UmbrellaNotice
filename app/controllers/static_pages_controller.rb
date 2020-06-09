@@ -3,9 +3,15 @@ class StaticPagesController < ApplicationController
   def home
   end
 
+  # /about
+  def about
+  end
+
+  # /policy
   def policy
   end
 
+  # /terms
   def terms
   end
 end
