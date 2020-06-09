@@ -4,7 +4,7 @@ services:
   umbrellanotice:
     build:
       context: .
-      dockerfile: docker/umbrellanotice/Dockerfile.ci
+      dockerfile: docker/umbrellanotice/Dockerfile
     environment:
       TZ: Asia/Tokyo
       RAILS_MASTER_KEY: $RAILS_MASTER_KEY
@@ -14,7 +14,6 @@ services:
     depends_on:
       - mysql
       - redis
-  command: development
   sidekiq:
     build:
       context: .
@@ -37,7 +36,7 @@ services:
   mysql:
     build:
       context: .
-      dockerfile: docker/mysqlDockerfile.ci
+      dockerfile: docker/mysql/Dockerfile.ci
     environment:
       MYSQL_ROOT_PASSWORD: password
     ports:

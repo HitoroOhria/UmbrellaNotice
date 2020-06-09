@@ -21,7 +21,7 @@ RSpec.describe "LinesApiControllers", type: :request do
 
     describe 'レスポンス' do
       before do
-        post line_webhock_path
+        post lines_webhock_path
       end
 
       it { is_expected.to have_http_status 200 }
@@ -30,7 +30,7 @@ RSpec.describe "LinesApiControllers", type: :request do
     context '位置情報の設定が済んでない時' do
       context 'ユーザーが初めてアクセスした時' do
         it 'Lineユーザーを作成すること' do
-          expect { post line_webhock_path }.to change(LineUser, :count).by(1)
+          expect { post lines_webhock_path }.to change(LineUser, :count).by(1)
         end
       end
 

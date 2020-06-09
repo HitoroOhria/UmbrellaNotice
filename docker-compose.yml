@@ -21,6 +21,7 @@ services:
       - redis
     tty: true
     stdin_open: true
+    command: development
   sidekiq:
     build:
       context: .
