@@ -13,6 +13,7 @@ RUN apt-get update \
   && mv entrykit /bin/entrykit \
   && chmod +x /bin/entrykit \
   && entrykit --symlink \
+  && curl -sL https://deb.nodesource.com/setup_10.x | bash - \
   && apt-get install -y \
        build-essential \
        nodejs \
