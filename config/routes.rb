@@ -4,12 +4,12 @@ Rails.application.routes.draw do
   }
 
   root 'static_pages#home'
-  get  '/about',               to: 'static_pages#about'
-  get  '/policy',              to: 'static_pages#policy'
-  get  '/terms',               to: 'static_pages#terms'
+  get  'about',                to: 'static_pages#about'
+  get  'policy',               to: 'static_pages#policy'
+  get  'terms',                to: 'static_pages#terms'
   get  'weathers/information', to: 'weathers#information'
   post 'weathers/trigger',     to: 'weathers#trigger'
   post 'weathers/line_notice', to: 'weathers#line_notice'
-  post 'lines/webhock',         to: 'line_api#webhock'
-  post 'calenders/callback',   to: 'calenders#callback'
+  post 'lines/webhock',        to: 'line_api#webhock'
+  post 'calendars/callback',   to: 'calendars#callback'
 end
