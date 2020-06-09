@@ -30,7 +30,6 @@ services:
   redis:
     build:
       context: docker/redis
-      dockerfile: Dockerfile.ci
     volumes:
       - socket-data:/run/redis
   mysql:
