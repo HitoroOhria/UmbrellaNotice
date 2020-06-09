@@ -34,5 +34,5 @@ ENTRYPOINT [ \
   "switch", \
       "circleci=bundle exec unicorn_rails -c /umbrellanotice/config/unicorn.rb -E development", \
   "prehook", "bundle exec rails db:seed", "--", \
-  "bundle exec unicorn_rails -c /umbrellanotice/config/unicorn.rb -E development" \
+  "prehook", "bundle exec unicorn_rails -c /umbrellanotice/config/unicorn.rb -E development", "--" \
 ]
