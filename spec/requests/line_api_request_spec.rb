@@ -38,8 +38,8 @@ RSpec.describe "LinesApiControllers", type: :request do
         let(:request_file) { 'spec/fixtures/line_api/absolute_user_id_request.json' }
 
         it 'Lineユーザーを作成しないこと' do
-          post line_webhock_path
-          expect { post line_webhock_path }.to_not change(LineUser, :count)
+          post lines_webhock_path
+          expect { post lines_webhock_path }.to_not change(LineUser, :count)
         end
       end
 
@@ -47,13 +47,13 @@ RSpec.describe "LinesApiControllers", type: :request do
         let(:current_weather_api_response) { false }
 
         it 'Weatherを作成しないこと' do
-          expect { post line_webhock_path }.to_not change(Weather, :count)
+          expect { post lines_webhock_path }.to_not change(Weather, :count)
         end
       end
 
       context '有効なテキストイベントを受け取った時' do
         it 'Weatherを作成すること' do
-          expect { post line_webhock_path }.to change(Weather, :count).by(1)
+          expect { post lines_webhock_path }.to change(Weather, :count).by(1)
         end
       end
 
@@ -61,7 +61,7 @@ RSpec.describe "LinesApiControllers", type: :request do
         let(:request_file) { 'spec/fixtures/line_api/location_request.json.erb' }
 
         it 'Weatherを作成すること' do
-          expect { post line_webhock_path }.to change(Weather, :count).by(1)
+          expect { post lines_webhock_path }.to change(Weather, :count).by(1)
         end
       end
     end
@@ -70,11 +70,11 @@ RSpec.describe "LinesApiControllers", type: :request do
       let(:request_file_name) { 'absolute_user_id_request.json' }
 
       before do
-        post line_webhock_path
+        post lines_webhock_path
       end
 
       it 'HTTPステータス200を返すこと' do
-        post line_webhock_path
+        post lines_webhock_path
         is_expected.to have_http_status 200
       end
     end
