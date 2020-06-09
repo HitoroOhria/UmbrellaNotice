@@ -32,6 +32,7 @@ group :development, :test do
   gem 'pry-remote'
   gem 'pry-byebug'
   gem 'rails-erd'
+  gem 'brakeman'
 end
 
 group :development do
