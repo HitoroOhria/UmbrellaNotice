@@ -22,6 +22,7 @@ gem 'zipang'
 gem 'romkan'
 gem 'sidekiq'
 gem 'redis-namespace'
+gem 'aws-sdk-s3'
 gem 'line-bot-api'
 gem 'google-api-client', '~> 0.34'
 
