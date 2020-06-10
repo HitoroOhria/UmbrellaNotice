@@ -1,9 +1,79 @@
-<h1>Welcom to Umbrella Notice</h1>
-<h3>ログイン機能</h3>
-<p><%= link_to 'sign_up', new_user_registration_path %></p>
-<p><%= link_to 'sign_in', new_user_session_path %></p>
-<p><%= link_to "Sign in with Facebook", user_facebook_omniauth_authorize_path %></p>
-<p><%= link_to 'forget_password', new_user_password_path %></p>
-
-<h3>コントローラー</h3>
-<p><%= link_to 'weathers/information', weathers_information_path %></p>
+<div class="container">
+  <div class="row">
+    <div class="col-sm text-center">
+      <h1>Umbrela Notice へようこそ</h1><br>
+      <h4 class="text-muted">
+        <p>雨が降る日に通知を送信するアプリケーションです。</p>
+        <p>もう、雨に濡れる必要はありません。</p>
+      </h4>
+    </div>
+  </div>
+</div>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-sm-6 my-auto">
+      <div class="card border-light bg-light text-center">
+        <div class="card-body">
+          <h3 class="card-title">About</h3>
+          <p class="card-text">傘を持たずに家を出て、雨に濡れてしまった、、、。</p>
+          <p class="card-text">そんな体験はありませんか？</p>
+          <p class="card-text">その失敗をシステムで解決しましょう。</p>
+          <p class="card-text">Umbrella Noticeは、登録した位置情報を利用します。</p>
+          <p class="card-text">毎朝、雨が降るかどうかを自動で判断し、LINEで通知します。</p>
+          <p class="card-text">もう、前日に天気予報を確認しなくても良いのです。</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 my-auto">
+      <%= image_tag 'rain', class: 'rounded img-fluid' %>
+    </div>
+  </div>
+</div>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-sm-6 my-auto">
+      <%= image_tag 'umbrella', class: 'rounded img-fluid' %>
+    </div>
+    <div class="col-sm-6 my-auto">
+      <div class="card border-light bg-light text-center">
+        <div class="card-body">
+          <h3 class="card-title">Simple</h3>
+          <p class="card-text">必要な操作は位置情報を設定するだけです。</p>
+          <p class="card-text">面倒なアカウント登録は必要ありません。</p>
+          <p class="card-text">あとは全て、Umbrella Noticeが行います。</p>
+          <p class="card-text">通知が来たら、あなたは傘を持てばよいのです。</p>
+          <p class="card-text">とてもシンプルです。</p>
+          <p class="card-text">さあ、雨に濡れない世界へと旅立ちましょう。</p>
+          <%= link_to 'LINE公式アカウントをフォロー',
+                      Rails.application.credentials.line_api[:follow_url],
+                      class: 'btn btn-outline-primary',
+                      role: 'button' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-sm-6 text-center my-auto">
+      <div class="card border-light bg-light text-center">
+        <div class="card-body">
+          <h3 class="card-title">Power Up</h3>
+          <p class="card-title">もしかしてあなたは、よく出張に出かけますか？</p>
+          <p class="card-title">それとも、完璧な精度を求めていますね？</p>
+          <p class="card-title">No Problem.</p>
+          <p class="card-title">Googleカレンダーと連携することにより、より精度の高い天気予報をお届けできます</p>
+          <p class="card-title">予定から自動で場所を取得し、より適切な判断を行います。</p>
+          <p class="card-title">このすばらしい機能を使うには、まずはアカウント登録を行ってください。</p>
+          <%= link_to 'アカウント登録',
+                      new_user_registration_path,
+                      class: 'btn btn-outline-primary',
+                      role: 'button' %>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 my-auto">
+      <%= image_tag 'calendar', class: 'rounded img-fluid' %>
+    </div>
+  </div>
+</div>
