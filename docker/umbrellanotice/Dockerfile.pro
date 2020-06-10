@@ -12,6 +12,7 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
 ADD . /umbrellanotice
 WORKDIR /umbrellanotice
 RUN mkdir -p tmp/sockets/task tmp/sockets/host log \
-  && bundle install
+  && bundle install \
+  && rails assets:precompile RAILS_ENV=production
 
 CMD bundle exec unicorn_rails -c /umbrellanotice/config/unicorn.rb -E production
