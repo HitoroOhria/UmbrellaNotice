@@ -4,8 +4,6 @@ class WeathersController < ApplicationController
 
   protect_from_forgery except: %i[trigger line_notice]
 
-  TOLERANCE_TIME = 3
-
   def information
     weather           = Weather.first
     @weather_forecast = weather.forecast

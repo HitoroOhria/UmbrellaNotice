@@ -1,9 +1,4 @@
 class Weather < ApplicationRecord
-  RAIN_FALL_JUDGMENT       = 3
-  TAKE_WEATHER_HOUR        = 15
-  RETRY_CALL_API_COUNT     = 3
-  RETRY_CALL_API_WAIT_TIME = 5
-
   belongs_to :user,      optional: true
   belongs_to :line_user, optional: true
 
