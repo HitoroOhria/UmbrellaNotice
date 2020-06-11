@@ -1,45 +1,62 @@
 <div class="container">
   <div class="row">
     <div class="col-sm text-center">
-      <h1>ログイン</h1><br>
-      <h4 class="text-muted mt-4">
+      <h1>ログイン</h1>
+      <h4 class="text-muted mt-1">
         <p>ログイン情報を入力してください。</p>
       </h4>
     </div>
   </div>
 </div>
-<div class="container">
+<div class="container mt-3">
   <div class="row">
-    <div class="col-sm text-center">
-      <h1>ログイン</h1><br>
-      <h4 class="text-muted mt-4">
-        <p>ログイン情報を入力してください。</p>
-      </h4>
+    <div class="col-sm-6 border-right">
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+        <div class="field mt-3">
+          <%= f.label :email %><br/>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control' %>
+        </div>
+
+        <div class="field mt-2">
+          <%= f.label :password %><br/>
+          <%= f.password_field :password, autocomplete: "current-password", class: 'form-control' %>
+        </div>
+
+        <% if devise_mapping.rememberable? %>
+          <div class="field mt-2">
+            <%= f.check_box :remember_me %>
+            <%= f.label 'ログイン情報を保存する' %>
+          </div>
+        <% end %>
+
+        <div class="actions text-center mt-3">
+          <%= f.submit 'Log in', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+      <div class="mt-5">
+        <p><%= link_to 'パスワードをお忘れですか?', new_user_password_path %></p>
+        <p><%= link_to '確認メールが届きませんか?', new_user_confirmation_path %></p>
+      </div>
+    </div>
+    <div class="col-sm-6 mt-5">
+      <div class="text-center">
+        <div>
+          <%= link_to Rails.application.credentials.line_api[:follow_url], class: 'btn btn-success w-75', role: 'button' do %>
+            <%= icon 'fab', 'line' %> LINEアカウントでログイン
+          <% end %>
+        </div>
+        <div class="mt-5">
+          <%= link_to Rails.application.credentials.line_api[:follow_url], class: 'btn btn-danger w-75', role: 'button' do %>
+            <%= icon 'fab', 'google' %> Googleアカウントでログイン
+          <% end %>
+        </div>
+        <div class="mt-5">
+          <%= link_to Rails.application.credentials.line_api[:follow_url], class: 'btn btn-primary w-75', role: 'button' do %>
+            <%= icon 'fab', 'facebook-square' %> Facebookアカウントでログイン
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-  <div class="field">
-    <%= f.label :email %><br />
-    <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
-  </div>
-
-  <div class="field">
-    <%= f.label :password %><br />
-    <%= f.password_field :password, autocomplete: "current-password" %>
-  </div>
-
-  <% if devise_mapping.rememberable? %>
-    <div class="field">
-      <%= f.check_box :remember_me %>
-      <%= f.label :remember_me %>
-    </div>
-  <% end %>
-
-  <div class="actions">
-    <%= f.submit "Log in" %>
-  </div>
-<% end %>
-
-<%= render "users/shared/links" %>
