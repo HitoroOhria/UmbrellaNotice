@@ -121,6 +121,8 @@ GEM
     faraday (1.0.1)
       multipart-post (>= 1.2, < 3)
     ffi (1.12.2)
+    font-awesome-sass (5.13.0)
+      sassc (>= 1.11)
     get_process_mem (0.2.5)
       ffi (~> 1.0)
     globalid (0.4.2)
@@ -414,6 +416,7 @@ DEPENDENCIES
   devise
   factory_bot_rails
   faker
+  font-awesome-sass (~> 5.13.0)
   google-api-client (~> 0.34)
   jbuilder (~> 2.5)
   jquery-rails
