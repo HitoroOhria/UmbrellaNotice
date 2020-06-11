@@ -32,8 +32,6 @@ ENTRYPOINT [ \
   "prehook", "echo finish sleep", "--", \
   "prehook", "bundle exec rails db:create", "--", \
   "prehook", "bundle exec rails db:migrate", "--", \
-  "switch", \
-      "circleci=bundle exec unicorn_rails -c /umbrellanotice/config/unicorn.rb -E development", \
   "prehook", "bundle exec rails db:seed", "--", \
-  "prehook", "bundle exec unicorn_rails -c /umbrellanotice/config/unicorn.rb -E development", "--" \
+  "prehook", "development=bundle exec unicorn_rails -c /umbrellanotice/config/unicorn.rb -E development" \
 ]
