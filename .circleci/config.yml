@@ -58,7 +58,6 @@ jobs:
     docker:
       - image: 'circleci/python:3.7.1'
     steps:
-      - checkout
       - setup_remote_docker
       - aws-cli/install
       - aws-ecr/build-and-push-image:
@@ -73,7 +72,6 @@ jobs:
     docker:
       - image: 'circleci/python:3.7.1'
     steps:
-      - checkout
       - setup_remote_docker
       - aws-cli/install
       - aws-ecr/build-and-push-image:
@@ -111,34 +109,34 @@ workflows:
   version: 2.1
   test_and_deploy:
     jobs:
-#      - RSpec
-#      - RuboCop
-      - Push-umbrellanotice-image #:
-#          requires:
-#            - RSpec
-#            - RuboCop
-#      - Push-db-migrate-image:
-#          requires:
-#            - RSpec
-#            - RuboCop
-#      - Run-db-migrate-task:
-#          requires:
-#            - Push-db-migrate-image
-#      - aws-ecs/deploy-service-update:
-#          name: Update-umbrellanotice-container-of-ECS
-#          family: 'umbrellanotice_task'
-#          cluster-name: $AWS_ECS_ARN
-#          service-name: 'umbrellanotice_Application_Service'
-#          container-image-name-updates: "container=umbrellanotice,tag=${CIRCLE_SHA1}"
-#          requires:
-#            - Run-db-migrate-task
-#            - Push-umbrellanotice-image
-#      - aws-ecs/deploy-service-update:
-#          name: Update-sidekiq-container-of-ECS
-#          family: 'umbrellanotice_redis'
-#          cluster-name: $AWS_ECS_ARN
-#          service-name: 'umbrellanotice_Sidekiq_Service'
-#          container-image-name-updates: "container=sidekiq,tag=${CIRCLE_SHA1}"
-#          requires:
-#            - Run-db-migrate-task
-#            - Push-umbrellanotice-image
+      - RSpec
+      - RuboCop
+      - Push-umbrellanotice-image:
+          requires:
+            - RSpec
+            - RuboCop
+      - Push-db-migrate-image:
+          requires:
+            - RSpec
+            - RuboCop
+      - Run-db-migrate-task:
+          requires:
+            - Push-db-migrate-image
+      - aws-ecs/deploy-service-update:
+          name: Update-umbrellanotice-container-of-ECS
+          family: 'umbrellanotice_task'
+          cluster-name: $AWS_ECS_ARN
+          service-name: 'umbrellanotice_Application_Service'
+          container-image-name-updates: "container=umbrellanotice,tag=${CIRCLE_SHA1}"
+          requires:
+            - Run-db-migrate-task
+            - Push-umbrellanotice-image
+      - aws-ecs/deploy-service-update:
+          name: Update-sidekiq-container-of-ECS
+          family: 'umbrellanotice_redis'
+          cluster-name: $AWS_ECS_ARN
+          service-name: 'umbrellanotice_Sidekiq_Service'
+          container-image-name-updates: "container=sidekiq,tag=${CIRCLE_SHA1}"
+          requires:
+            - Run-db-migrate-task
+            - Push-umbrellanotice-image
