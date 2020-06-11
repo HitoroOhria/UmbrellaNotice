@@ -10,7 +10,7 @@
 </div>
 <div class="container mt-3">
   <div class="row">
-    <div class="col-sm-6 mx-auto">
+    <div class="col-sm-6 border-right">
       <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
         <%= render "devise/shared/error_messages", resource: resource %>
 
@@ -27,7 +27,7 @@
           <%= f.password_field :password, autocomplete: "new-password", class: 'form-control' %>
         </div>
 
-        <div class="field">
+        <div class="field mt-2">
           <%= f.label :password %><span class="text-muted"> ( 再入力 )</span><br />
           <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'form-control' %>
         </div>
@@ -40,6 +40,7 @@
         <p><%= link_to '確認メールが届きませんか?', new_user_confirmation_path %></p>
       </div>
     </div>
+    <%= render 'users/shared/simple_login', action_text: 'サインアップ' %>
   </div>
 </div>
 
