@@ -1,6 +1,7 @@
 FROM ruby:2.5.1
 
 ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk-amd64
+ARG RAILS_MASTER_KEY
 
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
   && apt-get update \
