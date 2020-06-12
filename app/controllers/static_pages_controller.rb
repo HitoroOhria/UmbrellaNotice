@@ -1,6 +1,7 @@
 class StaticPagesController < ApplicationController
   # root
   def home
+    @user = current_user
   end
 
   # /about
