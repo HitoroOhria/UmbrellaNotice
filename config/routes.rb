@@ -12,4 +12,6 @@ Rails.application.routes.draw do
   post 'weathers/line_notice', to: 'weathers#line_notice'
   post 'lines/webhock',        to: 'line_api#webhock'
   post 'calendars/callback',   to: 'calendars#callback'
+
+  resources :users, only: [:show]
 end
