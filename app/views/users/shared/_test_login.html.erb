@@ -1,0 +1,22 @@
+<div class="mt-5">
+  <div class="card bg-light w-75 mx-auto">
+    <div class="card-body text-center">
+      <p class="card-text">もしかして、あなたはポートフォリオ評価者ですか？</p>
+      <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+        <div hidden class="field mt-3">
+          <%= f.label :email %><br/>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: 'form-control', value: 'test@example.com' %>
+        </div>
+
+        <div hidden class="field mt-2">
+          <%= f.label :password %><br/>
+          <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', value: 'example' %>
+        </div>
+
+        <div class="actions text-center mt-3">
+          <%= f.submit 'テストユーザーとして Log in', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
