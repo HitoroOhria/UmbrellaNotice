@@ -3,6 +3,7 @@ class UsersController < ApplicationController
 
   # /usres/:id
   def show
-    @user = current_user
+    @user    = current_user
+    @user_id = session['user_id']
   end
 end
