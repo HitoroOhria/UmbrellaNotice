@@ -1,1 +1,61 @@
-<%= link_to 'Googleカレンダーと連携させる' , google_auth_url%>
+<div class="container">
+  <div class="row">
+    <div class="col-sm text-center">
+      <h1>設定</h1>
+    </div>
+  </div>
+</div>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-sm">
+      <table class="table table-bordered text-center w-75 mx-auto">
+        <thead>
+        <tr>
+          <th class="table-active" scope="col" colspan="3">ユーザー情報</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <th>メール</th>
+          <td colspan="2"><%= @user.email %></td>
+        </tr>
+        <tr>
+          <th>サイレント通知</th>
+          <td colspan="2"><%= silent_notice_mode(@line_user) %></td>
+        </tr>
+        <tr>
+          <th class="table-active" scope="col" colspan="3">天気予報の位置情報</th>
+        </tr>
+        <tr>
+          <th>市</th>
+          <td colspan="2"><%= @weather.city %></td>
+        </tr>
+        <tr>
+          <th>経度</th>
+          <td colspan="2"><%= @weather.lat %></td>
+        </tr>
+        <tr>
+          <th>緯度</th>
+          <td colspan="2"><%= @weather.lon %></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-sm text-center">
+      <% if true %>
+        <%= link_to 'Googleカレンダーと連携させる',
+                    @calendar.authorization_url(domain_url),
+                    class: 'btn btn-primary',
+                    role: 'button' %>
+      <% else %>
+        <button type="button" class="btn btn-outline-primary" style="pointer-events: none;">Googleカレンダーと連携済みです！</button>
+      <% end %>
+      <p>@user_id => <%= @user_id %></p>
+    </div>
+  </div>
+</div>
+
