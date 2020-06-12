@@ -35,7 +35,7 @@ class Weather < ApplicationRecord
     self.lat = lat.round(2)
     self.lon = lon.round(2)
     save
-    line_user.update_attribute(:located_at, Time.zone.now)
+    line_user.update_attribute(:located_at, Time.zone.now, silent_notice: true)
   end
 
   private
@@ -43,20 +43,20 @@ class Weather < ApplicationRecord
   def current_weather_api
     api_type      = 'weather'
     request_query = "&q=#{city}"
-    take_api_and_error_handling(api_type, request_query)
+    take_api_and_handle_error(api_type, request_query)
   end
 
   def one_call_api
     api_type      = 'onecall'
     request_query = "&lat=#{lat}&lon=#{lon}&exclude=current,minutely,daily"
-    take_api_and_error_handling(api_type, request_query)
+    take_api_and_handle_error(api_type, request_query)
   end
 
   # 天気予報を取得するメソッドを呼び出す
   # 天気予報取得時にエラーが発生した場合、3回までリトライする
   # 取得できた場合 => 天気予報 Hash
   # 取得できなかった場合 => false
-  def take_api_and_error_handling(api_type, request_query)
+  def take_api_and_handle_error(api_type, request_query)
     retry_count = 0
     begin
       call_weather_api(api_type, request_query)
