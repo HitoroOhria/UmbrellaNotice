@@ -2,16 +2,16 @@ require 'rails_helper'
 
 RSpec.describe "LinesApiControllers", type: :request do
   describe '#webhock' do
-    let(:request_file_dir)             { 'spec/fixtures/line_api' }
-    let(:request_file_name)            { 'city_request.json.erb' }
-    let(:request_file_path)            { Rails.root + request_file_dir + request_file_name }
-    let(:request_body)                 { ERB.new(File.open(request_file_path).read).result }
+    let(:request_file_dir)       { 'spec/fixtures/line_api' }
+    let(:request_file_name)      { 'city_request.json.erb' }
+    let(:request_file_path)      { Rails.root + request_file_dir + request_file_name }
+    let(:request_body)           { ERB.new(File.open(request_file_path).read).result }
 
-    let(:current_weather_api_response) { { coord: { lat: 34.539012, lon: 140.345897 } } }
-    let(:double_events)                { Line::Bot::Client.new.parse_events_from(request_body) }
+    let(:double_events)          { Line::Bot::Client.new.parse_events_from(request_body) }
+    let(:city_to_coord_response) { { lat: 34.539012, lon: 140.345897 } }
 
     before do
-      allow_any_instance_of(Weather).to receive(:current_weather_api) { current_weather_api_response }
+      allow_any_instance_of(Weather).to receive(:city_to_coord) { city_to_coord_response }
       allow_any_instance_of(LineApiController).to receive(:reply)
       allow_any_instance_of(LineApiController).to receive(:validate_signature)
       allow_any_instance_of(LineApiController).to receive(:events) { double_events }
@@ -44,7 +44,7 @@ RSpec.describe "LinesApiControllers", type: :request do
       end
 
       context '無効なテキストイベントを受け取った時' do
-        let(:current_weather_api_response) { false }
+        let(:city_to_coord_response) { nil }
 
         it 'Weatherを作成しないこと' do
           expect { post lines_webhock_path }.to_not change(Weather, :count)

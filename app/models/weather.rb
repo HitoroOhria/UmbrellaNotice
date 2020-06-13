@@ -4,7 +4,7 @@ class Weather < ApplicationRecord
   belongs_to :user,      optional: true
   belongs_to :line_user, optional: true
 
-  validates :city, format:       { with: /.+[市区]/, message: '文字列の末尾に「市」か「区」を付ける必要があります' }
+  validates :city, format:       { with: /.+[市区]/, message: '市名の末尾に「市」か「区」を付ける必要があります' }
   validates :lat,  numericality: { greater_than_or_equal_to: -90,  less_than_or_equal_to: 90 }
   validates :lon,  numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
 
@@ -31,7 +31,7 @@ class Weather < ApplicationRecord
     self.lat = lat.round(2)
     self.lon = lon.round(2)
 
-    save && line_user.update_attribute(:located_at, Time.zone.now, silent_notice: true)
+    save && line_user.update_attributes(located_at: Time.zone.now, silent_notice: true)
   end
 
   private

@@ -28,6 +28,46 @@ RSpec.describe Weather, type: :model do
   end
 
   describe 'Validates' do
+    describe 'weathers.city' do
+      let(:error_message) { '文字列の末尾に「市」か「区」を付ける必要があります' }
+
+      subject(:weather) { build(:base_weather, city: city_name) }
+
+      context '値が「渋谷」の時' do
+        let(:city_name) { '渋谷' }
+
+        it { is_expected.to_not be_valid }
+
+        it 'エラーメッセージを表示すること' do
+          weather.valid?
+          expect(weather.errors[:city]).to include(error_message)
+        end
+      end
+
+      context '値が「かすみがうら」の時' do
+        let(:city_name) { 'かすみがうら' }
+
+        it { is_expected.to_not be_valid }
+
+        it 'エラーメッセージを表示すること' do
+          weather.valid?
+          expect(weather.errors[:city]).to include(error_message)
+        end
+      end
+
+      context '値が「渋谷区」の時' do
+        let(:city_name) { '渋谷区' }
+
+        it { is_expected.to be_valid }
+      end
+
+      context '値が「かすみがうら市」の時' do
+        let(:city_name) { 'かすみがうら市' }
+
+        it { is_expected.to be_valid }
+      end
+    end
+
     describe 'weathers.lat' do
       subject(:weather) { build(:base_weather, lat: latitude) }
 
@@ -103,13 +143,13 @@ RSpec.describe Weather, type: :model do
       it { is_expected.to eq false }
     end
 
-    context '天気予報の雨量が 2.9[mm] の時' do
+    context '天気予報の雨量が 0.79[mm] の時' do
       let(:weather_file_name) { 'cloudy_rain_forecast.json' }
 
       it { is_expected.to eq false }
     end
 
-    context '天気予報の雨量が 3[mm] の時' do
+    context '天気予報の雨量が 0.8[mm] の時' do
       let(:weather_file_name) { 'rain_forecast.json' }
 
       it { is_expected.to eq true }
@@ -120,14 +160,14 @@ RSpec.describe Weather, type: :model do
     let!(:weather) { build(:base_weather) }
 
     before do
-      allow(weather).to receive(:current_weather_api).and_return(api_response)
+      allow(weather).to receive(:city_to_coord).and_return(response)
       allow(weather).to receive(:save_location).with(any_args)
     end
 
     subject(:add_and_save_location) { weather.add_and_save_location('渋谷区') }
 
-    context 'APIコールのレスポンスが有効なJSONの場合' do
-      let(:api_response) { { coord: { lat: 34.408413, lon: 140.229085 } } }
+    context '#city_to_coord のレスポンスが有効な値の場合' do
+      let(:response) { { lat: 34.408413, lon: 140.229085 } }
 
       it '#save_location(lat, lon)を呼び出すこと' do
         expect(weather).to receive(:save_location).once
@@ -135,36 +175,10 @@ RSpec.describe Weather, type: :model do
       end
     end
 
-    context 'APIコールのレスポンスがfalseの場合' do
-      let(:api_response) { false }
+    context 'city_to_coordのレスポンスがnilの場合' do
+      let(:response) { nil }
 
       it { is_expected.to eq nil }
-    end
-  end
-
-  describe '#to_romaji(text)' do
-    context '引数に日本語が渡された時' do
-      let(:weather) { build(:base_weather) }
-
-      it '一部以外、訓令式のローマ字であること' do
-        expect(weather.to_romaji('長万部')).to eq 'osyamanbe'
-      end
-
-      it '「し」「ち」「つ」は「shi」「chi」「tsu」に変換すること' do
-        expect(weather.to_romaji('しちつ')).to eq 'shichitsu'
-      end
-
-      context '文字列の末尾に「市」がついていた時' do
-        it '「市」を除いたローマ字であること' do
-          expect(weather.to_romaji('かすみがうら市')).to eq 'kasumigaura'
-        end
-      end
-
-      context '文字列の末尾に「区」がついていた時' do
-        it '「区」を除いたローマ字であること' do
-          expect(weather.to_romaji('渋谷区')).to eq 'shibuya'
-        end
-      end
     end
   end
 
@@ -173,24 +187,70 @@ RSpec.describe Weather, type: :model do
     let!(:line_user)  { create(:line_user, weather: weather) }
     let!(:located_at) { line_user.located_at }
 
-    before do
-      weather.save_location(35.659108, 139.703728)
+    describe 'カラムの値' do
+      before do
+        weather.save_location(35.659108, 139.703728)
+      end
+
+      it 'latカラムが小数点第二位に丸められて保存されること' do
+        expect(weather.reload.lat).to eq 35.66
+      end
+
+      it 'lonカラムが小数点第二位に丸められて保存されること' do
+        expect(weather.reload.lon).to eq 139.70
+      end
     end
 
-    it 'latカラムが小数点第二位に丸められて保存されること' do
-      expect(weather.reload.lat).to eq 35.66
+    context 'saveに失敗した時' do
+      before do
+        allow(weather).to receive(:save).and_return(false)
+        weather.save_location(35.659108, 139.703728)
+      end
+
+      it '関連するLineユーザーのlocated_atカラムが更新されないこと' do
+        expect(line_user.reload.located_at).to eq located_at
+      end
     end
 
-    it 'lonカラムが小数点第二位に丸められて保存されること' do
-      expect(weather.reload.lon).to eq 139.70
-    end
+    context 'saveに成功した時' do
+      before do
+        allow(weather).to receive(:save).and_return(true)
+        weather.save_location(35.659108, 139.703728)
+      end
 
-    it '関連するLineユーザーのlocated_atカラムが更新されること' do
-      expect(line_user.reload.located_at).to_not eq located_at
+      it '関連するLineユーザーのlocated_atカラムが更新されること' do
+        expect(line_user.reload.located_at).to_not eq located_at
+      end
     end
   end
 
-  describe '#take_api_and_error_handling(api_type, request_query)' do
+  describe '#city_to_coord' do
+    let(:weather)   { build(:base_weather) }
+    let(:dir_path)  { 'spec/fixtures/geocoding_api' }
+    let(:file_name) { 'sccess_response.xml' }
+    let(:xml_file)  { File.open(Rails.root + dir_path + file_name) }
+    let(:response)  { REXML::Document.new(xml_file.read) }
+
+    before do
+      allow(weather).to receive(:geocoding_api).and_return(response)
+    end
+
+    subject { weather.send(:city_to_coord) }
+
+    context '#geocoding_apiのレスポンスがエラーの時' do
+      let(:file_name) { 'error_response.xml' }
+
+      it { is_expected.to eq nil }
+    end
+
+    context '#geocoding_apiのレスポンスが成功の時' do
+      let(:return_hash) { { lat: 35.658581, lon: 139.745433 } }
+
+      it { is_expected.to eq return_hash }
+    end
+  end
+
+  describe '#call_api_and_handle_error(api_name)' do
     context 'エラーが発生し続ける時' do
       let(:weather)      { build(:base_weather) }
       let(:exception_io) { double('Exception IO') }
@@ -198,41 +258,26 @@ RSpec.describe Weather, type: :model do
 
       before do
         allow(exception_io).to receive_message_chain(:status, :[]).with(0).and_return('302')
-        allow(weather).to      receive(:call_weather_api).with(any_args).and_raise(http_error)
+        allow(weather).to      receive(:call_geocoding_api).and_raise(http_error)
       end
 
       it '3回までリトライし、falseを返すこと' do
         expect(weather).to receive(:retry_message).exactly(4).times
-        expect(weather.send(:take_api_and_error_handling, 'api', 'hoge')).to eq false
+        expect(weather.send(:call_api_and_handle_error, 'geocoding')).to eq false
       end
     end
   end
 
-  describe '#call_weather_api(api_type, request_query)' do
-    let(:api_response) { StringIO.new('{ "weather": "clear" }') }
-    let(:weather)      { build(:base_weather) }
+  describe '#to_romaji(text)' do
+    context '引数に日本語が渡された時' do
+      let(:weather) { build(:base_weather) }
 
-    before do
-      allow(OpenURI).to receive(:open_uri).and_return(api_response)
-    end
-
-    subject(:call_weather_api) { weather.send(:call_weather_api, api_type, 'hoge') }
-
-    context 'api_type が "onecall" の時' do
-      let(:api_type) { 'onecall' }
-
-      it '#refill_rain(json_forecast) を呼び出すこと' do
-        expect(weather).to receive(:refill_rain).once
-        call_weather_api
+      it '一部以外、訓令式のローマ字であること' do
+        expect(weather.send(:to_romaji, '長万部')).to eq 'osyamanbe'
       end
-    end
 
-    context 'api_type が "onecall" 以外の時' do
-      let(:api_type)      { 'weather' }
-      let(:json_response) { { weather: 'clear' } }
-
-      it 'Hashに変換したAPIレスポンスを返すこと' do
-        is_expected.to eq json_response
+      it '「し」「ち」「つ」は「shi」「chi」「tsu」に変換すること' do
+        expect(weather.send(:to_romaji, 'しちつ')).to eq 'shichitsu'
       end
     end
   end
@@ -256,7 +301,7 @@ RSpec.describe Weather, type: :model do
     end
 
     context 'json_forecast の :hourly の天気が雨の時' do
-      context '雨量が 3[mm] 未満の時' do
+      context '雨量が 0.8[mm] 未満の時' do
         let(:weather_file_name) { 'cloudy_rain_forecast.json' }
 
         it '天気を曇りに変更すること' do
@@ -271,7 +316,7 @@ RSpec.describe Weather, type: :model do
         end
       end
 
-      context '雨量が 3[mm] 以上の時' do
+      context '雨量が 0.8[mm] 以上の時' do
         let(:weather_file_name) { 'rain_forecast.json' }
 
         it '変更を加えないこと' do
