@@ -16,14 +16,14 @@ class Weather < ApplicationRecord
     rain_falls.find { |rain_fall| rain_fall >= RAIN_FALL_JUDGMENT }.present?
   end
 
-  # CurrentWeatherAPI のレスポンスから、lat と lon を取得する
-  # 取得に成功した場合 => save_location を呼び出す
-  # 取得に失敗した場合 => nil を返す
-  def add_and_save_location(text)
-    self.city = to_romaji(text)
-    return unless (location_json = current_weather_api.try(:[], :coord))
+  # 引数の市名を座標に変換する
+  # 変換に成功した場合 => save_location を呼び出す
+  # 変換に失敗した場合 => nil を返す
+  def add_and_save_location(city_name)
+    coord = to_coord(city_name)
+    return unless coord
 
-    save_location(location_json[:lat], location_json[:lon])
+    save_location(coord[:lat], coord[:lon])
   end
 
   def save_location(lat, lon)
