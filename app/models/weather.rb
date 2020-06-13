@@ -20,7 +20,8 @@ class Weather < ApplicationRecord
   # 変換に成功した場合 => save_location を呼び出す
   # 変換に失敗した場合 => nil を返す
   def add_and_save_location(city_name)
-    coord = to_coord(city_name)
+    self.city = city_name
+    coord     = city_to_coord
     return unless coord
 
     save_location(coord[:lat], coord[:lon])
@@ -35,69 +36,54 @@ class Weather < ApplicationRecord
 
   private
 
-  # OpenWeatherApi の city に対応するローマ字に変換する
-  def to_romaji(text)
-    city_name   = text.slice(/(.+)[市区]/, 1) || text
-    kunrei_moji = Zipang.to_slug(city_name).gsub(/\-/, '').gsub(/m(?!(a|i|u|e|o|m))/, 'n').to_kunrei
-    kunrei_moji.gsub(/si/, 'shi').gsub(/ti/, 'chi').gsub(/tu/, 'tsu')
-  end
-
-  # 引数の市名の座標を返す
+  # self.city の市名の座標を返す
   # 有効な市名の場合 => { lat: Float, lon: Float }
   # 無効な市名の場合 => nil
-  def to_coord(city_name)
-    xml_doc  = geocoding_api(city_name)
+  def city_to_coord
+    xml_doc  = geocoding_api
     elements = xml_doc.elements
     return if elements['/result/error'].present?
 
-    latitude  = elements['/result/coordinate/lat'].text.to_f.round(2)
-    longitude = elements['/result/coordinate/lng'].text.to_f.round(2)
+    latitude  = elements['/result/coordinate/lat'].text.to_f
+    longitude = elements['/result/coordinate/lng'].text.to_f
     { lat: latitude, lon: longitude }
   end
 
-  # APIコールメソッドの呼び出しとエラーハンドリングを行う
-  def geocoding_api(city_name)
-    retry_count = 0
-    begin
-      call_geocoding_api(city_name)
-    rescue OpenURI::HTTPError => e
-      retry_count += 1
-      retry_message(e, retry_count)
-      retry_count <= RETRY_CALL_API_COUNT ? (sleep RETRY_CALL_API_WAIT_TIME; retry) : false
-    end
-  end
-
-  # Geocoding API を呼び出す
-  def call_geocoding_api(city_name)
-    base_url  = "https://www.geocoding.jp/api/?q=#{city_name}"
-    fixed_url = escape(base_url)
-
-    api_response = OpenURI.open_uri(fixed_url)
-    REXML::Document.new(api_response)
+  # Geocoing API を呼び出す
+  # 取得できた場合 => REXML::Document
+  # 取得できなかった場合 => false
+  def geocoding_api
+    api_response = call_api_and_handle_error('geocoding')
+    api_response && REXML::Document.new(api_response)
   end
 
   # Current Weather API を呼び出す
+  # 取得できた場合 => Hash
+  # 取得できなかった場合 => false
   def current_weather_api
-    api_type      = 'weather'
-    request_query = "&q=#{city}"
-    take_api_and_handle_error(api_type, request_query)
+    api_response = call_api_and_handle_error('current_weather')
+    api_response && JSON.parse(api_response.read, symbolize_names: true)
   end
 
   # One Call API を呼び出す
+  # 取得できた場合 => Hash
+  # 取得できなかった場合 => nil
   def one_call_api
-    api_type      = 'onecall'
-    request_query = "&lat=#{lat}&lon=#{lon}&exclude=current,minutely,daily"
-    take_api_and_handle_error(api_type, request_query)
+    api_response = call_api_and_handle_error('one_call')
+    return unless api_response
+
+    json_forecast = JSON.parse(api_response.read, symbolize_names: true)
+    refill_rain(json_forecast)
   end
 
-  # 天気予報を取得するメソッドを呼び出す
-  # 天気予報取得時にエラーが発生した場合、3回までリトライする
-  # 取得できた場合 => 天気予報 Hash
+  # 引数に対応する API コールメソッドを呼び出す
+  # API コール時にエラーが発生した場合、3回までリトライする
+  # 取得できた場合 => APIレスポンス
   # 取得できなかった場合 => false
-  def take_api_and_handle_error(api_type, request_query)
+  def call_api_and_handle_error(api_name)
     retry_count = 0
     begin
-      call_weather_api(api_type, request_query)
+      send("call_#{api_name}_api")
     rescue OpenURI::HTTPError => e
       retry_count += 1
       retry_message(e, retry_count)
@@ -105,15 +91,35 @@ class Weather < ApplicationRecord
     end
   end
 
-  # api_type に応じた　OpenWeatherAPI を呼び出す
-  # OneCallAIP の場合、取得したデータに処理を加えるメソッドを呼び出す
-  def call_weather_api(api_type, request_query)
-    base_url      = "http://api.openweathermap.org/data/2.5/#{api_type}?lang=ja"
+  def call_geocoding_api
+    request_url = "https://www.geocoding.jp/api/?q=#{city}"
+    fixed_url   = escape(request_url)
+
+    OpenURI.open_uri(fixed_url)
+  end
+
+  def call_current_weather_api
+    city_name     = city.slice(/(.+)[市区]/, 1)
+    romaji_city   = to_romaji(city_name)
+    base_url      = 'http://api.openweathermap.org/data/2.5/weather?lang=ja'
+    request_query = "&q=#{romaji_city}"
     app_id        = "&appid=#{Rails.application.credentials.open_weather_api[:app_key]}"
 
-    api_response  = OpenURI.open_uri(base_url + request_query + app_id)
-    json_forecast = JSON.parse(api_response.read, symbolize_names: true)
-    api_type == 'onecall' ? refill_rain(json_forecast) : json_forecast
+    OpenURI.open_uri(base_url + request_query + app_id)
+  end
+
+  def call_one_call_api
+    base_url      = 'http://api.openweathermap.org/data/2.5/onecall?lang=ja'
+    request_query = "&lat=#{lat}&lon=#{lon}&exclude=current,minutely,daily"
+    app_id        = "&appid=#{Rails.application.credentials.open_weather_api[:app_key]}"
+
+    OpenURI.open_uri(base_url + request_query + app_id)
+  end
+
+  # OpenWeatherApi の city に対応するローマ字に変換する
+  def to_romaji(text)
+    kunrei_moji = Zipang.to_slug(text).gsub(/\-/, '').gsub(/m(?!(a|i|u|e|o|m))/, 'n').to_kunrei
+    kunrei_moji.gsub(/si/, 'shi').gsub(/ti/, 'chi').gsub(/tu/, 'tsu')
   end
 
   # OpenWeatherAPI の仕様により、天気が雨以外の場合は雨量が設定されていない
