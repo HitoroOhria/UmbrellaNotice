@@ -1,4 +1,6 @@
 class Weather < ApplicationRecord
+  include WEBrick::HTTPUtils
+
   belongs_to :user,      optional: true
   belongs_to :line_user, optional: true
 
@@ -24,13 +26,6 @@ class Weather < ApplicationRecord
     save_location(location_json[:lat], location_json[:lon])
   end
 
-  # OpenWeatherApi の city に対応するローマ字に変換する
-  def to_romaji(text)
-    city_name   = text.slice(/(.+)[市区]/, 1) || text
-    kunrei_moji = Zipang.to_slug(city_name).gsub(/\-/, '').gsub(/m(?!(a|i|u|e|o|m))/, 'n').to_kunrei
-    kunrei_moji.gsub(/si/, 'shi').gsub(/ti/, 'chi').gsub(/tu/, 'tsu')
-  end
-
   def save_location(lat, lon)
     self.lat = lat.round(2)
     self.lon = lon.round(2)
@@ -40,12 +35,43 @@ class Weather < ApplicationRecord
 
   private
 
+  # OpenWeatherApi の city に対応するローマ字に変換する
+  def to_romaji(text)
+    city_name   = text.slice(/(.+)[市区]/, 1) || text
+    kunrei_moji = Zipang.to_slug(city_name).gsub(/\-/, '').gsub(/m(?!(a|i|u|e|o|m))/, 'n').to_kunrei
+    kunrei_moji.gsub(/si/, 'shi').gsub(/ti/, 'chi').gsub(/tu/, 'tsu')
+  end
+
+  # 引数の市名の座標を返す
+  # 有効な市名の場合 => { lat: Float, lon: Float }
+  # 無効な市名の場合 => nil
+  def to_coord(city_name)
+    xml_doc  = geocoding_api(city_name)
+    elements = xml_doc.elements
+    return if elements['/result/error'].present?
+
+    latitude  = elements['/result/coordinate/lat'].text.to_f.round(2)
+    longitude = elements['/result/coordinate/lng'].text.to_f.round(2)
+    { lat: latitude, lon: longitude }
+  end
+
+  # Geocoding API を呼び出す
+  def geocoding_api(city_name)
+    base_url  = "https://www.geocoding.jp/api/?q=#{city_name}"
+    fixed_url = escape(base_url)
+
+    api_response = OpenURI.open_uri(fixed_url)
+    REXML::Document.new(api_response)
+  end
+
+  # Current Weather API を呼び出す
   def current_weather_api
     api_type      = 'weather'
     request_query = "&q=#{city}"
     take_api_and_handle_error(api_type, request_query)
   end
 
+  # One Call API を呼び出す
   def one_call_api
     api_type      = 'onecall'
     request_query = "&lat=#{lat}&lon=#{lon}&exclude=current,minutely,daily"
