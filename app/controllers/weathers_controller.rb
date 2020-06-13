@@ -5,8 +5,8 @@ class WeathersController < ApplicationController
   protect_from_forgery except: %i[trigger line_notice]
 
   def information
-    weather           = Weather.first
-    @weather_forecast = weather.forecast
+    @weather          = Weather.first
+    @weather_forecast = @weather.forecast
   end
 
   def trigger
