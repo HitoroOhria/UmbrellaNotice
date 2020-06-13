@@ -25,6 +25,8 @@ module Webapp
 
     config.time_zone = 'Asia/Tokyo'
 
+    config.i18n.default_locale = :ja
+
     # production環境でのlibディレクトリの読み込みを設定
     config.paths.add 'lib', eager_load: true
 

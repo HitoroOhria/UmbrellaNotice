@@ -2,10 +2,11 @@ class Calendar < ApplicationRecord
   belongs_to :user, optional: true
 
   def authorizer
-    scope = Google::Apis::CalendarV3::AUTH_CALENDAR_EVENTS_READONLY
-    web = Rails.application.credentials.google_calendar[:recognition][:web].stringify_keys
-    client_id = Google::Auth::ClientId.from_hash(Hash['web', web])
+    scope       = Google::Apis::CalendarV3::AUTH_CALENDAR_EVENTS_READONLY
+    web         = Rails.application.credentials.google_calendar[:recognition][:web].stringify_keys
+    client_id   = Google::Auth::ClientId.from_hash(Hash['web', web])
     token_store = Google::Auth::Stores::RedisTokenStore.new(redis: Redis.new)
+
     Google::Auth::UserAuthorizer.new(client_id, scope, token_store)
   end
 
