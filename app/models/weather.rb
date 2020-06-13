@@ -55,8 +55,20 @@ class Weather < ApplicationRecord
     { lat: latitude, lon: longitude }
   end
 
-  # Geocoding API を呼び出す
+  # APIコールメソッドの呼び出しとエラーハンドリングを行う
   def geocoding_api(city_name)
+    retry_count = 0
+    begin
+      call_geocoding_api(city_name)
+    rescue OpenURI::HTTPError => e
+      retry_count += 1
+      retry_message(e, retry_count)
+      retry_count <= RETRY_CALL_API_COUNT ? (sleep RETRY_CALL_API_WAIT_TIME; retry) : false
+    end
+  end
+
+  # Geocoding API を呼び出す
+  def call_geocoding_api(city_name)
     base_url  = "https://www.geocoding.jp/api/?q=#{city_name}"
     fixed_url = escape(base_url)
 
