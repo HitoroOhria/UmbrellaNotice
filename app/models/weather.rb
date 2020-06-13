@@ -4,8 +4,8 @@ class Weather < ApplicationRecord
   belongs_to :user,      optional: true
   belongs_to :line_user, optional: true
 
-  validates :city, format: { with: /.+[市区]/, message: '文字列の末尾に「市」か「区」を付ける必要があります' }
-  validates :lat,  numericality: { greater_than_or_equal_to: -90, less_than_or_equal_to: 90 }
+  validates :city, format:       { with: /.+[市区]/, message: '文字列の末尾に「市」か「区」を付ける必要があります' }
+  validates :lat,  numericality: { greater_than_or_equal_to: -90,  less_than_or_equal_to: 90 }
   validates :lon,  numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
 
   def forecast
