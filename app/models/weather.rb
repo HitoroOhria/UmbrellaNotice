@@ -4,8 +4,9 @@ class Weather < ApplicationRecord
   belongs_to :user,      optional: true
   belongs_to :line_user, optional: true
 
-  validates :lat, numericality: { greater_than_or_equal_to: -90, less_than_or_equal_to: 90 }
-  validates :lon, numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
+  validates :city, format: { with: /.+[市区]/, message: '文字列の末尾に「市」か「区」を付ける必要があります' }
+  validates :lat,  numericality: { greater_than_or_equal_to: -90, less_than_or_equal_to: 90 }
+  validates :lon,  numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
 
   def forecast
     @forecast ||= one_call_api
@@ -22,16 +23,15 @@ class Weather < ApplicationRecord
   def add_and_save_location(city_name)
     self.city = city_name
     coord     = city_to_coord
-    return unless coord
 
-    save_location(coord[:lat], coord[:lon])
+    coord && save_location(coord[:lat], coord[:lon])
   end
 
   def save_location(lat, lon)
     self.lat = lat.round(2)
     self.lon = lon.round(2)
-    save
-    line_user.update_attribute(:located_at, Time.zone.now, silent_notice: true)
+
+    save && line_user.update_attribute(:located_at, Time.zone.now, silent_notice: true)
   end
 
   private
@@ -150,7 +150,7 @@ class Weather < ApplicationRecord
       logger.error "#{RETRY_CALL_API_WAIT_TIME}sec 待機後に再接続します。"
       logger.error "この処理は#{RETRY_CALL_API_COUNT}回まで繰り返されます。(現在: #{retry_count}回目)"
     else
-      logger.error "[Error]#{exception.class} の再接続に失敗しました。"
+      logger.error "[Error] #{exception.class} の再接続に失敗しました。"
       logger.error exception.backtrace
     end
   end
