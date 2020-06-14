@@ -1,4 +1,6 @@
-module RichMenusController
+module RichMenuable
+  extend ActiveSupport::Concern
+
   def rich_menus
     send(event['postback']['data'])
   end

@@ -156,7 +156,7 @@ RSpec.describe Weather, type: :model do
     end
   end
 
-  describe '#add_and_save_location(text)' do
+  describe '#take_and_save_location(text)' do
     let!(:weather) { build(:base_weather) }
 
     before do
@@ -164,14 +164,14 @@ RSpec.describe Weather, type: :model do
       allow(weather).to receive(:save_location).with(any_args)
     end
 
-    subject(:add_and_save_location) { weather.add_and_save_location('渋谷区') }
+    subject(:take_and_save_location) { weather.take_and_save_location('渋谷区') }
 
     context '#city_to_coord のレスポンスが有効な値の場合' do
       let(:response) { { lat: 34.408413, lon: 140.229085 } }
 
       it '#save_location(lat, lon)を呼び出すこと' do
         expect(weather).to receive(:save_location).once
-        add_and_save_location
+        take_and_save_location
       end
     end
 
@@ -183,15 +183,20 @@ RSpec.describe Weather, type: :model do
   end
 
   describe '#save_location(lat, lon)' do
-    let!(:weather)    { build(:base_weather) }
-    let!(:line_user)  { create(:line_user, weather: weather) }
-    let!(:located_at) { line_user.located_at }
+    let(:current_time) { Time.zone.now }
+    let(:located_at)   { current_time }
+    let(:locating_at)  { current_time }
+
+    let!(:weather)     { build(:base_weather) }
+    let!(:line_user)   {
+      create(:line_user, weather: weather, located_at: located_at, locating_at: locating_at)
+    }
+
+    before do
+      weather.save_location(35.659108, 139.703728)
+    end
 
     describe 'カラムの値' do
-      before do
-        weather.save_location(35.659108, 139.703728)
-      end
-
       it 'latカラムが小数点第二位に丸められて保存されること' do
         expect(weather.reload.lat).to eq 35.66
       end
@@ -201,25 +206,31 @@ RSpec.describe Weather, type: :model do
       end
     end
 
-    context 'saveに失敗した時' do
-      before do
-        allow(weather).to receive(:save).and_return(false)
-        weather.save_location(35.659108, 139.703728)
-      end
+    context '関連するLineUserの.located_atの値がない時' do
+      let(:located_at)         { nil }
 
-      it '関連するLineユーザーのlocated_atカラムが更新されないこと' do
-        expect(line_user.reload.located_at).to eq located_at
+      it '関連するLineUserの.located_atを更新すること' do
+        expect(line_user.reload.located_at).to_not eq nil
       end
     end
 
-    context 'saveに成功した時' do
-      before do
-        allow(weather).to receive(:save).and_return(true)
-        weather.save_location(35.659108, 139.703728)
+    context '関連するLineUserの.located_atの値がある時' do
+      it '関連するLineUserの.located_atを更新しない' do
+        expect(line_user.reload.located_at).to_not eq current_time
       end
+    end
 
-      it '関連するLineユーザーのlocated_atカラムが更新されること' do
-        expect(line_user.reload.located_at).to_not eq located_at
+    context '関連するLineUserの.locating_atの値がない時' do
+      let(:locating_at) { nil }
+
+      it '関連するLineUserの.locating_atを更新しない' do
+        expect(line_user.reload.locating_at).to eq nil
+      end
+    end
+
+    context '関連するLineUserの.locating_atの値がある時' do
+      it '関連するLineUserの.locating_atを更新すること' do
+        expect(line_user.reload.locating_at).to_not eq current_time
       end
     end
   end

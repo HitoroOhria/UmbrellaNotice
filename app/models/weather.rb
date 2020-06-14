@@ -20,7 +20,7 @@ class Weather < ApplicationRecord
   # 引数の市名を座標に変換する
   # 変換に成功した場合 => save_location を呼び出す
   # 変換に失敗した場合 => nil を返す
-  def add_and_save_location(city_name)
+  def take_and_save_location(city_name)
     self.city = city_name
     coord     = city_to_coord
 
@@ -33,7 +33,7 @@ class Weather < ApplicationRecord
 
     save
     line_user.located_at || line_user.update_attributes(located_at: Time.zone.now, silent_notice: true)
-    line_user.locating_at && line_user.update_attribute(:coord_resetting_at, nil)
+    line_user.locating_at && line_user.update_attribute(:locating_at, nil)
   end
 
   private

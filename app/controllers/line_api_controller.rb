@@ -1,5 +1,5 @@
 class LineApiController < ApplicationController
-  include RichMenusController
+  include RichMenuable
 
   before_action :validate_signature, :validate_event_type, :validate_source_type, only: [:webhock]
 
@@ -40,7 +40,7 @@ class LineApiController < ApplicationController
 
     case event.type
     when 'text'
-      weather.add_and_save_location(content) || reply('invalid_city_name')
+      weather.take_and_save_location(content) || reply('invalid_city_name')
     when 'location'
       weather.save_location(*content)
     end
