@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_12_060316) do
+ActiveRecord::Schema.define(version: 2020_06_14_110342) do
 
   create_table "calendars", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "google_id"
@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 2020_06_12_060316) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "silent_notice", default: false, null: false
+    t.datetime "locating_at"
     t.index ["line_id"], name: "index_line_users_on_line_id"
   end
 
