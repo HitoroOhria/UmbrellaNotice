@@ -31,7 +31,9 @@ class Weather < ApplicationRecord
     self.lat = lat.round(2)
     self.lon = lon.round(2)
 
-    save && line_user.update_attributes(located_at: Time.zone.now, silent_notice: true)
+    save
+    line_user.located_at || line_user.update_attributes(located_at: Time.zone.now, silent_notice: true)
+    line_user.locating_at && line_user.update_attribute(:coord_resetting_at, nil)
   end
 
   private
