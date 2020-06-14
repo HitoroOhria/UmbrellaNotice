@@ -25,6 +25,7 @@ Metrics/BlockLength:
   Max: 65
   Exclude:
     - 'spec/**/*.rb'
+    - 'lib/tasks/*.rake'
 
 Lint/NonDeterministicRequireOrder:
   Exclude:
