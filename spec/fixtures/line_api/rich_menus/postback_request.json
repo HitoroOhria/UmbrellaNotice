@@ -2,16 +2,16 @@
   "destination": "xxxxxxxxxx",
   "events": [
     {
-      "type":"postback",
-      "replyToken":"b60d432864f44d079f6d8efe86cf404b",
+      "type": "postback",
+      "replyToken": "b60d432864f44d079f6d8efe86cf404b",
       "source":{
-        "userId":"U91eeaf62d...",
-        "type":"user"
+        "userId": "U91eeaf62d...",
+        "type": "user"
       },
       "mode": "active",
-      "timestamp":1513669370317,
-      "postback":{
-        "data":"storeId=12345",
+      "timestamp": 1513669370317,
+      "postback": {
+        "data": "storeId=12345"
       }
     }
   ]
