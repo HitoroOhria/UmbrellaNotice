@@ -14,23 +14,23 @@ class LineApiController < ApplicationController
 
   def webhock
     events.each do |item|
-      initialize_webhock(item)
+      self.event     = item
+      self.line_user = LineUser.find_or_create_by(line_id: event['source']['userId'])
 
-      if !line_user.located_at || line_user.locating_at
-        location_setting
-      elsif event.type == 'postback'
-        rich_menus
-      else
-        interactive
-      end
+      control_processing
     end
 
     render_success
   end
 
-  def initialize_webhock(item)
-    self.event     = item
-    self.line_user = LineUser.find_or_create_by(line_id: event['source']['userId'])
+  def control_processing
+    if !line_user.located_at || line_user.locating_at
+      location_setting
+    elsif event.type == 'postback'
+      rich_menus(event, line_user)
+    else
+      interactive
+    end
   end
 
   def location_setting
@@ -40,12 +40,12 @@ class LineApiController < ApplicationController
 
     case event.type
     when 'text'
-      weather.take_and_save_location(content) || reply('invalid_city_name')
+      weather.take_and_save_location(content)
     when 'location'
       weather.save_location(*content)
     end
 
-    reply('completed_location_setting')
+    weather.persisted? ? reply('completed_location_setting') : reply('invalid_city_name')
   end
 
   def interactive
@@ -55,8 +55,8 @@ class LineApiController < ApplicationController
   private
 
   def reply(file_name, **locals)
-    message = { type: 'text', text: read_message(file_name, **locals) }
-    client.reply_message(event['replyToken'], message)
+    token = event['replyToken']
+    super(token, file_name, **locals)
   end
 
   def validate_signature
@@ -70,7 +70,8 @@ class LineApiController < ApplicationController
   def validate_event_type
     events.each do |item|
       self.event = item
-      next if %w[message postback].include?(event.type)
+      allow_classes = [Line::Bot::Event::Message, Line::Bot::Event::Postback]
+      next if allow_classes.include?(event.class)
 
       render_bad_request
     end
