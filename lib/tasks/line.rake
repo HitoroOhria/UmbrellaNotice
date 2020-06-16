@@ -5,9 +5,10 @@ namespace :line do
   # を実行してください
   desc 'Create line rich-menu'
   task create_rich_menu: :environment do
-    MENU_WIDTH            = 2500
-    MENU_HEIGHT           = 1686
-    CONTENT_COUNT         = 6
+    MENU_WIDTH            = 1200
+    MENU_HEIGHT           = 820
+    FIRST_CONTENT_HEIGHT  = 213
+    CONTENT_COUNT         = 7
     WIDTH_SEPARATE_COUNT  = 3
     HEIGHT_SEPARATE_COUNT = 2
 
@@ -17,22 +18,37 @@ namespace :line do
     }
 
     size    = { width: MENU_WIDTH, height: MENU_HEIGHT }
-    actions = %w[reply_weather_forecast notice_time_setting toggle_silent_notice
+    actions = %w[reply_weather_forecast send_location notice_time_setting toggle_silent_notice
                  location_resetting issue_serial_number profile_page]
 
     bounds = proc { |number|
-      width_unit  = size[:width] / WIDTH_SEPARATE_COUNT
-      height_unit = size[:height] / HEIGHT_SEPARATE_COUNT
-      upper_row   = number < WIDTH_SEPARATE_COUNT
+      width_unit  = MENU_WIDTH / WIDTH_SEPARATE_COUNT
+      height_unit = (MENU_HEIGHT - FIRST_CONTENT_HEIGHT) / HEIGHT_SEPARATE_COUNT
+      upper_tier  = number < 4
 
-      x = upper_row ? width_unit * number : width_unit * (number - 3)
-      y = upper_row ? 0 : height_unit
+      x = if number.zero?
+            0
+          elsif upper_tier
+            width_unit * (number - 1)
+          else
+            width_unit * (number - 4)
+          end
+      y = if number.zero?
+            0
+          elsif upper_tier
+            FIRST_CONTENT_HEIGHT
+          else
+            FIRST_CONTENT_HEIGHT + height_unit
+          end
+
+      width  = number.zero? ? MENU_WIDTH : width_unit
+      height = number.zero? ? FIRST_CONTENT_HEIGHT : height_unit
 
       {
         x: x,
         y: y,
-        width:  width_unit - 1,
-        height: height_unit - 1
+        width:  width,
+        height: height
       }
     }
 
@@ -45,6 +61,9 @@ namespace :line do
         }
       }
       case action
+      when 'send_location'
+        area[:action][:type] = 'location'
+        area[:action].delete(:data)
       when 'notice_time_setting'
         area[:action][:type]    = 'datetimepicker'
         area[:action][:mode]    = 'time'
@@ -69,6 +88,8 @@ namespace :line do
     puts "[Rich_Menu_ID] #{rich_menu_id}"
   end
 
+  # rails line:create_rich_menu_image[<rich_menu_id>]
+  # @param image_file = 'app/assets/images/rich_menu.png'
   desc 'Upload line rich-menu image and Set default rich-mune'
   task :create_rich_menu_image, ['rich_menu_id'] => :environment do |_task, args|
     rich_menu_id = args[:rich_menu_id]
