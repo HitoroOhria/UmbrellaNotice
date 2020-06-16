@@ -8,6 +8,11 @@ class Weather < ApplicationRecord
   validates :lat,  numericality: { greater_than_or_equal_to: -90,  less_than_or_equal_to: 90 }
   validates :lon,  numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
 
+  def romaji_city
+    city_name = city.gsub(/[市区]/, '')
+    to_romaji(city_name)
+  end
+
   def forecast
     @forecast ||= one_call_api
   end
@@ -21,6 +26,7 @@ class Weather < ApplicationRecord
   # 変換に成功した場合 => save_location を呼び出す
   # 変換に失敗した場合 => nil を返す
   def take_and_save_location(city_name)
+    city_name += '市' unless /.+[市区]/.match(city_name)
     self.city = city_name
     coord     = city_to_coord
 

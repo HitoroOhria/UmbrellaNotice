@@ -6,6 +6,8 @@ class User < ApplicationRecord
   has_one :weather,  dependent: :destroy
   has_one :calendar, dependent: :destroy
 
+  delegate :line_user, to: :weather
+
   def self.from_omniauth(auth)
     where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
       user.email = auth.info.email
