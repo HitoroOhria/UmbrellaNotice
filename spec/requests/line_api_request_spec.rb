@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "LinesApiControllers", type: :request do
   describe '#webhock' do
-    let(:request_file_dir)       { 'spec/fixtures/line_api' }
+    let(:request_file_dir)       { 'spec/fixtures/line_api/text_messages' }
     let(:request_file_name)      { 'city_request.json.erb' }
     let(:request_file_path)      { Rails.root + request_file_dir + request_file_name }
     let(:request_body)           { ERB.new(File.open(request_file_path).read).result }
@@ -27,7 +27,7 @@ RSpec.describe "LinesApiControllers", type: :request do
       it { is_expected.to have_http_status 200 }
     end
 
-    context '位置情報の設定が済んでない時' do
+    describe '初期の位置情報設定' do
       context 'ユーザーが初めてアクセスした時' do
         it 'Lineユーザーを作成すること' do
           expect { post lines_webhock_path }.to change(LineUser, :count).by(1)
@@ -66,7 +66,7 @@ RSpec.describe "LinesApiControllers", type: :request do
       end
     end
 
-    context '位置情報の設定が済んでいる時' do
+    describe '対話モード' do
       let(:request_file_name) { 'absolute_user_id_request.json' }
 
       before do

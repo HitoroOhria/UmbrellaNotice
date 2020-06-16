@@ -14,7 +14,7 @@ services:
     depends_on:
       - mysql
       - redis
-    comma: circleci
+    command: circleci
   sidekiq:
     build:
       context: .

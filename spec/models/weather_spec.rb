@@ -29,7 +29,7 @@ RSpec.describe Weather, type: :model do
 
   describe 'Validates' do
     describe 'weathers.city' do
-      let(:error_message) { '文字列の末尾に「市」か「区」を付ける必要があります' }
+      let(:error_message) { '市名の末尾に「市」か「区」を付ける必要があります' }
 
       subject(:weather) { build(:base_weather, city: city_name) }
 
@@ -175,7 +175,7 @@ RSpec.describe Weather, type: :model do
       end
     end
 
-    context 'city_to_coordのレスポンスがnilの場合' do
+    context '#city_to_coordのレスポンスがnilの場合' do
       let(:response) { nil }
 
       it { is_expected.to eq nil }
@@ -207,7 +207,7 @@ RSpec.describe Weather, type: :model do
     end
 
     context '関連するLineUserの.located_atの値がない時' do
-      let(:located_at)         { nil }
+      let(:located_at) { nil }
 
       it '関連するLineUserの.located_atを更新すること' do
         expect(line_user.reload.located_at).to_not eq nil
