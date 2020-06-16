@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_14_110342) do
+ActiveRecord::Schema.define(version: 2020_06_15_093452) do
 
   create_table "calendars", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "google_id"
@@ -24,11 +24,13 @@ ActiveRecord::Schema.define(version: 2020_06_14_110342) do
     t.string "line_id", null: false
     t.string "notice_time", default: "07:00"
     t.datetime "located_at"
-    t.string "token"
+    t.string "auth_token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "silent_notice", default: false, null: false
     t.datetime "locating_at"
+    t.string "inherit_token"
+    t.index ["inherit_token"], name: "index_line_users_on_inherit_token", unique: true
     t.index ["line_id"], name: "index_line_users_on_line_id"
   end
 
