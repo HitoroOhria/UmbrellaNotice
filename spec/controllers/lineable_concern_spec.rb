@@ -31,7 +31,7 @@ RSpec.describe "Lineable", type: :controller do
   end
 
   describe 'read_erb_message(file_path, **locals)' do
-    let(:line_user)     { build(:line_user_with_weather, silent_notice: true) }
+    let(:line_user)     { build(:line_user_with_weather, silent_notice: false) }
     let(:weather)       { line_user.weather }
 
     let(:dir_path)      { 'spec/fixtures/weather_api' }

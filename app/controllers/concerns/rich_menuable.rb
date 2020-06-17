@@ -16,7 +16,7 @@ module RichMenuable
   end
 
   def reply_weather_forecast(_event, line_user)
-    reply('notice_weather', line_user: line_user, weather: line_user.weather)
+    reply('notice_weather', line_user: line_user, weather: line_user.weather, reply_forecast: true)
   end
 
   def notice_time_setting(event, line_user)

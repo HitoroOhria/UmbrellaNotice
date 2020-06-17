@@ -23,7 +23,7 @@ RSpec.describe "RichMenuables", type: :controller do
   let(:event_file)     { File.open(Rails.root + fixture_dir + event_dir + event_name) }
   let!(:event)         { JSON.parse(event_file.read)['events'][0] }
 
-  let!(:line_user)     { create(:line_user_with_weather, silent_notice: true) }
+  let!(:line_user)     { create(:line_user_with_weather, silent_notice: false) }
   let!(:weather)       { line_user.weather }
 
   before do
@@ -34,7 +34,7 @@ RSpec.describe "RichMenuables", type: :controller do
     subject { controller.reply_weather_forecast(event, line_user) }
 
     it '天気予報通知のメッセージを返すこと' do
-      is_expected.to include '今日は雨は降りません！'
+      is_expected.to include "今後#{TAKE_WEATHER_HOUR}時間の天気予報です！"
     end
   end
 
