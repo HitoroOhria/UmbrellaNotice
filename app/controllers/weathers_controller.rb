@@ -1,6 +1,5 @@
 class WeathersController < ApplicationController
   before_action :authenticate,         only: %i[trigger line_notice]
-  before_action :validate_notice_time, only: [:trigger]
 
   protect_from_forgery except: %i[trigger line_notice]
 
@@ -34,19 +33,6 @@ class WeathersController < ApplicationController
     current_hour = current_time.hour.to_s.rjust(2, '0')
     current_min  = current_time.min.to_s.rjust(2, '0')
     "#{current_hour}:#{current_min}"
-  end
-
-  def validate_notice_time
-    current_time = Time.zone.now
-    notice_time  = params[:notice_time].match(/(\d{2}):(\d{2})/)
-    minute_range = (current_time.min - TOLERANCE_TIME)..(current_time.min + TOLERANCE_TIME)
-    return if notice_time_is_valid?(current_time, notice_time, minute_range)
-
-    render_bad_request
-  end
-
-  def notice_time_is_valid?(current_time, notice_time, minute_range)
-    current_time.hour == notice_time[1].to_i || minute_range.include?(notice_time[2].to_i)
   end
 
   def authenticate
