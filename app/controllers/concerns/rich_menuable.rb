@@ -29,7 +29,7 @@ module RichMenuable
   def toggle_silent_notice(_event, line_user)
     boolean = line_user.silent_notice
     line_user.update_attribute(:silent_notice, !boolean)
-    reply('completed_toggle_silent_notice', 'description_silent_notice', line_user: line_user)
+    reply('completed_toggle_silent_notice', line_user: line_user)
   end
 
   def location_resetting(_event, line_user)
