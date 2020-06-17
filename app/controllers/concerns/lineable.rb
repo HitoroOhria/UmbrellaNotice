@@ -10,18 +10,18 @@ module Lineable
   end
 
   def reply(token, *file_names, **locals)
-    messages = make_messages(file_names, **locals)
+    messages = make_messages(*file_names, **locals)
     client.reply_message(token, messages)
   end
 
   def push_message(line_id, *file_names, **locals)
-    messages = make_messages(file_names, **locals)
+    messages = make_messages(*file_names, **locals)
     client.push_message(line_id, messages)
   end
 
   # LINE返信用のメッセージを作成する
   # @return = [ { type: 'text', text: 'message' }, ... ]
-  def make_messages(file_names, **locals)
+  def make_messages(*file_names, **locals)
     messages = file_names.map { |file_name| read_message(file_name, **locals) }
     messages.map { |message| { type: 'text', text: message } }
   end

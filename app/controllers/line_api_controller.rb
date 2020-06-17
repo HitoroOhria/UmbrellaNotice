@@ -54,9 +54,9 @@ class LineApiController < ApplicationController
 
   private
 
-  def reply(file_name, **locals)
+  def reply(*file_names, **locals)
     token = event['replyToken']
-    super(token, file_name, **locals)
+    super(token, *file_names, **locals)
   end
 
   def validate_signature
