@@ -125,6 +125,16 @@ RSpec.describe Weather, type: :model do
     end
   end
 
+  describe '#romaji_city' do
+    let(:weather) { build(:base_weather, city: '渋谷区') }
+
+    subject { weather.romaji_city }
+
+    it 'self.city の一文字目が大文字を変換したローマ字を返すこと' do
+      is_expected.to eq 'Shibuya'
+    end
+  end
+
   describe '#today_is_rainy?' do
     let(:weather_dir_path)  { 'spec/fixtures/weather_api' }
     let(:weather_file_name) { 'fixed_clear_forecast.json' }

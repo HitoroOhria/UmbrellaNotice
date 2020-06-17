@@ -10,7 +10,7 @@
   <% end %>
 
   --------------------------------
-    時刻       天気       場所
+    時刻       天気   場所
     <% weather.forecast[:hourly][0...TAKE_WEATHER_HOUR].each do |hourly| %>
       <% hour_time  = Time.zone.at(hourly[:dt]).hour.to_s.rjust(2,'0') %>
       <% emoji_code = emoji[hourly[:weather][0][:main].downcase.to_sym] %>

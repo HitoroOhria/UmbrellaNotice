@@ -10,7 +10,8 @@ class Weather < ApplicationRecord
 
   def romaji_city
     city_name = city.gsub(/[市区]/, '')
-    to_romaji(city_name)
+    romaji    = to_romaji(city_name)
+    romaji[0].upcase + romaji[1..romaji.length]
   end
 
   def forecast
