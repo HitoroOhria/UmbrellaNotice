@@ -1,14 +1,13 @@
 namespace :line do
   # Messaging API を使用してリッチメニューを作成する
-  # 作成しただけでは有効化されないため、
+  # 作成しただけでは有効化されないため、以下コマンドを実行してください
   #   rails line:create_rich_menu_image[<rich_menu_id>]
-  # を実行してください
+  # see https://developers.line.biz/ja/reference/messaging-api/#create-rich-menu
   desc 'Create line rich-menu'
   task create_rich_menu: :environment do
     MENU_WIDTH            = 1200
     MENU_HEIGHT           = 820
-    FIRST_CONTENT_HEIGHT  = 213
-    CONTENT_COUNT         = 7
+    CONTENT_COUNT         = 6
     WIDTH_SEPARATE_COUNT  = 3
     HEIGHT_SEPARATE_COUNT = 2
 
@@ -18,31 +17,19 @@ namespace :line do
     }
 
     size    = { width: MENU_WIDTH, height: MENU_HEIGHT }
-    actions = %w[reply_weather_forecast send_location notice_time_setting toggle_silent_notice
+    actions = %w[reply_weather_forecast notice_time_setting toggle_silent_notice
                  location_resetting issue_serial_number profile_page]
 
     bounds = proc { |number|
       width_unit  = MENU_WIDTH / WIDTH_SEPARATE_COUNT
-      height_unit = (MENU_HEIGHT - FIRST_CONTENT_HEIGHT) / HEIGHT_SEPARATE_COUNT
-      upper_tier  = number < 4
+      height_unit = MENU_HEIGHT / HEIGHT_SEPARATE_COUNT
+      upper_tier  = number < 3
 
-      x = if number.zero?
-            0
-          elsif upper_tier
-            width_unit * (number - 1)
-          else
-            width_unit * (number - 4)
-          end
-      y = if number.zero?
-            0
-          elsif upper_tier
-            FIRST_CONTENT_HEIGHT
-          else
-            FIRST_CONTENT_HEIGHT + height_unit
-          end
+      x = upper_tier ? width_unit * number : width_unit * (number - 3)
+      y = upper_tier ? 0 : height_unit
 
-      width  = number.zero? ? MENU_WIDTH : width_unit
-      height = number.zero? ? FIRST_CONTENT_HEIGHT : height_unit
+      width  = width_unit
+      height = height_unit
 
       {
         x: x,
@@ -61,9 +48,6 @@ namespace :line do
         }
       }
       case action
-      when 'send_location'
-        area[:action][:type] = 'location'
-        area[:action].delete(:data)
       when 'notice_time_setting'
         area[:action][:type]    = 'datetimepicker'
         area[:action][:mode]    = 'time'
@@ -85,12 +69,13 @@ namespace :line do
     api_response = client.create_rich_menu(rich_menu)
     rich_menu_id = JSON.parse(api_response.body)['richMenuId']
 
-    puts "[Rich_Menu_ID] #{rich_menu_id}"
+    puts "[Create Rich_Menu] #{api_response}"
+    puts "[Rich_Menu_ID]     #{rich_menu_id}"
   end
 
   # rails line:create_rich_menu_image[<rich_menu_id>]
   # @param image_file = 'app/assets/images/rich_menu.png'
-  desc 'Upload line rich-menu image and Set default rich-mune'
+  desc 'Upload line rich-menu image and Set default rich-menu'
   task :create_rich_menu_image, ['rich_menu_id'] => :environment do |_task, args|
     rich_menu_id = args[:rich_menu_id]
     image_file   = File.open(Rails.root + 'app/assets/images/rich_menu.png')
