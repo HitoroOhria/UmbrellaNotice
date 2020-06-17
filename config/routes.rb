@@ -15,6 +15,6 @@ Rails.application.routes.draw do
   resources :users, only: [:show]
 
   if Rails.env.development?
-    get   'weathers/information', to: 'weathers#information'
+    get 'weathers/information', to: 'weathers#information'
   end
 end

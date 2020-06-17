@@ -94,7 +94,7 @@ RSpec.describe "RichMenuables", type: :controller do
 
     context '関するユーザーが存在しない時' do
       it 'アカウント登録ページのURLを返すこと' do
-        is_expected.to include 'https://www.umbrellanotice.work/users/sign_up'
+        is_expected.to include new_user_registration_url
       end
     end
   end

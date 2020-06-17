@@ -32,6 +32,7 @@ class WeathersController < ApplicationController
     current_time = Time.zone.now
     current_hour = current_time.hour.to_s.rjust(2, '0')
     current_min  = current_time.min.to_s.rjust(2, '0')
+
     "#{current_hour}:#{current_min}"
   end
 

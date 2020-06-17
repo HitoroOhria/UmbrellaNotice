@@ -1,7 +1,7 @@
-<div class="container">
+<div class="container mt-3">
   <div class="row">
     <div class="col-sm text-center">
-      <h1>設定</h1>
+      <h1>プロフィール</h1>
     </div>
   </div>
 </div>
@@ -21,7 +21,7 @@
         </tr>
         <tr>
           <th>サイレント通知</th>
-          <td colspan="2"><%= silent_notice_mode(@line_user) %></td>
+          <td colspan="2"><%= @line_user.silent_notice_text %></td>
         </tr>
         <tr>
           <th class="table-active" scope="col" colspan="3">天気予報の位置情報</th>
