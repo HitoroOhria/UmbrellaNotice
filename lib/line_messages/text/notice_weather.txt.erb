@@ -1,8 +1,13 @@
 <% if !line_user.silent_notice || defined?(reply_forecast) %>
   <%= current_date %>
-
+　
   <% if defined?(reply_forecast) %>
     今後<%= TAKE_WEATHER_HOUR %>時間の天気予報です！
+    <% if weather.today_is_rainy? %>
+      雨が降ります！
+    <% else %>
+      雨は降りません！
+    <% end %>
   <% elsif weather.today_is_rainy? %>
     今日は雨が降ります！
     傘を持てば何とやら！
@@ -10,7 +15,7 @@
     今日は雨は降りません！
     良い一日をお過ごしください！
   <% end %>
-
+　
   --------------------------------
     時刻       天気    場所
     <% weather.forecast[:hourly][0...TAKE_WEATHER_HOUR].each do |hourly| %>
