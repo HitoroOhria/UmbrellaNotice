@@ -33,7 +33,7 @@ module RichMenuable
   end
 
   def location_resetting(_event, line_user)
-    line_user.update_attribute(:locating_at, Time.zone.now)
+    line_user.update_attribute(:locating_from, Time.zone.now)
     reply('location_resetting')
   end
 

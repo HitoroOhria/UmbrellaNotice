@@ -24,7 +24,7 @@ class LineApiController < ApplicationController
   end
 
   def control_processing
-    if !line_user.located_at || line_user.locating_at
+    if !line_user.located_at || line_user.locating_from
       location_setting
     elsif event.is_a? Line::Bot::Event::Postback
       rich_menus(event, line_user)

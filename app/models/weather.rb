@@ -39,7 +39,7 @@ class Weather < ApplicationRecord
 
     save
     line_user.located_at || line_user.update_attributes(located_at: Time.zone.now, silent_notice: true)
-    line_user.locating_at && line_user.update_attribute(:locating_at, nil)
+    line_user.locating_from && line_user.update_attribute(:locating_from, nil)
   end
 
   private

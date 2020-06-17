@@ -183,13 +183,13 @@ RSpec.describe Weather, type: :model do
   end
 
   describe '#save_location(lat, lon)' do
-    let(:current_time) { Time.zone.now }
-    let(:located_at)   { current_time }
-    let(:locating_at)  { current_time }
+    let(:current_time)  { Time.zone.now }
+    let(:located_at)    { current_time }
+    let(:locating_from) { current_time }
 
-    let!(:weather)     { build(:base_weather) }
-    let!(:line_user)   {
-      create(:line_user, weather: weather, located_at: located_at, locating_at: locating_at)
+    let!(:weather)      { build(:base_weather) }
+    let!(:line_user)    {
+      create(:line_user, weather: weather, located_at: located_at, locating_from: locating_from)
     }
 
     before do
@@ -220,17 +220,17 @@ RSpec.describe Weather, type: :model do
       end
     end
 
-    context '関連するLineUserの.locating_atの値がない時' do
-      let(:locating_at) { nil }
+    context '関連するLineUserの.locating_fromの値がない時' do
+      let(:locating_from) { nil }
 
-      it '関連するLineUserの.locating_atを更新しない' do
-        expect(line_user.reload.locating_at).to eq nil
+      it '関連するLineUserの.locating_fromを更新しない' do
+        expect(line_user.reload.locating_from).to eq nil
       end
     end
 
-    context '関連するLineUserの.locating_atの値がある時' do
-      it '関連するLineUserの.locating_atを更新すること' do
-        expect(line_user.reload.locating_at).to_not eq current_time
+    context '関連するLineUserの.locating_fromの値がある時' do
+      it '関連するLineUserの.locating_fromを更新すること' do
+        expect(line_user.reload.locating_from).to_not eq current_time
       end
     end
   end

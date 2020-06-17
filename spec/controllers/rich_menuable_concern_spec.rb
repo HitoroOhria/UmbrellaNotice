@@ -73,7 +73,7 @@ RSpec.describe "RichMenuables", type: :controller do
 
     it 'line_userのlocating_atを更新すること' do
       location_resetting
-      expect(line_user.reload.locating_at).to be_present
+      expect(line_user.reload.locating_from).to be_present
     end
 
     it '位置情報の再設定中メッセージを返すこと' do
