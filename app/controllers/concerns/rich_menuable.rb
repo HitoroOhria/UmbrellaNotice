@@ -1,6 +1,16 @@
 module RichMenuable
   extend ActiveSupport::Concern
 
+  # Lineリッチメニューのポストバックアクションに対応したメソッドを呼び出す
+  # リッチメニューには以下の7つのアクションを設定している
+  # send_location 以外のアクションは全てポストバックイベントとして、'post lines/webhock'に送信される
+  #   - reply_weather_forecast
+  #   - send_location
+  #   - notice_time_setting
+  #   - toggle_silent_notice
+  #   - location_resetting
+  #   - issue_serial_number
+  #   - profile_page
   def rich_menus(event, line_user)
     send(event['postback']['data'], event, line_user)
   end

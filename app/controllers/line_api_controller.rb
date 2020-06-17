@@ -26,7 +26,7 @@ class LineApiController < ApplicationController
   def control_processing
     if !line_user.located_at || line_user.locating_at
       location_setting
-    elsif event.type == 'postback'
+    elsif event.is_a? Line::Bot::Event::Postback
       rich_menus(event, line_user)
     else
       interactive
