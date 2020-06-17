@@ -34,7 +34,7 @@ module RichMenuable
 
   def location_resetting(_event, line_user)
     line_user.update_attribute(:locating_from, Time.zone.now)
-    reply('location_resetting')
+    reply('location_resetting', 'send_location_information')
   end
 
   def issue_serial_number(_event, line_user)
