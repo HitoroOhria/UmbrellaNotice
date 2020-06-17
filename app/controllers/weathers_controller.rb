@@ -1,5 +1,5 @@
 class WeathersController < ApplicationController
-  before_action :authenticate,         only: %i[trigger line_notice]
+  before_action :authenticate, only: %i[trigger line_notice]
 
   protect_from_forgery except: %i[trigger line_notice]
 

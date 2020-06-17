@@ -8,10 +8,13 @@ Rails.application.routes.draw do
   get   'policy',               to: 'static_pages#policy'
   get   'terms',                to: 'static_pages#terms'
   post  'lines/webhock',        to: 'line_api#webhock'
-  get   'weathers/information', to: 'weathers#information'
   post  'weathers/trigger',     to: 'weathers#trigger'
   post  'weathers/line_notice', to: 'weathers#line_notice'
   match '/oauth2callback',      to: Google::Auth::WebUserAuthorizer::CallbackApp, via: :all
 
   resources :users, only: [:show]
+
+  if Rails.env.development?
+    get   'weathers/information', to: 'weathers#information'
+  end
 end
