@@ -13,15 +13,17 @@ class Users::LineCallbacksController < ApplicationController
   end
 
   def callback
-    code     = params[:code]
-    response = request_access_token(code)
+    response = request_access_token(params[:code])
     payload  = fetch_payload(response)
     line_id  = payload['sub']
     email    = payload['email']
-    password = SecureRandom.alphanumeric
-    user     = find_or_create_user(email, password)
+    user     = User.find_or_initialize_by(email: email)
 
-    create_relation_model(user, line_id) unless user.weather
+    if user.new_record?
+      save_user(user)
+      create_relation_model(user, line_id)
+    end
+
     sign_in_and_redirect user
     flash[:notice] = 'LINE アカウントによる認証に成功しました。'
   end
@@ -45,17 +47,6 @@ class Users::LineCallbacksController < ApplicationController
     URI.encode_www_form(**client_id, **redirect_uri, **state, **scope)
   end
 
-  def post_request(url, **params)
-    uri = URI.parse(url)
-    req = Net::HTTP::Post.new(uri)
-
-    req.set_form_data(**params)
-
-    Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
-      http.request(req)
-    end
-  end
-
   def request_access_token(code)
     url    = 'https://api.line.me/oauth2/v2.1/token'
     params = {
@@ -69,6 +60,17 @@ class Users::LineCallbacksController < ApplicationController
     post_request(url, **params)
   end
 
+  def post_request(url, **params)
+    uri = URI.parse(url)
+    req = Net::HTTP::Post.new(uri)
+
+    req.set_form_data(**params)
+
+    Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+      http.request(req)
+    end
+  end
+
   def fetch_payload(access_token_res)
     access_token_json = JSON.parse(access_token_res.body, symbolize_names: true)
     id_token          = access_token_json[:id_token]
@@ -76,17 +78,10 @@ class Users::LineCallbacksController < ApplicationController
     JWT.decode(id_token, secret_id)[0]
   end
 
-  def find_or_create_user(email, password)
-    user = User.find_or_initialize_by(email: email)
-
-    if user.persisted?
-      user.update_attribute(:password, password)
-    else
-      user.password     = password
-      user.confirmed_at = Time.zone.now
-      user.save
-    end
-    user
+  def save_user(user)
+    user.password     = SecureRandom.alphanumeric
+    user.confirmed_at = Time.zone.now
+    user.save
   end
 
   def create_relation_model(user, line_id)
