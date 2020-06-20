@@ -32,5 +32,8 @@ module Webapp
 
     # キューイングバックエンドを設定
     config.active_job.queue_adapter = :sidekiq
+
+    # メイラープレビューのパスを変更
+    config.action_mailer.preview_path = "#{Rails.root}/spec/mailers/previews"
   end
 end

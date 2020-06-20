@@ -1,5 +1,8 @@
-<p>Welcome <%= @email %>!</p>
+<p><%= @email %> さん</p>
+<p>Umbrella Notice にアカウント登録頂きありがとうございます！</p>
 
-<p>You can confirm your account email through the link below:</p>
+<p>以下のリンクから本人であることを確認してください！</p>
 
-<p><%= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token) %></p>
+<p><%= link_to 'アカウントを確認する', confirmation_url(@resource, confirmation_token: @token) %></p>
+
+<p>もし心当たりが無い場合、このメールを無視してください。</p>
