@@ -3,9 +3,9 @@ module Lineable
 
   def client
     @client ||= Line::Bot::Client.new { |config|
-      config.channel_id     = Rails.application.credentials.line_api[:channel_id]
-      config.channel_secret = Rails.application.credentials.line_api[:channel_secret_id]
-      config.channel_token  = Rails.application.credentials.line_api[:channel_token]
+      config.channel_id     = credentials.line_api[:message][:channel_id]
+      config.channel_secret = credentials.line_api[:message][:channel_secret_id]
+      config.channel_token  = credentials.line_api[:message][:channel_token]
     }
   end
 
