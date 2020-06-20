@@ -1,17 +1,17 @@
 <div class="col-sm-6 mt-5">
   <div class="text-center">
     <div>
-      <%= link_to Rails.application.credentials.line_api[:follow_url], class: 'btn btn-success w-75', role: 'button' do %>
+      <%= link_to users_line_login_path, class: 'btn btn-success w-75', role: 'button' do %>
         <%= icon 'fab', 'line' %> LINEアカウントで<%= action_text %>
       <% end %>
     </div>
     <div class="mt-5">
-      <%= link_to Rails.application.credentials.line_api[:follow_url], class: 'btn btn-danger w-75', role: 'button' do %>
+      <%= link_to Rails.application.credentials.line_api[:message][:follow_url], class: 'btn btn-danger w-75', role: 'button' do %>
         <%= icon 'fab', 'google' %> Googleアカウントで<%= action_text %>
       <% end %>
     </div>
     <div class="mt-5">
-      <%= link_to Rails.application.credentials.line_api[:follow_url], class: 'btn btn-primary w-75', role: 'button' do %>
+      <%= link_to user_facebook_omniauth_authorize_path, class: 'btn btn-primary w-75', role: 'button' do %>
         <%= icon 'fab', 'facebook-square' %> Facebookアカウントで<%= action_text %>
       <% end %>
     </div>

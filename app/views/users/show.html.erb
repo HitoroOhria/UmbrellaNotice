@@ -11,35 +11,32 @@
   <div class="row">
     <div class="col-sm">
       <table class="table table-bordered text-center w-75 mx-auto">
+        <caption>設定の変更は <%= link_to 'LINE公式アカウントの「メニュー」', Rails.application.credentials.line_api[:follow_url] %>から行えます。</caption>
         <thead>
-        <tr>
-          <th class="table-active" scope="col" colspan="3">ユーザー情報</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <th>メール</th>
-          <td colspan="2"><%= @user.email %></td>
-        </tr>
-        <tr>
-          <th>サイレント通知</th>
-          <td colspan="2"><%= @line_user.silent_notice_text %></td>
-        </tr>
-        <tr>
-          <th class="table-active" scope="col" colspan="3">天気予報の位置情報</th>
-        </tr>
-        <tr>
-          <th>市</th>
-          <td colspan="2"><%= @weather.city %></td>
-        </tr>
-        <tr>
-          <th>経度</th>
-          <td colspan="2"><%= @weather.lat %></td>
-        </tr>
-        <tr>
-          <th>緯度</th>
-          <td colspan="2"><%= @weather.lon %></td>
-        </tr>
+          <tr>
+            <th class="table-active" scope="col" colspan="3">ユーザー情報</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <th>メール</th>
+            <td colspan="2"><%= @user.email %></td>
+          </tr>
+          <tr>
+            <th>通知時間</th>
+            <td colspan="2"><%= @line_user.notice_time %></td>
+          </tr>
+          <tr>
+            <th>サイレント通知</th>
+            <td colspan="2"><%= @line_user.silent_notice_text %></td>
+          </tr>
+          <tr>
+            <th class="table-active" scope="col" colspan="3">天気予報の位置情報</th>
+          </tr>
+          <tr>
+            <th>場所</th>
+            <td colspan="2"><%= @weather.city %></td>
+          </tr>
         </tbody>
       </table>
     </div>
