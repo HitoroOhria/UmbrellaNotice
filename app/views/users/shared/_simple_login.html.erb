@@ -2,17 +2,18 @@
   <div class="text-center">
     <div>
       <%= link_to users_line_login_path, class: 'btn btn-success w-75', role: 'button' do %>
-        <%= icon 'fab', 'line' %> LINEアカウントで<%= action_text %>
+        <%= icon 'fab', 'line' %> LINEアカウントでログイン
       <% end %>
     </div>
-    <div class="mt-5">
-      <%= link_to Rails.application.credentials.line_api[:message][:follow_url], class: 'btn btn-danger w-75', role: 'button' do %>
-        <%= icon 'fab', 'google' %> Googleアカウントで<%= action_text %>
-      <% end %>
-    </div>
+<!--    未実装のため、コメントアウト-->
+<!--    <div class="mt-5">-->
+      <%#= link_to Rails.application.credentials.line_api[:message][:follow_url], class: 'btn btn-danger w-75', role: 'button' do %>
+<!--        <%#= icon 'fab', 'google' %> Googleアカウントでログイン-->
+      <%# end %>
+<!--    </div>-->
     <div class="mt-5">
       <%= link_to user_facebook_omniauth_authorize_path, class: 'btn btn-primary w-75', role: 'button' do %>
-        <%= icon 'fab', 'facebook-square' %> Facebookアカウントで<%= action_text %>
+        <%= icon 'fab', 'facebook-square' %> Facebookアカウントでログイン
       <% end %>
     </div>
   </div>

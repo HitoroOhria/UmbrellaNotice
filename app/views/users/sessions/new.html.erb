@@ -35,13 +35,13 @@
           <%= f.submit 'Log in', class: 'btn btn-primary' %>
         </div>
       <% end %>
-      <div class="mt-5">
+      <div class="mt-5 text-center">
         <p><%= link_to 'パスワードをお忘れですか?', new_user_password_path %></p>
         <p><%= link_to '確認メールが届きませんか?', new_user_confirmation_path %></p>
       </div>
       <%= render 'users/shared/test_login' %>
     </div>
-    <%= render 'users/shared/simple_login', action_text: 'ログイン' %>
+    <%= render 'users/shared/simple_login' %>
   </div>
 </div>
 
