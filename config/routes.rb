@@ -12,6 +12,12 @@ Rails.application.routes.draw do
   post  'weathers/line_notice', to: 'weathers#line_notice'
   match '/oauth2callback',      to: Google::Auth::WebUserAuthorizer::CallbackApp, via: :all
 
+  namespace :users do
+    get  'line_login',          to: 'line_callbacks#line_login'
+    get  'line_callbacks',      to: 'line_callbacks#callback'
+    post 'line_callbacks',      to: 'line_callbacks#callback'
+  end
+
   resources :users, only: [:show]
 
   if Rails.env.development?
