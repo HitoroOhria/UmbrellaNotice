@@ -27,7 +27,7 @@
         <% if devise_mapping.rememberable? %>
           <div class="field mt-2">
             <%= f.check_box :remember_me %>
-            <%= f.label 'ログイン情報を保存する' %>
+            <%= f.label :remember_me, 'ログイン情報を保存する' %>
           </div>
         <% end %>
 
@@ -39,9 +39,9 @@
         <p><%= link_to 'パスワードをお忘れですか?', new_user_password_path %></p>
         <p><%= link_to '確認メールが届きませんか?', new_user_confirmation_path %></p>
       </div>
-      <%= render 'users/shared/test_login' %>
     </div>
     <%= render 'users/shared/simple_login' %>
   </div>
+  <%= render 'users/shared/test_login' %>
 </div>
 

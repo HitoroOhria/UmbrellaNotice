@@ -5,7 +5,7 @@
         <p class="alert alert-primary"><%= notice %></p>
       <% elsif alert.present? %>
         <p class="alert alert-warning"><%= alert %></p>
-      <% elsif resource.errors.any? %>
+      <% elsif defined?(resource) && resource.errors.any? %>
         <div id="error_explanation" class="alert alert-warning">
           <h4>
             <%= I18n.t("errors.messages.not_saved",
