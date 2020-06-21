@@ -6,9 +6,7 @@ class Users::LineCallbacksController < ApplicationController
     auth_state = SecureRandom.alphanumeric
     query_str  = line_authorization_query(auth_state)
 
-    session.delete(:auth_state) if session[:auth_state]
     session[:auth_state] = auth_state
-
     redirect_to base_url + query_str
   end
 
