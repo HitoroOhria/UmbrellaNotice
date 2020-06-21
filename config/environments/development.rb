@@ -65,4 +65,8 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   config.log_level = :debug
+
+  # Setting session store and Redis
+  config.session_store :cache_store
+  config.cache_store = :redis_store, { expires_in: 5.minutes, path: (Rails.root + 'tmp/sockets/redis.sock').to_s, namespace: 'cache' }
 end

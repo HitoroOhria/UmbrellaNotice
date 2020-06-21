@@ -1,5 +1,5 @@
-pro_redis_setting = { path: (Rails.root + 'tmp/sockets/host/redis.sock').to_s }
-dev_redis_setting = { path: (Rails.root + 'tmp/sockets/redis.sock').to_s }
+pro_redis_setting = { path: (Rails.root + 'tmp/sockets/host/redis.sock').to_s, namespace: 'sidekiq' }
+dev_redis_setting = { path: (Rails.root + 'tmp/sockets/redis.sock').to_s, namespace: 'sidekiq' }
 
 Sidekiq.configure_server do |config|
   if Rails.env.production?
