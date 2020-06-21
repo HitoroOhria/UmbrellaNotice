@@ -79,3 +79,6 @@
     </div>
   </div>
 </div>
+<% if Rails.env.development? %>
+  <p class="text-center mt-3"><%= link_to 'weathers/information', weathers_information_path %></p>
+<% end %>
