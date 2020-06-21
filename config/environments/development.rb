@@ -68,5 +68,5 @@ Rails.application.configure do
 
   # Setting session store and Redis
   config.session_store :cache_store
-  config.cache_store = :redis_store, { expires_in: 5.minutes, path: (Rails.root + 'tmp/sockets/redis.sock').to_s, namespace: 'cache' }
+  config.cache_store = :redis_store, { expires_in: 90.minutes, path: (Rails.root + 'tmp/sockets/redis.sock').to_s, namespace: 'cache' }
 end

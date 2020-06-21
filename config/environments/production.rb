@@ -58,7 +58,7 @@ Rails.application.configure do
 
   # Use a different cache store in production.
   config.session_store :cache_store
-  config.cache_store = :redis_store, { expires_in: 5.minutes, path: (Rails.root + 'tmp/sockets/host/redis.sock').to_s, namespace: 'cache' }
+  config.cache_store = :redis_store, { expires_in: 90.minutes, path: (Rails.root + 'tmp/sockets/host/redis.sock').to_s, namespace: 'cache' }
 
   # Use a real queuing backend for Active Job (and separate queues per environment)
   # config.active_job.queue_adapter     = :resque
