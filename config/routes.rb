@@ -15,6 +15,8 @@ Rails.application.routes.draw do
   namespace :users do
     get  'line_login',          to: 'line_callbacks#line_login'
     get  'line_callbacks',      to: 'line_callbacks#callback'
+
+    resources :line_users,      only: %i[new create]
   end
 
   resources :users, only: [:show]
