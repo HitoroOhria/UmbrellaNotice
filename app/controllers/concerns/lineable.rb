@@ -68,10 +68,11 @@ module Lineable
     File.open(file_path).read
   end
 
+  # LineMessageHelper に依存
   def read_erb_message(file_path, **locals)
-    erb_file  = File.open(file_path)
-    methods   = %i[new_user_registration_url current_date emoji]
-    variables = methods.map { |method| [method, send(method)] }.to_h
+    erb_file     = File.open(file_path)
+    method_names = %i[new_user_registration_url current_date emoji]
+    variables    = method_names.map { |method_name| [method_name, send(method_name)] }.to_h
 
     ERB.new(erb_file.read)
        .result_with_hash(**variables, **locals)
