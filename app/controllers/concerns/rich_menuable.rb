@@ -38,7 +38,8 @@ module RichMenuable
   end
 
   def issue_serial_number(_event, line_user)
-    reply('issue_serial_number', line_user: line_user)
+    file_names = %w[completed_issue_serial_number issue_serial_number explain_serial_number]
+    reply(*file_names, line_user: line_user)
   end
 
   def profile_page(_event, line_user)

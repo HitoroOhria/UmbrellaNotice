@@ -87,6 +87,20 @@ RSpec.describe "RichMenuables", type: :controller do
     it 'アカウント登録時のトークンを返すこと' do
       is_expected.to include line_user.inherit_token
     end
+
+    context 'ユーザー登録が済んでいない時' do
+      it 'アカウント登録ページのリンクを返すこと' do
+        is_expected.to include new_user_registration_url
+      end
+    end
+
+    context 'ユーザー登録が済んでいる時' do
+      let!(:user) { create(:user, weather: weather) }
+
+      it 'シリアル番号入力ページのリンクを返すこと' do
+        is_expected.to include new_users_line_user_path
+      end
+    end
   end
 
   describe '#profile_page' do

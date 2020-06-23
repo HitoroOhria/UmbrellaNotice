@@ -25,8 +25,8 @@ module Lineable
   # @return = [ { type: 'text', text: 'message', (quickReply: '...') }, ... ]
   def make_messages(*file_names, **locals)
     messages      = file_names.map { |file_name| read_message(file_name, **locals) }
-    text_messages = messages.map   { |hash| hash.try(:[], :text) }.compact
-    quick_reply   = messages.find  { |hash| hash.try(:[], :quick_reply) }.try(:[], :quick_reply)
+    text_messages = messages.select { |message| message.is_a?(String) }
+    quick_reply   = messages.select { |message| message.is_a?(Hash) }.last
 
     if quick_reply
       text_messages.map { |text_message| { type: 'text', text: text_message, quickReply: quick_reply } }
@@ -43,14 +43,11 @@ module Lineable
 
     case File.extname(file_path)
     when '.txt'
-      text = read_text_message(file_path)
-      { text: text }
+      read_text_message(file_path)
     when '.erb'
-      text = read_erb_message(file_path, **locals)
-      { text: text }
+      read_erb_message(file_path, **locals)
     when '.json'
-      hash = read_quick_reply(file_path)
-      { quick_reply: hash }
+      read_quick_reply(file_path)
     end
   end
 
@@ -61,7 +58,7 @@ module Lineable
       Rails.root + messages_dir + message_type + "#{file_name}.*"
     end
 
-    Dir[*messages_dirs][0] || raise(LoadError, "No such file. name: #{file_name}")
+    Dir[*messages_dirs][0] || raise(LoadError, "No such file '#{file_name}'.")
   end
 
   def read_text_message(file_path)
@@ -71,7 +68,7 @@ module Lineable
   # LineMessageHelper に依存
   def read_erb_message(file_path, **locals)
     erb_file     = File.open(file_path)
-    method_names = %i[new_user_registration_url current_date emoji]
+    method_names = %i[new_users_line_user_path new_user_registration_url current_date emoji]
     variables    = method_names.map { |method_name| [method_name, send(method_name)] }.to_h
 
     ERB.new(erb_file.read)
