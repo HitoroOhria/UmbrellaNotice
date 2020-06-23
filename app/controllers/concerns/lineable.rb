@@ -10,12 +10,14 @@ module Lineable
   end
 
   # イベントに対してリプライを送信する
+  # @param locals = #read_erb_message で使用するハッシュ { ローカル変数名: オブジェクト, ... }
   def reply(token, *file_names, **locals)
     messages = make_messages(*file_names, **locals)
     client.reply_message(token, messages)
   end
 
   # プッシュメッセージを送信する
+  # @param locals = #read_erb_message で使用するハッシュ { ローカル変数名: オブジェクト, ... }
   def push_message(line_id, *file_names, **locals)
     messages = make_messages(*file_names, **locals)
     client.push_message(line_id, messages)
@@ -37,7 +39,6 @@ module Lineable
 
   # lib/line_messages から、file_name に対応するファイルを読み込む
   # @param file_name = 読み込むファイル名
-  #        **locals  = .erbファイル内で使用されるローカル変数のハッシュ
   def read_message(file_name, **locals)
     file_path = find_by_line_messages(file_name)
 
@@ -65,10 +66,10 @@ module Lineable
     File.open(file_path).read
   end
 
-  # LineMessageHelper に依存
+  # LineMessageHelper に依存する
   def read_erb_message(file_path, **locals)
     erb_file     = File.open(file_path)
-    method_names = %i[new_users_line_user_path new_user_registration_url current_date emoji]
+    method_names = LineMessageHelper.public_instance_methods(false)
     variables    = method_names.map { |method_name| [method_name, send(method_name)] }.to_h
 
     ERB.new(erb_file.read)

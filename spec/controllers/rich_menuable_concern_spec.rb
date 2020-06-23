@@ -98,7 +98,7 @@ RSpec.describe "RichMenuables", type: :controller do
       let!(:user) { create(:user, weather: weather) }
 
       it 'シリアル番号入力ページのリンクを返すこと' do
-        is_expected.to include new_users_line_user_path
+        is_expected.to include new_users_line_user_url
       end
     end
   end

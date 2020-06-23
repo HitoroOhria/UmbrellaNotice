@@ -12,7 +12,7 @@ RSpec.describe "Lineable", type: :controller do
 
     context '"file_name"が存在しない時' do
       it 'LoadErrorを発生させること' do
-        expect { find_by_line_messages }.to raise_error(LoadError, "No such file. name: #{file_name}")
+        expect { find_by_line_messages }.to raise_error(LoadError, "No such file '#{file_name}'.")
       end
     end
   end
