@@ -37,12 +37,14 @@ class Users::LineCallbacksController < ApplicationController
   end
 
   def line_authorization_query(state)
-    client_id    = { client_id:    credentials.line_api[:login][:channel_id] }
-    redirect_uri = { redirect_uri: callback_url }
-    state        = { state:        state }
-    scope        = { scope:        'openid email' }
+    queries = {
+      client_id:    credentials.line_api[:login][:channel_id],
+      redirect_uri: callback_url,
+      state:        state,
+      scope:        'openid email'
+    }
 
-    URI.encode_www_form(**client_id, **redirect_uri, **state, **scope)
+    URI.encode_www_form(**queries)
   end
 
   def request_access_token(code)
@@ -62,7 +64,7 @@ class Users::LineCallbacksController < ApplicationController
     uri = URI.parse(url)
     req = Net::HTTP::Post.new(uri)
 
-    req.set_form_data(**params)
+    req.set_form_data(**params) if params.any?
 
     Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
       http.request(req)
@@ -72,8 +74,8 @@ class Users::LineCallbacksController < ApplicationController
   def fetch_payload(access_token_res)
     access_token_json = JSON.parse(access_token_res.body, symbolize_names: true)
     id_token          = access_token_json[:id_token]
-    secret_id         = Rails.application.credentials.line_api[:login][:channel_secret_id]
-    JWT.decode(id_token, secret_id)[0]
+    secret_id         = credentials.line_api[:login][:channel_secret_id]
+    JWT.decode(id_token, secret_id).first
   end
 
   def save_user(user)

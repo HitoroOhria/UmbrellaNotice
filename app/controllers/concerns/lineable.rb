@@ -26,7 +26,7 @@ module Lineable
   # LINE返信用のメッセージを作成する
   # @return = [ { type: 'text', text: 'message', (quickReply: '...') }, ... ]
   def make_messages(*file_names, **locals)
-    messages      = file_names.map { |file_name| read_message(file_name, **locals) }
+    messages      = file_names.map  { |file_name| read_message(file_name, **locals) }
     text_messages = messages.select { |message| message.is_a?(String) }
     quick_reply   = messages.select { |message| message.is_a?(Hash) }.last
 
@@ -59,7 +59,7 @@ module Lineable
       Rails.root + messages_dir + message_type + "#{file_name}.*"
     end
 
-    Dir[*messages_dirs][0] || raise(LoadError, "No such file '#{file_name}'.")
+    Dir[*messages_dirs].last || raise(LoadError, "No such file '#{file_name}'.")
   end
 
   def read_text_message(file_path)

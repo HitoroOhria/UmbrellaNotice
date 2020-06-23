@@ -21,11 +21,12 @@ module RichMenuable
     target_time = event['postback']['params']['time']
 
     line_user.update_attribute(:notice_time, target_time)
-    reply('completed_notice_time_setting', line_user: line_user.reload)
+    reply('completed_notice_time_setting', line_user: line_user)
   end
 
   def toggle_silent_notice(_event, line_user)
     boolean = line_user.silent_notice
+
     line_user.update_attribute(:silent_notice, !boolean)
     reply('completed_toggle_silent_notice', line_user: line_user)
   end

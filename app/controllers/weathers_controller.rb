@@ -38,7 +38,7 @@ class WeathersController < ApplicationController
 
   def authenticate
     line_user = LineUser.find_by(line_id: params[:line_id])
-    token     = line_user.try(:auth_token) || Rails.application.credentials.http[:trigger_token]
+    token     = line_user.try(:auth_token) || credentials.http[:trigger_token]
 
     authenticate_or_request_with_http_token do |request_token, _options|
       ActiveSupport::SecurityUtils.secure_compare(request_token, token)
