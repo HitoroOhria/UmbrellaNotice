@@ -6,9 +6,9 @@ class ApplicationController < ActionController::Base
     Rails.application.credentials
   end
 
-  # サインイン後のリダイレクト先を /users/:id に変更
+  # サインイン後のリダイレクト先を変更
   def after_sign_in_path_for(resource)
-    user_path(resource)
+    stored_location_for(resource) || user_path(resource)
   end
 
   def render_success
