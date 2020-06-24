@@ -37,18 +37,21 @@ module RichMenuable
   end
 
   def issue_serial_number(_event, line_user)
-    file_names = %w[completed_issue_serial_number issue_serial_number explain_serial_number]
-    reply(*file_names,
-          line_user: line_user,
-          new_users_line_user_url:   new_users_line_user_url,
-          new_user_registration_url: new_user_registration_url)
+    if line_user.user
+      reply('completed_issue_serial_number', line_user: line_user)
+    else
+      file_names = %w[completed_issue_serial_number issue_serial_number explain_serial_number]
+      reply(*file_names,
+            line_user: line_user,
+            new_users_line_user_url:   new_users_line_user_url)
+    end
   end
 
   def profile_page(_event, line_user)
-    user_path = line_user.user && user_path(line_user.user)
+    user_url = line_user.user && user_url(line_user.user)
     reply('profile_page',
           line_user: line_user,
-          user_path: user_path,
+          user_url: user_url,
           new_user_registration_url: new_user_registration_url)
   end
 end
