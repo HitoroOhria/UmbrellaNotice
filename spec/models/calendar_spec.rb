@@ -1,5 +1,5 @@
 require 'rails_helper'
 
 RSpec.describe Calendar, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  pending 'Googleカレンダー連携を実装次第、記述予定'
 end
