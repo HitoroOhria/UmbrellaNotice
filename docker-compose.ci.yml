@@ -4,7 +4,7 @@ services:
   umbrellanotice:
     build:
       context: .
-      dockerfile: Dockerfile.ci
+      dockerfile: docker/umbrellanotice/Dockerfile
     environment:
       TZ: Asia/Tokyo
       RAILS_MASTER_KEY: $RAILS_MASTER_KEY
@@ -14,10 +14,11 @@ services:
     depends_on:
       - mysql
       - redis
+    command: circleci
   sidekiq:
     build:
       context: .
-      dockerfile: Dockerfile.ci
+      dockerfile: docker/umbrellanotice/Dockerfile
     environment:
       TZ: Asia/Tokyo
       RAILS_MASTER_KEY: $RAILS_MASTER_KEY
@@ -29,21 +30,22 @@ services:
     command: sidekiq
   redis:
     build:
-      context: docker/redis
-      dockerfile: Dockerfile.ci
+      context: .
+      dockerfile: docker/redis/Dockerfile
     volumes:
       - socket-data:/run/redis
   mysql:
     build:
-      context: ./docker/mysql
-      dockerfile: Dockerfile.ci
+      context: .
+      dockerfile: docker/mysql/Dockerfile.ci
     environment:
       MYSQL_ROOT_PASSWORD: password
     ports:
       - '33306:3306'
   nginx:
     build:
-      context: docker/nginx
+      context: .
+      dockerfile: docker/nginx/Dockerfile
     volumes:
       - socket-data:/umbrellanotice/tmp/sockets
     ports:

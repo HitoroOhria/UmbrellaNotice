@@ -1,27 +1,14 @@
 class ApplicationController < ActionController::Base
   include LineMessageHelper
+  include Lineable
 
-  def client
-    @client ||= Line::Bot::Client.new { |config|
-      config.channel_id     = Rails.application.credentials.line_api[:channel_id]
-      config.channel_secret = Rails.application.credentials.line_api[:channel_secret_id]
-      config.channel_token  = Rails.application.credentials.line_api[:channel_token]
-    }
+  def credentials
+    Rails.application.credentials
   end
 
-  # lib/line_messages から、file_name に対応するファイルを読み込む
-  # locals 変数は、ERB で読み込むファイル内で使用する
-  def read_message(file_name, **locals)
-    file_path = Dir[Rails.root + "lib/line_messages/#{file_name}.*"][0]
-
-    case File.extname(file_path)
-    when '.txt'
-      File.open(file_path).read
-    when '.erb'
-      ERB.new(File.open(file_path).read)
-         .result_with_hash(locals: locals, current_date: current_date, emoji: emoji)
-         .gsub(/^\s+/, '')
-    end
+  # サインイン後のリダイレクト先を変更
+  def after_sign_in_path_for(resource)
+    stored_location_for(resource) || user_path(resource)
   end
 
   def render_success

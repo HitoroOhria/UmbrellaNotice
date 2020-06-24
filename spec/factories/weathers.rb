@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :base_weather, class: Weather do
-    city { 'shibuya' }
+    city { '渋谷区' }
     lat  { 35.65 }
     lon  { 139.70 }
 

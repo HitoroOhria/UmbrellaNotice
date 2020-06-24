@@ -25,10 +25,15 @@ module Webapp
 
     config.time_zone = 'Asia/Tokyo'
 
+    config.i18n.default_locale = :ja
+
     # production環境でのlibディレクトリの読み込みを設定
     config.paths.add 'lib', eager_load: true
 
     # キューイングバックエンドを設定
     config.active_job.queue_adapter = :sidekiq
+
+    # メイラープレビューのパスを変更
+    config.action_mailer.preview_path = "#{Rails.root}/spec/mailers/previews"
   end
 end

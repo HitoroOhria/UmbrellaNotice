@@ -1,10 +1,12 @@
 class LineApiController < ApplicationController
-  before_action :validate_signature, :validate_event_type, :validate_source_type, :validate_message_type,
-                only: [:webhock]
+  include RichMenuable
+
+  before_action :validate_signature, :validate_event_type, :validate_source_type, only: [:webhock]
 
   protect_from_forgery except: :webhock
 
   attr_accessor :event
+  attr_accessor :line_user
 
   def events
     @events ||= client.parse_events_from(request.body.read)
@@ -12,41 +14,49 @@ class LineApiController < ApplicationController
 
   def webhock
     events.each do |item|
-      self.event = item
-      line_user = LineUser.find_or_create_by(line_id: event['source']['userId'])
-      if line_user.located_at
-        interactive
-      else
-        location_setting(line_user)
-      end
+      self.event     = item
+      self.line_user = LineUser.find_or_create_by(line_id: event['source']['userId'])
+
+      control_processing
     end
 
     render_success
+  end
+
+  def control_processing
+    if !line_user.located_at || line_user.locating_from
+      location_setting
+    elsif event.is_a? Line::Bot::Event::Postback
+      rich_menus(event, line_user)
+    else
+      interactive
+    end
+  end
+
+  def location_setting
+    weather = Weather.find_or_initialize_by(line_user: line_user)
+    message = event.message
+    content = message['text'] || [message['latitude'], message['longitude']]
+
+    case event.type
+    when 'text'
+      weather.take_and_save_location(content)
+    when 'location'
+      weather.save_location(*content)
+    end
+
+    weather.persisted? ? reply('completed_location_setting') : reply('invalid_city_name')
   end
 
   def interactive
     reply('interactive')
   end
 
-  def location_setting(line_user)
-    weather = Weather.new(line_user: line_user)
-    message = event.message
-    content = message['text'] || { lat: message['latitude'], lon: message['longitude'] }
-
-    case event.type
-    when 'text'
-      weather.add_and_save_location(content) || reply('invalid_city_name')
-    when 'location'
-      weather.save_location(content[:lat], content[:lon])
-    end
-
-    reply('completed_location_setting')
-  end
-
   private
 
-  def reply(file_name)
-    client.reply_message(event['replyToken'], { type: 'text', text: read_message(file_name) })
+  def reply(*file_names, **locals)
+    token = event['replyToken']
+    super(token, *file_names, **locals)
   end
 
   def validate_signature
@@ -60,7 +70,8 @@ class LineApiController < ApplicationController
   def validate_event_type
     events.each do |item|
       self.event = item
-      next if event.class == Line::Bot::Event::Message
+      allow_classes = [Line::Bot::Event::Message, Line::Bot::Event::Postback]
+      next if allow_classes.include?(event.class)
 
       render_bad_request
     end
@@ -72,16 +83,6 @@ class LineApiController < ApplicationController
       next if event['source']['type'] == 'user'
 
       reply('invalid_source_type')
-      render_bad_request
-    end
-  end
-
-  def validate_message_type
-    events.each do |item|
-      self.event = item
-      message_type = event['message']['type']
-      next if %w[text location].include?(message_type)
-
       render_bad_request
     end
   end

@@ -2,7 +2,9 @@ version: '3'
 
 services:
   umbrellanotice:
-    build: .
+    build:
+      context: .
+      dockerfile: ./docker/umbrellanotice/Dockerfile
     environment:
       TZ:         Asia/Tokyo
       LINE_ID:    $LINE_ID
@@ -20,7 +22,9 @@ services:
     tty: true
     stdin_open: true
   sidekiq:
-    build: .
+    build:
+      context: .
+      dockerfile: ./docker/umbrellanotice/Dockerfile
     volumes:
       - .:/umbrellanotice
       - public-data:/umbrellanotice/public
@@ -33,7 +37,8 @@ services:
     command: sidekiq
   redis:
     build:
-      context: docker/redis
+      context: .
+      dockerfile: ./docker/redis/Dockerfile
     volumes:
       - socket-data:/run/redis
   mysql:
@@ -44,7 +49,8 @@ services:
       - ./docker/mysql/mysql-confd:/etc/mysql/conf.d
   nginx:
     build:
-      context: docker/nginx
+      context: .
+      dockerfile: ./docker/nginx/Dockerfile
     volumes:
       - socket-data:/umbrellanotice/tmp/sockets
     ports:

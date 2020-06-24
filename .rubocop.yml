@@ -15,13 +15,17 @@ Layout/LineLength:
 Layout/HashAlignment:
   Enabled: false
 
+Metrics/ClassLength:
+  Max: 200
+
+Metrics/MethodLength:
+  Max: 13
+
 Metrics/BlockLength:
   Max: 65
   Exclude:
     - 'spec/**/*.rb'
-
-Metrics/MethodLength:
-  Max: 13
+    - 'lib/tasks/*.rake'
 
 Lint/NonDeterministicRequireOrder:
   Exclude:
@@ -50,7 +54,6 @@ Style/Documentation:
 
 Style/BlockDelimiters:
   Enabled: false
-
 
 Style/FrozenStringLiteralComment:
   Enabled: false

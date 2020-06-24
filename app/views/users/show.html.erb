@@ -1,0 +1,83 @@
+<% provide(:title, 'Profile') %>
+
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-sm text-center">
+      <h1>プロフィール</h1>
+    </div>
+  </div>
+</div>
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-sm">
+      <table class="table table-bordered text-center w-75 mx-auto">
+        <caption>
+          天気予報の設定変更は <%= link_to 'LINE公式アカウント', Rails.application.credentials.line_api[:follow_url] %> の「メニュー」から行えます。
+        </caption>
+        <thead>
+          <tr>
+            <th class="table-active" scope="col" colspan="3">
+              ユーザー情報　<span><%= link_to '変更', edit_user_registration_path %></span>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <th>メール</th>
+            <td colspan="2"><%= @user.email %></td>
+          </tr>
+          <tr>
+            <th>パスワード</th>
+            <td colspan="2">非表示</td>
+          </tr>
+          <tr>
+            <th class="table-active" scope="col" colspan="3">天気予報の設定</th>
+          </tr>
+          <tr>
+            <th>予報位置</th>
+            <td colspan="2"><%= @weather.try(:city) || '-' %></td>
+          </tr>
+          <tr>
+            <th>通知時間</th>
+            <td colspan="2"><%= @line_user.try(:notice_time) || '-' %></td>
+          </tr>
+          <tr>
+            <th>サイレント通知</th>
+            <td colspan="2"><%= @line_user.try(:silent_notice_text) || '-' %></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-sm text-center">
+      <div>
+        <% if !@line_user %>
+          <%= link_to 'LINEと連携する',
+                      new_users_line_user_path,
+                      class: 'btn btn-primary',
+                      role: 'button' %>
+        <% else %>
+          <button type="button" class="btn btn-outline-primary" style="pointer-events: none;">LINEと連携済みです！</button>
+        <% end %>
+        <% if Rails.env.development? %>
+          <% if true %>
+            <%= link_to 'Googleカレンダーと連携する',
+                        @calendar.authorization_url(domain_url),
+                        class: 'btn btn-primary ml-4',
+                        role: 'button' %>
+          <% else %>
+            <button type="button" class="btn btn-outline-primary ml-4" style="pointer-events: none;">Googleカレンダーと連携済みです！</button>
+          <% end %>
+          <br>
+          <p>@user_id => <%= @user_id %></p>
+        <% else %>
+          <button type="button" class="btn btn-outline-primary ml-4" style="pointer-events: none;">Googleカレンダーとの連携は現在準備中です</button>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+

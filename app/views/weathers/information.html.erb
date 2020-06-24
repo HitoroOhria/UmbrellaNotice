@@ -2,7 +2,7 @@
 
 <h3>リクエスト時刻は、[<%= Time.zone.now %>] です。</h3>
 <p>取得データ個数は、【<%= @weather_forecast[:hourly].count %>】個です。</p>
-<p>今日は雨降りますか？ => <%= @rain_notice %></p>
+<p>今日は雨降りますか？ => <%= @weather.today_is_rainy? %></p>
 <p>仕様 : 現在時刻のhourから取得</p>
 
 <p>TZ => <%= @weather_forecast[:timezone] %></p>

@@ -8,7 +8,7 @@ class PostWeathersNoticeWorker
     req = Net::HTTP::Post.new(uri)
 
     req['Authorization'] = "Token #{token}"
-    req.set_form_data('line_id': line_id)
+    req.set_form_data(line_id: line_id)
 
     Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
       http.request(req)
