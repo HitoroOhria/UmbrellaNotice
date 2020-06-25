@@ -26,7 +26,6 @@ gem 'romkan'
 gem 'sidekiq'
 gem 'redis-rails'
 gem 'redis-namespace'
-gem 'aws-sdk-s3'
 gem 'line-bot-api'
 gem 'google-api-client', '~> 0.34'
 
@@ -59,6 +58,11 @@ group :test do
   gem 'database_cleaner'
   gem 'rails-controller-testing'
   gem 'bullet'
+end
+
+group :production do
+  gem 'asset_sync'
+  gem 'fog-aws'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

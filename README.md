@@ -42,6 +42,7 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
         - Nginx
         - Unicorn
         - Sidekiq
+    - AWS ECR
     - AWS ELB (ALB)
     - AWS AutoScaling
     - AWS VPC
@@ -53,9 +54,10 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
     - AWS ElasticCache (Redis)
 - 定期イベント
     - AWS Lambda
-- 画像配信
+- コンテンツ配信
     - AWS S3
     - AWS CloudFont
+    - asset_sync gem
 - ログ管理
     - AWS CloudWatch
 - 機密情報管理

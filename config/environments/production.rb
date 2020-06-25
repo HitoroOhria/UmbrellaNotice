@@ -32,7 +32,9 @@ Rails.application.configure do
   # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
-  # config.action_controller.asset_host = 'http://assets.example.com'
+  config.assets.digest = true
+  config.assets.enabled = true
+  config.action_controller.asset_host = 'static.umbrellanotice.work'
 
   # Specifies the header that your server uses for sending files.
   # config.action_dispatch.x_sendfile_header = 'X-Sendfile' # for Apache
@@ -71,10 +73,6 @@ Rails.application.configure do
   config.session_store :redis_store, redis_setting.call('session', 90.minute)
 
   config.cache_store = :redis_store, redis_setting.call('cache', 3.month)
-
-  config.assets.configure do |env|
-    env.cache = ActiveSupport::Cache.lookup_store :redis_store, redis_setting.call('asset', 3.month)
-  end
 
   # Use a real queuing backend for Active Job (and separate queues per environment)
   # config.active_job.queue_adapter     = :resque
