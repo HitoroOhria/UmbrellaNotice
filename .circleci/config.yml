@@ -54,6 +54,19 @@ jobs:
           key: gemfiles-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
+  Run-assets-precompile:
+    working_directory: ~/umbrellanotice
+    docker:
+      - image: circleci/ruby
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build image
+          command: docker build -f docker/umbrellanotice/Dockerfile.pro -t assets_precompile .
+      - run:
+          name: Run assets precompile
+          command: docker run -e RAILS_MASTER_KEY assets_precompile bundle exec rails assets:precompile RAILS_ENV=production
   Push-umbrellanotice-image:
     docker:
       - image: 'circleci/python:3.7.1'
@@ -111,6 +124,10 @@ workflows:
     jobs:
       - RSpec
       - RuboCop
+      - Run-assets-precompile :
+          requires:
+            - RSpec
+            - RuboCop
       - Push-umbrellanotice-image:
           requires:
             - RSpec
