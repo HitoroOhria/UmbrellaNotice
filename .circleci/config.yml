@@ -124,7 +124,7 @@ workflows:
     jobs:
       - RSpec
       - RuboCop
-      - Run-assets-precompile :
+      - Run-assets-precompile:
           requires:
             - RSpec
             - RuboCop
