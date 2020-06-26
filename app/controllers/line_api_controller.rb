@@ -36,16 +36,21 @@ class LineApiController < ApplicationController
   def location_setting
     weather = Weather.find_or_initialize_by(line_user: line_user)
     message = event.message
-    content = message['text'] || [message['latitude'], message['longitude']]
+    content = message['text'] || { lat: message['latitude'], lon: message['longitude'] }
 
     case event.type
     when 'text'
-      weather.take_and_save_location(content)
+      set_location_form_text(weather, content)
     when 'location'
-      weather.save_location(*content)
+      weather.save_location(**content)
     end
 
     weather.persisted? ? reply('completed_location_setting') : reply('invalid_city_name')
+  end
+
+  def set_location_form_text(weather, city_name)
+    coord = weather.compensate_city(city_name) && weather.city_to_coord
+    coord && weather.save_location(**coord)
   end
 
   def interactive

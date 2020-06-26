@@ -29,29 +29,23 @@ RSpec.describe Weather, type: :model do
 
   describe 'Validates' do
     describe 'weathers.city' do
-      let(:error_message) { '市名の末尾に「市」か「区」を付ける必要があります' }
-
       subject(:weather) { build(:base_weather, city: city_name) }
 
       context '値が「渋谷」の時' do
         let(:city_name) { '渋谷' }
 
-        it { is_expected.to_not be_valid }
-
-        it 'エラーメッセージを表示すること' do
+        it 'self.cityの末尾に「市」を付けること' do
           weather.valid?
-          expect(weather.errors[:city]).to include(error_message)
+          expect(weather.city).to eq '渋谷市'
         end
       end
 
       context '値が「かすみがうら」の時' do
         let(:city_name) { 'かすみがうら' }
 
-        it { is_expected.to_not be_valid }
-
-        it 'エラーメッセージを表示すること' do
+        it 'self.cityの末尾に「市」を付けること' do
           weather.valid?
-          expect(weather.errors[:city]).to include(error_message)
+          expect(weather.city).to eq 'かすみがうら市'
         end
       end
 
@@ -166,29 +160,28 @@ RSpec.describe Weather, type: :model do
     end
   end
 
-  describe '#take_and_save_location(text)' do
-    let!(:weather) { build(:base_weather) }
+  describe '#city_to_coord' do
+    let(:weather)   { build(:base_weather) }
+    let(:dir_path)  { 'spec/fixtures/geocoding_api' }
+    let(:file_name) { 'success_response.xml' }
+    let(:response)  { File.open(Rails.root + dir_path + file_name) }
 
     before do
-      allow(weather).to receive(:city_to_coord).and_return(response)
-      allow(weather).to receive(:save_location).with(any_args)
+      allow(weather).to receive(:call_geocoding_api).and_return(response)
     end
 
-    subject(:take_and_save_location) { weather.take_and_save_location('渋谷区') }
+    subject { weather.send(:city_to_coord) }
 
-    context '#city_to_coord のレスポンスが有効な値の場合' do
-      let(:response) { { lat: 34.408413, lon: 140.229085 } }
-
-      it '#save_location(lat, lon)を呼び出すこと' do
-        expect(weather).to receive(:save_location).once
-        take_and_save_location
-      end
-    end
-
-    context '#city_to_coordのレスポンスがnilの場合' do
-      let(:response) { nil }
+    context '#geocoding_apiのレスポンスがエラーの時' do
+      let(:file_name) { 'error_response.xml' }
 
       it { is_expected.to eq nil }
+    end
+
+    context '#geocoding_apiのレスポンスが成功の時' do
+      let(:return_hash) { { lat: 35.661971, lon: 139.703795 } }
+
+      it { is_expected.to eq return_hash }
     end
   end
 
@@ -203,7 +196,7 @@ RSpec.describe Weather, type: :model do
     }
 
     before do
-      weather.save_location(35.659108, 139.703728)
+      weather.save_location(lat: 35.659108, lon: 139.703728)
     end
 
     describe 'カラムの値' do
@@ -242,32 +235,6 @@ RSpec.describe Weather, type: :model do
       it '関連するLineUserの.locating_fromを更新すること' do
         expect(line_user.reload.locating_from).to_not eq current_time
       end
-    end
-  end
-
-  describe '#city_to_coord' do
-    let(:weather)   { build(:base_weather) }
-    let(:dir_path)  { 'spec/fixtures/geocoding_api' }
-    let(:file_name) { 'sccess_response.xml' }
-    let(:xml_file)  { File.open(Rails.root + dir_path + file_name) }
-    let(:response)  { REXML::Document.new(xml_file.read) }
-
-    before do
-      allow(weather).to receive(:geocoding_api).and_return(response)
-    end
-
-    subject { weather.send(:city_to_coord) }
-
-    context '#geocoding_apiのレスポンスがエラーの時' do
-      let(:file_name) { 'error_response.xml' }
-
-      it { is_expected.to eq nil }
-    end
-
-    context '#geocoding_apiのレスポンスが成功の時' do
-      let(:return_hash) { { lat: 35.658581, lon: 139.745433 } }
-
-      it { is_expected.to eq return_hash }
     end
   end
 
