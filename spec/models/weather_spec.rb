@@ -1,6 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe Weather, type: :model do
+  let(:weather)                 { build(:base_weather) }
+  let(:fixtures_dir_path)       { Rails.root + 'spec/fixtures' }
+
+  let(:weather_api_dir)         { 'weather_api' }
+  let(:one_call_api_file)       { 'fixed_clear_forecast.json' }
+  let!(:one_call_api_response)  { File.open(fixtures_dir_path + weather_api_dir + one_call_api_file) }
+
+  let(:geocoding_api_dir)       { 'geocoding_api' }
+  let(:geocoding_api_file)      { 'success_response.xml' }
+  let(:geocoding_api_file_path) { fixtures_dir_path + geocoding_api_dir + geocoding_api_file }
+  let(:geocoding_api_response)  { File.open(geocoding_api_file_path).read }
+
+  before do
+    allow(weather).to receive(:call_one_call_api).and_return(one_call_api_response)
+    allow(weather).to receive(:call_geocoding_api).and_return(geocoding_api_response)
+  end
+
   describe 'Factory' do
     describe ':base_weather' do
       subject { create(:base_weather) }
@@ -130,17 +147,6 @@ RSpec.describe Weather, type: :model do
   end
 
   describe '#today_is_rainy?' do
-    let(:weather_dir_path)  { 'spec/fixtures/weather_api' }
-    let(:weather_file_name) { 'fixed_clear_forecast.json' }
-    let(:weather_file)      { File.open(Rails.root + weather_dir_path + weather_file_name) }
-
-    let!(:weather)          { build(:base_weather) }
-    let!(:weather_forecast) { JSON.parse(weather_file.read, symbolize_names: true) }
-
-    before do
-      allow(weather).to receive(:forecast).and_return(weather_forecast)
-    end
-
     subject { weather.today_is_rainy? }
 
     context '天気予報の雨量が 0[mm] の時' do
@@ -148,32 +154,39 @@ RSpec.describe Weather, type: :model do
     end
 
     context '天気予報の雨量が 0.79[mm] の時' do
-      let(:weather_file_name) { 'cloudy_rain_forecast.json' }
+      let(:one_call_api_file) { 'cloudy_rain_forecast.json' }
 
       it { is_expected.to eq false }
     end
 
     context '天気予報の雨量が 0.8[mm] の時' do
-      let(:weather_file_name) { 'rain_forecast.json' }
+      let(:one_call_api_file) { 'rain_forecast.json' }
 
       it { is_expected.to eq true }
     end
   end
 
-  describe '#city_to_coord' do
-    let(:weather)   { build(:base_weather) }
-    let(:dir_path)  { 'spec/fixtures/geocoding_api' }
-    let(:file_name) { 'success_response.xml' }
-    let(:response)  { File.open(Rails.root + dir_path + file_name) }
+  describe '#compensate_city(city_name)' do
+    subject(:compensate_city) { weather.compensate_city('渋谷') }
 
-    before do
-      allow(weather).to receive(:call_geocoding_api).and_return(response)
+    context '#geocodingのリターンがfalseの時' do
+      let(:geocoding_api_response) { false }
+
+      it { is_expected.to eq nil }
     end
 
+    context 'geocodingのリターンがREXML::Documentの時' do
+      it 'self.cityに、APIレスポンスの市名を代入すること' do
+        is_expected.to eq '渋谷区'
+      end
+    end
+  end
+
+  describe '#city_to_coord' do
     subject { weather.send(:city_to_coord) }
 
     context '#geocoding_apiのレスポンスがエラーの時' do
-      let(:file_name) { 'error_response.xml' }
+      let(:geocoding_api_file) { 'error_response.xml' }
 
       it { is_expected.to eq nil }
     end
@@ -271,12 +284,7 @@ RSpec.describe Weather, type: :model do
   end
 
   describe '#refill_rain(json_forecast)' do
-    let(:weather_dir_path)  { 'spec/fixtures/weather_api' }
-    let(:weather_file_name) { 'clear_forecast.json' }
-    let(:weather_file)      { File.open(Rails.root + weather_dir_path + weather_file_name) }
-
-    let!(:weather)          { build(:base_weather) }
-    let!(:json_forecast)    { JSON.parse(weather_file.read, symbolize_names: true) }
+    let!(:json_forecast)    { JSON.parse(one_call_api_response.read, symbolize_names: true) }
 
     subject(:refill_rain) { weather.send(:refill_rain, json_forecast) }
 
@@ -290,7 +298,7 @@ RSpec.describe Weather, type: :model do
 
     context 'json_forecast の :hourly の天気が雨の時' do
       context '雨量が 0.8[mm] 未満の時' do
-        let(:weather_file_name) { 'cloudy_rain_forecast.json' }
+        let(:one_call_api_file) { 'cloudy_rain_forecast.json' }
 
         it '天気を曇りに変更すること' do
           refill_rain[:hourly].each do |hourly|
