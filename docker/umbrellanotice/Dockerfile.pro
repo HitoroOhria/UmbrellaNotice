@@ -11,6 +11,6 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
 ADD . /umbrellanotice
 WORKDIR /umbrellanotice
 RUN mkdir -p tmp/sockets/task tmp/sockets/host log \
-  && bundle install
+  && bundle install --without development test
 
 CMD sh /umbrellanotice/docker/umbrellanotice/production_set_up.sh

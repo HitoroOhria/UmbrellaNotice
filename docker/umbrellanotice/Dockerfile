@@ -21,10 +21,10 @@ RUN apt-get update \
 
 ADD . /umbrellanotice
 WORKDIR /umbrellanotice
-RUN bundle install
+RUN bundle install --without production
 
 ENTRYPOINT [ \
-  "prehook", "bundle install", "--", \
+  "prehook", "bundle install --without production", "--", \
   "switch", \
       "sidekiq=bundle exec sidekiq -q sidekiq", "--", \
   "prehook", "echo sleep 45 seconds for mysql Start Up Comprete", "--", \
