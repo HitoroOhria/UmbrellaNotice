@@ -1,6 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe Weather, type: :model do
+  let(:weather)                 { build(:base_weather) }
+  let(:fixtures_dir_path)       { Rails.root + 'spec/fixtures' }
+
+  let(:weather_api_dir)         { 'weather_api' }
+  let(:one_call_api_file)       { 'fixed_clear_forecast.json' }
+  let!(:one_call_api_response)  { File.open(fixtures_dir_path + weather_api_dir + one_call_api_file) }
+
+  let(:geocoding_api_dir)       { 'geocoding_api' }
+  let(:geocoding_api_file)      { 'success_response.xml' }
+  let(:geocoding_api_file_path) { fixtures_dir_path + geocoding_api_dir + geocoding_api_file }
+  let(:geocoding_api_response)  { File.open(geocoding_api_file_path).read }
+
+  before do
+    allow(weather).to receive(:call_one_call_api).and_return(one_call_api_response)
+    allow(weather).to receive(:call_geocoding_api).and_return(geocoding_api_response)
+  end
+
   describe 'Factory' do
     describe ':base_weather' do
       subject { create(:base_weather) }
@@ -29,29 +46,23 @@ RSpec.describe Weather, type: :model do
 
   describe 'Validates' do
     describe 'weathers.city' do
-      let(:error_message) { '市名の末尾に「市」か「区」を付ける必要があります' }
-
       subject(:weather) { build(:base_weather, city: city_name) }
 
       context '値が「渋谷」の時' do
         let(:city_name) { '渋谷' }
 
-        it { is_expected.to_not be_valid }
-
-        it 'エラーメッセージを表示すること' do
+        it 'self.cityの末尾に「市」を付けること' do
           weather.valid?
-          expect(weather.errors[:city]).to include(error_message)
+          expect(weather.city).to eq '渋谷市'
         end
       end
 
       context '値が「かすみがうら」の時' do
         let(:city_name) { 'かすみがうら' }
 
-        it { is_expected.to_not be_valid }
-
-        it 'エラーメッセージを表示すること' do
+        it 'self.cityの末尾に「市」を付けること' do
           weather.valid?
-          expect(weather.errors[:city]).to include(error_message)
+          expect(weather.city).to eq 'かすみがうら市'
         end
       end
 
@@ -136,17 +147,6 @@ RSpec.describe Weather, type: :model do
   end
 
   describe '#today_is_rainy?' do
-    let(:weather_dir_path)  { 'spec/fixtures/weather_api' }
-    let(:weather_file_name) { 'fixed_clear_forecast.json' }
-    let(:weather_file)      { File.open(Rails.root + weather_dir_path + weather_file_name) }
-
-    let!(:weather)          { build(:base_weather) }
-    let!(:weather_forecast) { JSON.parse(weather_file.read, symbolize_names: true) }
-
-    before do
-      allow(weather).to receive(:forecast).and_return(weather_forecast)
-    end
-
     subject { weather.today_is_rainy? }
 
     context '天気予報の雨量が 0[mm] の時' do
@@ -154,41 +154,47 @@ RSpec.describe Weather, type: :model do
     end
 
     context '天気予報の雨量が 0.79[mm] の時' do
-      let(:weather_file_name) { 'cloudy_rain_forecast.json' }
+      let(:one_call_api_file) { 'cloudy_rain_forecast.json' }
 
       it { is_expected.to eq false }
     end
 
     context '天気予報の雨量が 0.8[mm] の時' do
-      let(:weather_file_name) { 'rain_forecast.json' }
+      let(:one_call_api_file) { 'rain_forecast.json' }
 
       it { is_expected.to eq true }
     end
   end
 
-  describe '#take_and_save_location(text)' do
-    let!(:weather) { build(:base_weather) }
+  describe '#compensate_city(city_name)' do
+    subject(:compensate_city) { weather.compensate_city('渋谷') }
 
-    before do
-      allow(weather).to receive(:city_to_coord).and_return(response)
-      allow(weather).to receive(:save_location).with(any_args)
-    end
-
-    subject(:take_and_save_location) { weather.take_and_save_location('渋谷区') }
-
-    context '#city_to_coord のレスポンスが有効な値の場合' do
-      let(:response) { { lat: 34.408413, lon: 140.229085 } }
-
-      it '#save_location(lat, lon)を呼び出すこと' do
-        expect(weather).to receive(:save_location).once
-        take_and_save_location
-      end
-    end
-
-    context '#city_to_coordのレスポンスがnilの場合' do
-      let(:response) { nil }
+    context '#geocodingのリターンがfalseの時' do
+      let(:geocoding_api_response) { false }
 
       it { is_expected.to eq nil }
+    end
+
+    context 'geocodingのリターンがREXML::Documentの時' do
+      it 'self.cityに、APIレスポンスの市名を代入すること' do
+        is_expected.to eq '渋谷区'
+      end
+    end
+  end
+
+  describe '#city_to_coord' do
+    subject { weather.send(:city_to_coord) }
+
+    context '#geocoding_apiのレスポンスがエラーの時' do
+      let(:geocoding_api_file) { 'error_response.xml' }
+
+      it { is_expected.to eq nil }
+    end
+
+    context '#geocoding_apiのレスポンスが成功の時' do
+      let(:return_hash) { { lat: 35.661971, lon: 139.703795 } }
+
+      it { is_expected.to eq return_hash }
     end
   end
 
@@ -203,7 +209,7 @@ RSpec.describe Weather, type: :model do
     }
 
     before do
-      weather.save_location(35.659108, 139.703728)
+      weather.save_location(lat: 35.659108, lon: 139.703728)
     end
 
     describe 'カラムの値' do
@@ -245,32 +251,6 @@ RSpec.describe Weather, type: :model do
     end
   end
 
-  describe '#city_to_coord' do
-    let(:weather)   { build(:base_weather) }
-    let(:dir_path)  { 'spec/fixtures/geocoding_api' }
-    let(:file_name) { 'sccess_response.xml' }
-    let(:xml_file)  { File.open(Rails.root + dir_path + file_name) }
-    let(:response)  { REXML::Document.new(xml_file.read) }
-
-    before do
-      allow(weather).to receive(:geocoding_api).and_return(response)
-    end
-
-    subject { weather.send(:city_to_coord) }
-
-    context '#geocoding_apiのレスポンスがエラーの時' do
-      let(:file_name) { 'error_response.xml' }
-
-      it { is_expected.to eq nil }
-    end
-
-    context '#geocoding_apiのレスポンスが成功の時' do
-      let(:return_hash) { { lat: 35.658581, lon: 139.745433 } }
-
-      it { is_expected.to eq return_hash }
-    end
-  end
-
   describe '#call_api_and_handle_error(api_name)' do
     context 'エラーが発生し続ける時' do
       let(:weather)      { build(:base_weather) }
@@ -304,12 +284,7 @@ RSpec.describe Weather, type: :model do
   end
 
   describe '#refill_rain(json_forecast)' do
-    let(:weather_dir_path)  { 'spec/fixtures/weather_api' }
-    let(:weather_file_name) { 'clear_forecast.json' }
-    let(:weather_file)      { File.open(Rails.root + weather_dir_path + weather_file_name) }
-
-    let!(:weather)          { build(:base_weather) }
-    let!(:json_forecast)    { JSON.parse(weather_file.read, symbolize_names: true) }
+    let!(:json_forecast)    { JSON.parse(one_call_api_response.read, symbolize_names: true) }
 
     subject(:refill_rain) { weather.send(:refill_rain, json_forecast) }
 
@@ -323,7 +298,7 @@ RSpec.describe Weather, type: :model do
 
     context 'json_forecast の :hourly の天気が雨の時' do
       context '雨量が 0.8[mm] 未満の時' do
-        let(:weather_file_name) { 'cloudy_rain_forecast.json' }
+        let(:one_call_api_file) { 'cloudy_rain_forecast.json' }
 
         it '天気を曇りに変更すること' do
           refill_rain[:hourly].each do |hourly|

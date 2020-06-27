@@ -4,9 +4,11 @@ class Weather < ApplicationRecord
   belongs_to :user,      optional: true
   belongs_to :line_user, optional: true
 
-  validates :city, format:       { with: /.+[市区]/, message: '市名の末尾に「市」か「区」を付ける必要があります' }
   validates :lat,  numericality: { greater_than_or_equal_to: -90,  less_than_or_equal_to: 90 }
   validates :lon,  numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
+
+  before_validation -> { self.city += '市' }, if:     :will_save_change_to_city?,
+                                              unless: -> { /.+[市区]/.match(city) }
 
   def romaji_city
     city_name = city.gsub(/[市区]/, '')
@@ -17,52 +19,59 @@ class Weather < ApplicationRecord
     @forecast ||= one_call_api
   end
 
+  def geocoding
+    @geocoding ||= geocoding_api
+  end
+
   def today_is_rainy?
     rain_falls = forecast[:hourly][0...TAKE_WEATHER_HOUR].map { |hourly| hourly[:rain][:'1h'] }
     rain_falls.find { |rain_fall| rain_fall >= RAIN_FALL_JUDGMENT }.present?
   end
 
-  # 引数の市名を座標に変換する
-  # 変換に成功した場合 => save_location を呼び出す
-  # 変換に失敗した場合 => nil を返す
-  def take_and_save_location(city_name)
-    city_name += '市' unless /.+[市区]/.match(city_name)
+  # city_name で geocoding_api を呼び出せるか検証する
+  # 成功した場合、レスポンスの行政区分を含んだ表記を self.city に保存する
+  def compensate_city(city_name)
     self.city = city_name
-    coord     = city_to_coord
+    xml_doc   = geocoding
+    return unless xml_doc
 
-    coord && save_location(coord[:lat], coord[:lon])
+    location  = xml_doc.elements['/result/google_maps'].text
+    self.city = location.slice(/(.+)、.+/, 1)
   end
 
-  def save_location(lat, lon)
+  # self.city の市名の座標を返す
+  # 有効な市名の場合 => { lat: Float, lon: Float }
+  # 無効な市名の場合 => nil
+  def city_to_coord
+    xml_doc = geocoding
+    return unless xml_doc
+
+    elements  = xml_doc.elements
+    latitude  = elements['/result/coordinate/lat'].text.to_f
+    longitude = elements['/result/coordinate/lng'].text.to_f
+    { lat: latitude, lon: longitude }
+  end
+
+  def save_location(lat: 0, lon: 0)
     self.lat = lat.round(2)
     self.lon = lon.round(2)
 
-    save
+    save!
     line_user.located_at || line_user.update_attributes(located_at: Time.zone.now, silent_notice: true)
     line_user.locating_from && line_user.update_attribute(:locating_from, nil)
   end
 
   private
 
-  # self.city の市名の座標を返す
-  # 有効な市名の場合 => { lat: Float, lon: Float }
-  # 無効な市名の場合 => nil
-  def city_to_coord
-    xml_doc  = geocoding_api
-    elements = xml_doc.elements
-    return if elements['/result/error'].present?
-
-    latitude  = elements['/result/coordinate/lat'].text.to_f
-    longitude = elements['/result/coordinate/lng'].text.to_f
-    { lat: latitude, lon: longitude }
-  end
-
   # Geocoing API を呼び出す
-  # 取得できた場合 => REXML::Document
-  # 取得できなかった場合 => false
+  # 成功した場合 => REXML::Document
+  # 失敗した場合 => false
   def geocoding_api
     api_response = call_api_and_handle_error('geocoding')
-    api_response && REXML::Document.new(api_response)
+    return unless api_response
+
+    xml_doc = REXML::Document.new(api_response)
+    xml_doc.elements['/result/error'].blank? && xml_doc
   end
 
   # Current Weather API を呼び出す
