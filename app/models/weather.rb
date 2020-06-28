@@ -10,17 +10,19 @@ class Weather < ApplicationRecord
   before_validation -> { self.city += '市' }, if:     :will_save_change_to_city?,
                                               unless: -> { /.+[市区]/.match(city) }
 
-  def romaji_city
-    city_name = city.gsub(/[市区]/, '')
-    to_romaji(city_name).camelize
-  end
-
   def forecast
     @forecast ||= one_call_api
   end
 
   def geocoding
     @geocoding ||= geocoding_api
+  end
+
+  def romaji_city
+    return unless city
+
+    city_name = city.gsub(/[市区]/, '')
+    to_romaji(city_name).camelize
   end
 
   def today_is_rainy?

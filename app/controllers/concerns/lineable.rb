@@ -1,8 +1,8 @@
 module Lineable
   extend ActiveSupport::Concern
 
-  def client
-    @client ||= Line::Bot::Client.new { |config|
+  def line_client
+    @line_client ||= Line::Bot::Client.new { |config|
       config.channel_id     = credentials.line_api[:message][:channel_id]
       config.channel_secret = credentials.line_api[:message][:channel_secret_id]
       config.channel_token  = credentials.line_api[:message][:channel_token]
@@ -13,14 +13,14 @@ module Lineable
   # @param locals = #read_erb_message で使用するハッシュ { ローカル変数名: オブジェクト, ... }
   def reply(token, *file_names, **locals)
     messages = make_messages(*file_names, **locals)
-    client.reply_message(token, messages)
+    line_client.reply_message(token, messages)
   end
 
   # プッシュメッセージを送信する
   # @param locals = #read_erb_message で使用するハッシュ { ローカル変数名: オブジェクト, ... }
   def push_message(line_id, *file_names, **locals)
     messages = make_messages(*file_names, **locals)
-    client.push_message(line_id, messages)
+    line_client.push_message(line_id, messages)
   end
 
   # LINE返信用のメッセージを作成する
