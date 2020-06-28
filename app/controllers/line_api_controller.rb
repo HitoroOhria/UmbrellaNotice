@@ -25,7 +25,9 @@ class LineApiController < ApplicationController
 
   def control_processing
     if !line_user.located_at || line_user.locating_from
-      location_setting
+      corresponding_types = %w[text location]
+      event_type          = event.try(:type)
+      corresponding_types.include?(event_type) ? location_setting : reply('finish_location_setting')
     elsif event.is_a? Line::Bot::Event::Postback
       rich_menus(event, line_user)
     else
@@ -50,7 +52,7 @@ class LineApiController < ApplicationController
 
   def set_location_form_text(weather, city_name)
     coord = weather.compensate_city(city_name) && weather.city_to_coord
-    coord && weather.save_location(**coord)
+    coord ? weather.save_location(**coord) : reply('invalid_city_name')
   end
 
   def interactive
