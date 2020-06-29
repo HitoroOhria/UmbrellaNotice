@@ -24,7 +24,8 @@ class LineApiController < ApplicationController
 
   def control_event
     if !line_user.located_at || line_user.locating_from
-      corresponding_type? ? location_setting : reply('finish_location_setting')
+      reply_files = %w[finish_location_setting send_location_information]
+      corresponding_type? ? location_setting : reply(*reply_files)
     elsif event.is_a?(Line::Bot::Event::Postback)
       rich_menus(event, line_user)
     else
