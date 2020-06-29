@@ -45,40 +45,6 @@ RSpec.describe Weather, type: :model do
   end
 
   describe 'Validates' do
-    describe 'weathers.city' do
-      subject(:weather) { build(:base_weather, city: city_name) }
-
-      context '値が「渋谷」の時' do
-        let(:city_name) { '渋谷' }
-
-        it 'self.cityの末尾に「市」を付けること' do
-          weather.valid?
-          expect(weather.city).to eq '渋谷市'
-        end
-      end
-
-      context '値が「かすみがうら」の時' do
-        let(:city_name) { 'かすみがうら' }
-
-        it 'self.cityの末尾に「市」を付けること' do
-          weather.valid?
-          expect(weather.city).to eq 'かすみがうら市'
-        end
-      end
-
-      context '値が「渋谷区」の時' do
-        let(:city_name) { '渋谷区' }
-
-        it { is_expected.to be_valid }
-      end
-
-      context '値が「かすみがうら市」の時' do
-        let(:city_name) { 'かすみがうら市' }
-
-        it { is_expected.to be_valid }
-      end
-    end
-
     describe 'weathers.lat' do
       subject(:weather) { build(:base_weather, lat: latitude) }
 
@@ -132,6 +98,58 @@ RSpec.describe Weather, type: :model do
         let(:longitude) { 181 }
 
         it { is_expected.to_not be_valid }
+      end
+    end
+  end
+
+  describe 'Before Validation' do
+    describe 'weathers.city' do
+      subject(:weather) { build(:base_weather, city: city_name) }
+
+      context '値がnilの時' do
+        let(:city_name) { '渋谷' }
+
+        before do
+          weather.save
+          weather.city = nil
+        end
+
+        it { expect(weather.save).to be_truthy }
+
+        it '変更を加えないこと' do
+          weather.valid?
+          expect(weather.city).to eq nil
+        end
+      end
+
+      context '値が「渋谷」の時' do
+        let(:city_name) { '渋谷' }
+
+        it 'self.cityの末尾に「市」を付けること' do
+          weather.valid?
+          expect(weather.city).to eq '渋谷市'
+        end
+      end
+
+      context '値が「かすみがうら」の時' do
+        let(:city_name) { 'かすみがうら' }
+
+        it 'self.cityの末尾に「市」を付けること' do
+          weather.valid?
+          expect(weather.city).to eq 'かすみがうら市'
+        end
+      end
+
+      context '値が「渋谷区」の時' do
+        let(:city_name) { '渋谷区' }
+
+        it { is_expected.to be_valid }
+      end
+
+      context '値が「かすみがうら市」の時' do
+        let(:city_name) { 'かすみがうら市' }
+
+        it { is_expected.to be_valid }
       end
     end
   end
