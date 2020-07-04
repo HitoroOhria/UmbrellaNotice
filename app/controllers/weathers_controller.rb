@@ -6,6 +6,7 @@ class WeathersController < ApplicationController
   def information
     @weather          = Weather.first
     @weather_forecast = @weather.forecast
+    @emoji = emoji
   end
 
   def trigger

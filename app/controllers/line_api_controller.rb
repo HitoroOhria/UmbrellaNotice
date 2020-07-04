@@ -45,7 +45,7 @@ class LineApiController < ApplicationController
 
     case event.type
     when 'text'
-      save_location_form_text(weather) || reply('invalid_city_name')
+      save_location_form_text(weather) || reply('invalid_city_name', 'send_location_information')
     when 'location'
       save_location_form_coord(weather)
     end
