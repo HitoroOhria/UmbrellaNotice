@@ -5,11 +5,10 @@ class LineApiController < ApplicationController
 
   protect_from_forgery except: :webhock
 
-  attr_accessor :event
-  attr_accessor :line_user
+  attr_accessor :event, :line_user
 
   def events
-    @events ||= client.parse_events_from(request.body.read)
+    @events ||= line_client.parse_events_from(request.body.read)
   end
 
   def webhock
@@ -17,46 +16,54 @@ class LineApiController < ApplicationController
       self.event     = item
       self.line_user = LineUser.find_or_create_by(line_id: event['source']['userId'])
 
-      control_processing
+      control_event
     end
 
     render_success
   end
 
-  def control_processing
+  def control_event
     if !line_user.located_at || line_user.locating_from
-      corresponding_types = %w[text location]
-      event_type          = event.try(:type)
-      corresponding_types.include?(event_type) ? location_setting : reply('finish_location_setting')
-    elsif event.is_a? Line::Bot::Event::Postback
+      reply_files = %w[finish_location_setting send_location_information]
+      corresponding_type? ? location_setting : reply(*reply_files)
+    elsif event.is_a?(Line::Bot::Event::Postback)
       rich_menus(event, line_user)
     else
-      interactive
+      reply('weather_trivia')
     end
+  end
+
+  def corresponding_type?
+    corresponding_types = %w[text location]
+    event_type          = event.try(:type)
+
+    corresponding_types.include?(event_type)
   end
 
   def location_setting
     weather = Weather.find_or_initialize_by(line_user: line_user)
-    message = event.message
-    content = message['text'] || { lat: message['latitude'], lon: message['longitude'] }
 
     case event.type
     when 'text'
-      set_location_form_text(weather, content)
+      save_location_form_text(weather) || reply('invalid_city_name')
     when 'location'
-      weather.save_location(**content)
+      save_location_form_coord(weather)
     end
 
-    weather.persisted? ? reply('completed_location_setting') : reply('invalid_city_name')
+    reply('completed_location_setting')
   end
 
-  def set_location_form_text(weather, city_name)
-    coord = weather.compensate_city(city_name) && weather.city_to_coord
-    coord ? weather.save_location(**coord) : reply('invalid_city_name')
+  def save_location_form_text(weather)
+    text = event.message['text']
+    weather.compensate_city(text) && (coord = weather.city_to_coord) && weather.save_location(**coord)
   end
 
-  def interactive
-    reply('interactive')
+  def save_location_form_coord(weather)
+    message      = event.message
+    coord        = { lat: message['latitude'], lon: message['longitude'] }
+    weather.city = nil
+
+    weather.save_location(**coord)
   end
 
   private
@@ -69,7 +76,7 @@ class LineApiController < ApplicationController
   def validate_signature
     body = request.body.read
     signature = request.env['HTTP_X_LINE_SIGNATURE']
-    return if client.validate_signature(body, signature)
+    return if line_client.validate_signature(body, signature)
 
     render_bad_request
   end

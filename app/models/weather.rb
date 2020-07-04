@@ -7,13 +7,8 @@ class Weather < ApplicationRecord
   validates :lat,  numericality: { greater_than_or_equal_to: -90,  less_than_or_equal_to: 90 }
   validates :lon,  numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
 
-  before_validation -> { self.city += '市' }, if:     :will_save_change_to_city?,
+  before_validation -> { self.city += '市' }, if:     [:will_save_change_to_city?, -> { city.present? }],
                                               unless: -> { /.+[市区]/.match(city) }
-
-  def romaji_city
-    city_name = city.gsub(/[市区]/, '')
-    to_romaji(city_name).camelize
-  end
 
   def forecast
     @forecast ||= one_call_api
@@ -21,6 +16,13 @@ class Weather < ApplicationRecord
 
   def geocoding
     @geocoding ||= geocoding_api
+  end
+
+  def romaji_city
+    return unless city
+
+    city_name = city.gsub(/[市区]/, '')
+    to_romaji(city_name).camelize
   end
 
   def today_is_rainy?
