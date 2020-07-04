@@ -5,9 +5,17 @@
 <p>今日は雨降りますか？ => <%= @weather.today_is_rainy? %></p>
 <p>仕様 : 現在時刻のhourから取得</p>
 
+<br>
+<p>都市 => <%= @weather.city %></p>
 <p>TZ => <%= @weather_forecast[:timezone] %></p>
 <p>TZオフセット => <%= @weather_forecast[:timezone_offset] %></p>
 
+<br>
+<% @emoji.each do |k, v| %>
+  <%= "#{k} => #{v}" %>
+<% end %>
+
+<br>
 <% @weather_forecast[:hourly].each do |item| %>
   <% time_jst = Time.zone.at(item[:dt]) %>
 
