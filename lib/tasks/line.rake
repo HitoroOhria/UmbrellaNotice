@@ -7,11 +7,14 @@ namespace :line do
       include LineMessageHelper
       include Lineable
 
-      if args[:number_of_executions]
-        messages = (0..args[:number_of_executions].to_i).to_a.map { read_message(args[:line_message_file]) }
+      line_message_file    = args[:line_message_file]
+      number_of_executions = args[:number_of_executions]
+
+      if number_of_executions
+        messages = (0..number_of_executions.to_i).to_a.map { read_message(line_message_file) }
         messages.each { |message| puts message }
       else
-        puts read_message(args[:line_message_file])
+        puts read_message(line_message_file)
       end
     end
   end
