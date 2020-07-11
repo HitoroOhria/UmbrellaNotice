@@ -3,7 +3,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :confirmable, :omniauthable
 
-  has_one :weather,  dependent: :destroy
+  has_one :weather
   has_one :calendar, dependent: :destroy
 
   delegate :line_user, to: :weather, allow_nil: true
