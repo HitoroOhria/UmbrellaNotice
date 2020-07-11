@@ -1,15 +1,26 @@
-<% TRIVIA_COUNT  = 8 %>
-<% trivia_number = rand(TRIVIA_COUNT) %>
+<% CREATOR_TRIVIA_COUNT ||= 1 %>
+<% WEATHER_TRIVIA_COUNT ||= 7 %>
 
-<% if trivia_number.zero? %>
-  【アプリ制作者雑学 (レア)】(全<%= TRIVIA_COUNT %>個)
+<% creator_trivia_range = 0...CREATOR_TRIVIA_COUNT %>
+<% weather_trivia_range = CREATOR_TRIVIA_COUNT...CREATOR_TRIVIA_COUNT + WEATHER_TRIVIA_COUNT %>
+
+<% trivia_number  = rand(CREATOR_TRIVIA_COUNT + WEATHER_TRIVIA_COUNT) %>
+<% trivia_counter = case trivia_number
+                    when creator_trivia_range
+                      trivia_number + 1
+                    when weather_trivia_range
+                      trivia_number - CREATOR_TRIVIA_COUNT + 1
+                    end %>
+
+<% if creator_trivia_range.include? trivia_number %>
+  【アプリ制作者雑学(レア)】
   アプリ制作者の好きな食べ物は特にありません！
   ゆえに、アプリ制作者との対面時に発してはいけない質問No.1です！
   使用された場合、アプリ制作者は5分間活動を停止します！
 <% else %>
-  【気象雑学 No.<%= trivia_number %>】(全<%= TRIVIA_COUNT %>個)
+  【気象雑学 No.<%= trivia_counter %>】(全<%= WEATHER_TRIVIA_COUNT %>個)
 
-  <% case trivia_number
+  <% case trivia_counter
      when 1 %>
     最高気温が25°Cを超えるとビールが飲みたくなるそうです！
     他にもかき氷は30°C、アイスクリームは27°Cで食べたくなるそうですよ！
