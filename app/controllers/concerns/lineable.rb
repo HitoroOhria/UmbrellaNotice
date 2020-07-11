@@ -66,7 +66,7 @@ module Lineable
     File.open(file_path).read
   end
 
-  # LineMessageHelper に依存する
+  # LineMessageHelper に依存するため、include すること
   def read_erb_message(file_path, **locals)
     erb_file     = File.open(file_path)
     method_names = LineMessageHelper.public_instance_methods(false)
