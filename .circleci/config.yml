@@ -132,10 +132,16 @@ workflows:
           requires:
             - RSpec
             - RuboCop
+          filters:
+            branches:
+              only: master
       - Push-db-migrate-image:
           requires:
             - RSpec
             - RuboCop
+          filters:
+            branches:
+              only: master
       - Run-db-migrate-task:
           requires:
             - Push-db-migrate-image
