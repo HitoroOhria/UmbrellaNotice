@@ -7,6 +7,5 @@ class UsersController < ApplicationController
     @line_user = @user.line_user
     @weather   = @user.weather
     @calendar  = @user.calendar
-    @user_id   = session['user_id']
   end
 end
