@@ -45,39 +45,23 @@
             <th>サイレント通知</th>
             <td colspan="2"><%= @line_user.try(:silent_notice_text) || '-' %></td>
           </tr>
+          <tr>
+            <th class="table-active" scope="col" colspan="3">連携</th>
+          </tr>
+          <tr>
+            <th>LINEアカウント</th>
+            <td colspan="2"><%= @line_user ? '連携済み' : link_to('連携する', new_users_line_user_path) %></td>
+          </tr>
+          <tr>
+            <th>Googleアカウント</th>
+            <% if Rails.env.production? %>
+              <td colspan="2">準備中です！</td>
+            <% else %>
+              <td colspan="2"><%= @calendar.google_id ? '連携済み' : link_to('連携する', @calendar.authorization_url(domain_url)) %></td>
+            <% end %>
+          </tr>
         </tbody>
       </table>
     </div>
   </div>
 </div>
-<div class="container mt-4">
-  <div class="row">
-    <div class="col-sm text-center">
-      <div>
-        <% if !@line_user %>
-          <%= link_to 'LINEと連携する',
-                      new_users_line_user_path,
-                      class: 'btn btn-primary',
-                      role: 'button' %>
-        <% else %>
-          <button type="button" class="btn btn-outline-primary" style="pointer-events: none;">LINEと連携済みです！</button>
-        <% end %>
-        <% if Rails.env.development? %>
-          <% if true %>
-            <%= link_to 'Googleカレンダーと連携する',
-                        @calendar.authorization_url(domain_url),
-                        class: 'btn btn-primary ml-4',
-                        role: 'button' %>
-          <% else %>
-            <button type="button" class="btn btn-outline-primary ml-4" style="pointer-events: none;">Googleカレンダーと連携済みです！</button>
-          <% end %>
-          <br>
-          <p>@user_id => <%= @user_id %></p>
-        <% else %>
-          <button type="button" class="btn btn-outline-primary ml-4" style="pointer-events: none;">Googleカレンダーとの連携は現在準備中です</button>
-        <% end %>
-      </div>
-    </div>
-  </div>
-</div>
-
