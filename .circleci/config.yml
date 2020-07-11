@@ -128,14 +128,23 @@ workflows:
           requires:
             - RSpec
             - RuboCop
+          filters:
+            branches:
+              only: master
       - Push-umbrellanotice-image:
           requires:
             - RSpec
             - RuboCop
+          filters:
+            branches:
+              only: master
       - Push-db-migrate-image:
           requires:
             - RSpec
             - RuboCop
+          filters:
+            branches:
+              only: master
       - Run-db-migrate-task:
           requires:
             - Push-db-migrate-image
@@ -146,6 +155,7 @@ workflows:
           service-name: 'umbrellanotice_Application_Service'
           container-image-name-updates: "container=umbrellanotice,tag=${CIRCLE_SHA1}"
           requires:
+            - Run-assets-precompile
             - Run-db-migrate-task
             - Push-umbrellanotice-image
       - aws-ecs/deploy-service-update:
@@ -155,5 +165,6 @@ workflows:
           service-name: 'umbrellanotice_Sidekiq_Service'
           container-image-name-updates: "container=sidekiq,tag=${CIRCLE_SHA1}"
           requires:
+            - Run-assets-precompile
             - Run-db-migrate-task
             - Push-umbrellanotice-image
