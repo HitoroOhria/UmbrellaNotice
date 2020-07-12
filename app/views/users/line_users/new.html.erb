@@ -14,7 +14,7 @@
 <div class="container mt-5">
   <div class="row">
     <div class="col-sm">
-      <%= form_with url: users_line_users_path do |f| %>
+      <%= form_with url: users_line_users_path, data: { remote: false } do |f| %>
         <div class="field w-75 mx-auto">
           <%= f.label :serial_number, 'シリアル番号' %><br />
           <%= f.text_field :serial_number, class: 'form-control' %>
