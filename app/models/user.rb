@@ -13,7 +13,7 @@ class User < ApplicationRecord
     return user if user
 
     user = create_from_api_login(email)
-    Calendar.create(user: user) && user.relate_line_user(user, line_id) && user
+    Calendar.create(user: user) && user.relate_line_user(line_id) && user
   end
 
   def self.from_omniauth(auth)
@@ -32,10 +32,8 @@ class User < ApplicationRecord
     end
   end
 
-  private
-
-  def relate_line_user(user, line_id)
+  def relate_line_user(line_id)
     line_user = LineUser.find_by(line_id: line_id)
-    line_user.weather.update_attribute(user_id: user.id)
+    line_user.weather.update_attribute(:user_id, id)
   end
 end
