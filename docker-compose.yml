@@ -55,6 +55,7 @@ services:
       - socket-data:/umbrellanotice/tmp/sockets
     ports:
       - 80:80
+      - 443:443
     depends_on:
       - umbrellanotice
 
