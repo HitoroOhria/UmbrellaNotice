@@ -6,7 +6,7 @@ class Users::LineCallbacksController < ApplicationController
     auth_state = SecureRandom.alphanumeric
     query_str  = line_authorization_query(auth_state)
 
-    session[:auth_state] = auth_state
+    session[:line_auth_state] = auth_state
     redirect_to base_url + query_str
   end
 
@@ -15,12 +15,7 @@ class Users::LineCallbacksController < ApplicationController
     payload  = fetch_payload(response)
     line_id  = payload['sub']
     email    = payload['email']
-    user     = User.find_or_initialize_by(email: email)
-
-    if user.new_record?
-      save_user(user)
-      create_relation_model(user, line_id)
-    end
+    user     = User.from_line_login(email, line_id)
 
     sign_in_and_redirect user
     flash[:notice] = 'LINE アカウントによる認証に成功しました。'
@@ -78,28 +73,15 @@ class Users::LineCallbacksController < ApplicationController
     JWT.decode(id_token, secret_id).first
   end
 
-  def save_user(user)
-    user.password     = SecureRandom.alphanumeric
-    user.confirmed_at = Time.zone.now
-    user.save
-  end
-
-  def create_relation_model(user, line_id)
-    line_user    = LineUser.find_by(line_id: line_id)
-    weather      = line_user.weather
-    weather.user = user
-
-    weather.save
-    Calendar.create(user: user)
-  end
-
   def authenticate
     if params[:error]
       render controller: :sessions, action: :new
     elsif params[:code]
       query_state = params[:state]
-      auth_state  = session[:auth_state]
-      return if ActiveSupport::SecurityUtils.secure_compare(query_state, auth_state)
+      auth_state  = session[:line_auth_state]
+      auth_result = ActiveSupport::SecurityUtils.secure_compare(query_state, auth_state)
+      session[:line_auth_state].clear
+      return if auth_result
 
       render_bad_request
     end

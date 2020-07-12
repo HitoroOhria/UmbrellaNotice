@@ -7,10 +7,6 @@ class LineApiController < ApplicationController
 
   attr_accessor :event, :line_user
 
-  def events
-    @events ||= line_client.parse_events_from(request.body.read)
-  end
-
   def webhock
     events.each do |item|
       self.event     = item
@@ -20,6 +16,12 @@ class LineApiController < ApplicationController
     end
 
     render_success
+  end
+
+  private
+
+  def events
+    @events ||= line_client.parse_events_from(request.body.read)
   end
 
   def control_event
@@ -65,8 +67,6 @@ class LineApiController < ApplicationController
 
     weather.save_location(**coord)
   end
-
-  private
 
   def reply(*file_names, **locals)
     token = event['replyToken']
