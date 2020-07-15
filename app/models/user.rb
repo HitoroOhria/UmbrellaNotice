@@ -33,7 +33,7 @@ class User < ApplicationRecord
   end
 
   def relate_line_user(line_id)
-    line_user = LineUser.find_by(line_id: line_id)
+    line_user = LineUser.find_by!(line_id: line_id)
     line_user.weather.update_attribute(:user_id, id)
   end
 end
