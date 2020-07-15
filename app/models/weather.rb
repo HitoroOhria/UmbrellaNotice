@@ -106,7 +106,23 @@ class Weather < ApplicationRecord
     rescue OpenURI::HTTPError => e
       retry_count += 1
       retry_message(e, retry_count)
-      retry_count <= RETRY_CALL_API_COUNT ? (sleep RETRY_CALL_API_WAIT_TIME; retry) : false
+
+      if retry_count <= RETRY_CALL_API_COUNT
+        (sleep RETRY_CALL_API_WAIT_TIME) && retry
+      else
+        false
+      end
+    end
+  end
+
+  def retry_message(exception, retry_count)
+    if retry_count <= RETRY_CALL_API_COUNT
+      logger.error "[Error] #{exception.class} が発生しました。"
+      logger.error "#{RETRY_CALL_API_WAIT_TIME}sec 待機後に再接続します。"
+      logger.error "この処理は#{RETRY_CALL_API_COUNT}回まで繰り返されます。(現在: #{retry_count}回目)"
+    else
+      logger.error "[Error] #{exception.class} の再接続に失敗しました。"
+      logger.error exception.backtrace
     end
   end
 
@@ -161,16 +177,5 @@ class Weather < ApplicationRecord
       end
     end
     json_forecast
-  end
-
-  def retry_message(exception, retry_count)
-    if retry_count <= RETRY_CALL_API_COUNT
-      logger.error "[Error] #{exception.class} が発生しました。"
-      logger.error "#{RETRY_CALL_API_WAIT_TIME}sec 待機後に再接続します。"
-      logger.error "この処理は#{RETRY_CALL_API_COUNT}回まで繰り返されます。(現在: #{retry_count}回目)"
-    else
-      logger.error "[Error] #{exception.class} の再接続に失敗しました。"
-      logger.error exception.backtrace
-    end
   end
 end
