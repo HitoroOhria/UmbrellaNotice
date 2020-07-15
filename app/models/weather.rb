@@ -27,7 +27,7 @@ class Weather < ApplicationRecord
 
   def today_is_rainy?
     rain_falls = forecast[:hourly][0...TAKE_WEATHER_HOUR].map { |hourly| hourly[:rain][:'1h'] }
-    rain_falls.find { |rain_fall| rain_fall >= RAIN_FALL_JUDGMENT }.present?
+    rain_falls.any? { |rain_fall| rain_fall >= RAIN_FALL_JUDGMENT }
   end
 
   # city_name で geocoding_api を呼び出せるか検証する
