@@ -63,3 +63,9 @@ Style/AsciiComments:
 
 Style/Semicolon:
   Enabled: false
+
+Style/MultilineTernaryOperator:
+  Enabled: false
+
+Style/TernaryParentheses:
+  Enabled: false
