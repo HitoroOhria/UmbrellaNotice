@@ -1,5 +1,3 @@
-inherit_from: .rubocop_todo.yml
-
 AllCops:
   Exclude:
     - 'db/**/*'
@@ -62,4 +60,10 @@ Style/AsciiComments:
   Enabled: false
 
 Style/Semicolon:
+  Enabled: false
+
+Style/MultilineTernaryOperator:
+  Enabled: false
+
+Style/TernaryParentheses:
   Enabled: false
