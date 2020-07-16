@@ -107,11 +107,8 @@ class Weather < ApplicationRecord
       retry_counter += 1
       retry_message(e, retry_counter)
 
-      if retry_counter <= RETRY_CALL_API_COUNT
-        (sleep RETRY_CALL_API_WAIT_TIME) && retry
-      else
-        false
-      end
+      (retry_counter <= RETRY_CALL_API_COUNT) ? (sleep RETRY_CALL_API_WAIT_TIME) && retry
+                                              : false
     end
   end
 
