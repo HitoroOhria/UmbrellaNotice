@@ -43,10 +43,10 @@ class Weather < ApplicationRecord
 
   # self.city の市名の座標を返す
   # 有効な市名の場合 => { lat: Float, lon: Float }
-  # 無効な市名の場合 => nil
+  # 無効な市名の場合 => false
   def city_to_coord
     xml_doc = geocoding
-    return unless xml_doc
+    return false unless xml_doc
 
     elements  = xml_doc.elements
     latitude  = elements['/result/coordinate/lat'].text.to_f
@@ -58,7 +58,7 @@ class Weather < ApplicationRecord
     self.lat = lat.round(2)
     self.lon = lon.round(2)
 
-    save!
+    save
     line_user.located_at || line_user.update_attributes(located_at: Time.zone.now, silent_notice: true)
     line_user.locating_from && line_user.update_attribute(:locating_from, nil)
   end
@@ -70,7 +70,7 @@ class Weather < ApplicationRecord
   # 失敗した場合 => false
   def geocoding_api
     sio_response = call_api_and_handle_error('geocoding')
-    return unless sio_response
+    return false unless sio_response
 
     xml_doc = REXML::Document.new(sio_response)
     xml_doc.elements['/result/error'].blank? && xml_doc
@@ -86,10 +86,10 @@ class Weather < ApplicationRecord
 
   # One Call API を呼び出す
   # 取得できた場合 => Hash
-  # 取得できなかった場合 => nil
+  # 取得できなかった場合 => false
   def one_call_api
     sio_response = call_api_and_handle_error('one_call')
-    return unless sio_response
+    return false unless sio_response
 
     json_forecast = JSON.parse(sio_response.read, symbolize_names: true)
     refill_rain(json_forecast)
@@ -100,14 +100,14 @@ class Weather < ApplicationRecord
   # 取得できた場合 => APIレスポンス
   # 取得できなかった場合 => false
   def call_api_and_handle_error(api_name)
-    retry_count = 0
+    retry_counter = 0
     begin
       send("call_#{api_name}_api")
     rescue OpenURI::HTTPError => e
-      retry_count += 1
-      retry_message(e, retry_count)
+      retry_counter += 1
+      retry_message(e, retry_counter)
 
-      if retry_count <= RETRY_CALL_API_COUNT
+      if retry_counter <= RETRY_CALL_API_COUNT
         (sleep RETRY_CALL_API_WAIT_TIME) && retry
       else
         false
@@ -128,12 +128,9 @@ class Weather < ApplicationRecord
 
   def call_geocoding_api
     base_uri       = 'https://www.geocoding.jp/api/?'
-    request_params = {
-      q: city
-    }
+    request_params = { q: city }
 
-    request_uri = base_uri + request_params.to_query
-    OpenURI.open_uri(request_uri)
+    OpenURI.open_uri(base_uri + request_params.to_query)
   end
 
   def call_current_weather_api
@@ -145,8 +142,7 @@ class Weather < ApplicationRecord
       appid: Rails.application.credentials.open_weather_api[:app_key]
     }
 
-    request_uri = CGI.unescape(base_uri + request_params.to_query)
-    OpenURI.open_uri(request_uri)
+    OpenURI.open_uri(base_uri + request_params.to_query)
   end
 
   def call_one_call_api
@@ -159,8 +155,7 @@ class Weather < ApplicationRecord
       appid:   Rails.application.credentials.open_weather_api[:app_key]
     }
 
-    request_uri = CGI.unescape(base_uri + request_params.to_query)
-    OpenURI.open_uri(request_uri)
+    OpenURI.open_uri(base_uri + request_params.to_query)
   end
 
   # OpenWeatherApi の city に対応するローマ字に変換する
