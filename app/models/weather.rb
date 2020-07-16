@@ -166,7 +166,7 @@ class Weather < ApplicationRecord
   # OpenWeatherApi の city に対応するローマ字に変換する
   def to_romaji(text)
     kunrei_moji = Zipang.to_slug(text).gsub(/\-/, '').gsub(/m(?!(a|i|u|e|o|m))/, 'n').to_kunrei
-    kunrei_moji.gsub(/si/, 'shi').gsub(/ti/, 'chi').gsub(/tu/, 'tsu')
+    kunrei_moji.gsub(/si/, 'shi').gsub(/ti/, 'chi').gsub(/tu/, 'tsu').gsub(/zyu/, 'ju')
   end
 
   # OpenWeatherAPI の仕様により、天気が雨以外の場合は雨量が設定されていない
