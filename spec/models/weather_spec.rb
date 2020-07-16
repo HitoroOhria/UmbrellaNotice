@@ -206,7 +206,7 @@ RSpec.describe Weather, type: :model do
     context '#geocoding_apiのレスポンスがエラーの時' do
       let(:geocoding_api_file) { 'error_response.xml' }
 
-      it { is_expected.to eq nil }
+      it { is_expected.to be_falsey }
     end
 
     context '#geocoding_apiのレスポンスが成功の時' do
