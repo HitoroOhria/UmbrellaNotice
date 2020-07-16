@@ -69,10 +69,10 @@ class Weather < ApplicationRecord
   # 成功した場合 => REXML::Document
   # 失敗した場合 => false
   def geocoding_api
-    api_response = call_api_and_handle_error('geocoding')
-    return unless api_response
+    sio_response = call_api_and_handle_error('geocoding')
+    return unless sio_response
 
-    xml_doc = REXML::Document.new(api_response)
+    xml_doc = REXML::Document.new(sio_response)
     xml_doc.elements['/result/error'].blank? && xml_doc
   end
 
@@ -80,18 +80,18 @@ class Weather < ApplicationRecord
   # 取得できた場合 => Hash
   # 取得できなかった場合 => false
   def current_weather_api
-    api_response = call_api_and_handle_error('current_weather')
-    api_response && JSON.parse(api_response.read, symbolize_names: true)
+    sio_response = call_api_and_handle_error('current_weather')
+    sio_response && JSON.parse(sio_response.read, symbolize_names: true)
   end
 
   # One Call API を呼び出す
   # 取得できた場合 => Hash
   # 取得できなかった場合 => nil
   def one_call_api
-    api_response = call_api_and_handle_error('one_call')
-    return unless api_response
+    sio_response = call_api_and_handle_error('one_call')
+    return unless sio_response
 
-    json_forecast = JSON.parse(api_response.read, symbolize_names: true)
+    json_forecast = JSON.parse(sio_response.read, symbolize_names: true)
     refill_rain(json_forecast)
   end
 
@@ -127,28 +127,40 @@ class Weather < ApplicationRecord
   end
 
   def call_geocoding_api
-    request_url = "https://www.geocoding.jp/api/?q=#{city}"
-    fixed_url   = escape(request_url)
+    base_uri       = 'https://www.geocoding.jp/api/?'
+    request_params = {
+      q: city
+    }
 
-    OpenURI.open_uri(fixed_url)
+    request_uri = base_uri + request_params.to_query
+    OpenURI.open_uri(request_uri)
   end
 
   def call_current_weather_api
-    city_name     = city.slice(/(.+)[市区]/, 1)
-    romaji_city   = to_romaji(city_name)
-    base_url      = 'http://api.openweathermap.org/data/2.5/weather?lang=ja'
-    request_query = "&q=#{romaji_city}"
-    app_id        = "&appid=#{Rails.application.credentials.open_weather_api[:app_key]}"
+    city_name      = city.slice(/(.+)[市区]/, 1)
+    base_uri       = 'http://api.openweathermap.org/data/2.5/weather?'
+    request_params = {
+      lang:  'ja',
+      q:     to_romaji(city_name),
+      appid: Rails.application.credentials.open_weather_api[:app_key]
+    }
 
-    OpenURI.open_uri(base_url + request_query + app_id)
+    request_uri = CGI.unescape(base_uri + request_params.to_query)
+    OpenURI.open_uri(request_uri)
   end
 
   def call_one_call_api
-    base_url      = 'http://api.openweathermap.org/data/2.5/onecall?lang=ja'
-    request_query = "&lat=#{lat}&lon=#{lon}&exclude=current,minutely,daily"
-    app_id        = "&appid=#{Rails.application.credentials.open_weather_api[:app_key]}"
+    base_uri       = 'http://api.openweathermap.org/data/2.5/onecall?'
+    request_params = {
+      lang:    'ja',
+      lat:     lat,
+      lon:     lon,
+      exclude: 'current,minutely,daily',
+      appid:   Rails.application.credentials.open_weather_api[:app_key]
+    }
 
-    OpenURI.open_uri(base_url + request_query + app_id)
+    request_uri = CGI.unescape(base_uri + request_params.to_query)
+    OpenURI.open_uri(request_uri)
   end
 
   # OpenWeatherApi の city に対応するローマ字に変換する
