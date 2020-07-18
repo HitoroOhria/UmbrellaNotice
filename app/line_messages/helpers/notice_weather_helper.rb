@@ -1,4 +1,4 @@
-module LineMessageHelper
+module NoticeWeatherHelper
   # '4/1 (月)' のような形式の文字列を返す
   def current_date
     current_time    = Time.zone.now
