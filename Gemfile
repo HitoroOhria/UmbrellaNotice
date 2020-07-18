@@ -28,6 +28,7 @@ gem 'sidekiq'
 gem 'redis-rails'
 gem 'redis-namespace'
 gem 'line-bot-api'
+gem 'line_message_creator'
 gem 'google-api-client', '~> 0.34'
 
 group :development, :test do
