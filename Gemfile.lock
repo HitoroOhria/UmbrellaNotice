@@ -171,6 +171,7 @@ GEM
     launchy (2.5.0)
       addressable (~> 2.7)
     line-bot-api (1.14.1)
+    line_message_creator (0.0.1)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -460,6 +461,7 @@ DEPENDENCIES
   jquery-rails
   launchy
   line-bot-api
+  line_message_creator
   listen (>= 3.0.5, < 3.2)
   mysql2 (>= 0.4.4, < 0.6.0)
   omniauth-facebook
