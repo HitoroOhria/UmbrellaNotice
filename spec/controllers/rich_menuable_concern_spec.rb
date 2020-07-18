@@ -6,8 +6,8 @@ RSpec.describe "RichMenuables", type: :controller do
     include RichMenuable
 
     def reply(*file_names, **locals)
-      messages = file_names.map { |file_name| read_message(file_name, **locals) }
-      messages.join('')
+      messages = LineMessageCreator.create_from(*file_names, **locals)
+      messages.map { |message| message[:text] }.join
     end
   end
 
