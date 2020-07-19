@@ -68,7 +68,7 @@
           <p class="card-text">とてもシンプルです。</p>
           <p class="card-text">さあ、雨に濡れない世界へと旅立ちましょう。</p>
           <%= link_to 'LINE公式アカウントをフォロー',
-                      Rails.application.credentials.line_api[:message][:follow_url],
+                      Rails.application.credentials.line_api[:messaging][:follow_url],
                       class:  'btn btn-outline-primary',
                       target: :_blank,
                       role:   'button' %>
