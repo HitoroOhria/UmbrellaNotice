@@ -4,11 +4,11 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
+# Ignore RuboCop
+/.rubocop_todo.yml
+
 # Ignore Rubumine
 /.idea
-
-# Ignore environments
-/docker/environments
 
 # Ignore bundler config.
 /.bundle
