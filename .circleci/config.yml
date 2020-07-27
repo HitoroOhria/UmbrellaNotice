@@ -35,7 +35,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - gemfiles-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+            - gemfiles-{{ .Branch }}-{{ checksum "backend/Gemfile.lock" }}
             - gemfiles-{{ .Branch }}-
             - gemfiles-master-
       - run:
@@ -47,13 +47,15 @@ jobs:
       - run:
           name: bundle install
           command: bundle check || bundle install --jobs=8 --clean
+          working_directory: ~/umbrellanotice/backend
       - run:
           name: Run rubocop
           command: bundle exec rubocop --parallel
+          working_directory: ~/umbrellanotice/backend
       - save_cache:
-          key: gemfiles-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: gemfiles-{{ .Branch }}-{{ checksum "backend/Gemfile.lock" }}
           paths:
-            - vendor/bundle
+            - backend/vendor/bundle
   Run-assets-precompile:
     working_directory: ~/umbrellanotice
     docker:
@@ -63,7 +65,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: Build image
-          command: docker build -f docker/umbrellanotice/Dockerfile.pro -t assets_precompile .
+          command: docker build -f backend/docker/umbrellanotice/Dockerfile.pro -t assets_precompile ./backend
       - run:
           name: Run assets precompile
           command: docker run -e RAILS_MASTER_KEY assets_precompile bundle exec rails assets:precompile RAILS_ENV=production
@@ -78,6 +80,7 @@ jobs:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           create-repo: true
+          path: ./backend
           dockerfile: ./docker/umbrellanotice/Dockerfile.pro
           repo: umbrellanotice-app
           tag: "${CIRCLE_SHA1}"
@@ -92,6 +95,7 @@ jobs:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           create-repo: true
+          path: ./backend
           dockerfile: ./docker/db_migrate/Dockerfile.pro
           region: AWS_REGION
           repo: umbrellanotice-db-migration
