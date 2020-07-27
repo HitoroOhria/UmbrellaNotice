@@ -5,7 +5,7 @@
 #   git config --global core.excludesfile '~/.gitignore_global'
 
 # Ignore RuboCop
-/.rubocop_todo.yml
+/backend/.rubocop_todo.yml
 
 # Ignore Rubumine
 /.idea
@@ -14,13 +14,13 @@
 /.bundle
 
 # Ignore all logfiles and tempfiles.
-/log/*
-/tmp/*
-!/log/.keep
-!/tmp/.keep
+/backend/log/*
+/backend/tmp/*
+!/backend/log/.keep
+!/backend/tmp/.keep
 
 # Ignore uploaded files in development
-/storage/*
+/backend/storage/*
 
 /node_modules
 /yarn-error.log
@@ -29,4 +29,4 @@
 .byebug_history
 
 # Ignore master key for decrypting credentials and more.
-/config/master.key
+/backend/config/master.key
