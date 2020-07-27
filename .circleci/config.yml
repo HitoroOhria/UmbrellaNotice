@@ -7,10 +7,22 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+      - restore_cache:
+          keys:
+            - docker-dev-{{ .Branch }}-
+            - docker-dev-
       - run:
           name: Setup environment variable
           command: |
             echo "export COMPOSE_FILE=docker-compose.ci.yml" >> $BASH_ENV
+      - run:
+          name: Read Dcoker cache
+          command: |
+            if test -d ~/cache/docker/dev/umbrellanotice_umbrellanotice.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_umbrellanotice.tar; fi
+            if test -d ~/cache/docker/dev/umbrellanotice_sidekiq.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_sidekiq.tar; fi
+            if test -d ~/cache/docker/dev/umbrellanotice_redis.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_redis.tar; fi
+            if test -d ~/cache/docker/dev/umbrellanotice_mysql.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_mysql.tar; fi
+            if test -d ~/cache/docker/dev/umbrellanotice_nginx.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_nginx.tar; fi
       - run:
           name: Build images
           command: |
@@ -27,6 +39,20 @@ jobs:
       - run:
           name: Run RSpec
           command: docker-compose exec umbrellanotice rspec
+      - run:
+          name: Output Dcoker Image for cache
+          command: |
+            mkdir -p ~/cache/docker/dev
+            rm -rf ~/chache/docker/dev/*
+            docker save -o ~/cache/docker/dev/umbrellanotice_umbrellanotice.tar umbrellanotice_umbrellanotice
+            docker save -o ~/cache/docker/dev/umbrellanotice_sidekiq.tar umbrellanotice_sidekiq
+            docker save -o ~/cache/docker/dev/umbrellanotice_redis.tar umbrellanotice_redis
+            docker save -o ~/cache/docker/dev/umbrellanotice_mysql.tar umbrellanotice_mysql
+            docker save -o ~/cache/docker/dev/umbrellanotice_nginx.tar umbrellanotice_nginx
+      - save_cache:
+          key: docker-dev-{{ .Branch }}-{{ .BuildNum }}
+          paths:
+            - ~/cache/docker/dev
   RuboCop:
     working_directory: ~/umbrellanotice
     docker:
@@ -63,18 +89,44 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+      - restore_cache:
+          keys:
+            - docker-pro-umbrella-{{ .Branch }}-
+            - docker-pro-umbrella-
+      - run:
+          name: Read Dcoker cache
+          command: |
+            if test -d ~/cache/docker/pro/umbrellanotice_umbrellanotice.tar; then docker load -i ~/cache/docker/pro/umbrellanotice_umbrellanotice.tar; fi
       - run:
           name: Build image
-          command: docker build -f backend/docker/umbrellanotice/Dockerfile.pro -t assets_precompile ./backend
+          command: docker build -f backend/docker/umbrellanotice/Dockerfile.pro -t umbrellanotice_umbrellanotice ./backend
       - run:
           name: Run assets precompile
-          command: docker run -e RAILS_MASTER_KEY assets_precompile bundle exec rails assets:precompile RAILS_ENV=production
+          command: docker run -e RAILS_MASTER_KEY umbrellanotice_umbrellanotice bundle exec rails assets:precompile RAILS_ENV=production
+      - run:
+          name: Output Dcoker Image for cache
+          command: |
+            mkdir -p ~/cache/docker/pro
+            rm -rf ~/chache/docker/pro/*
+            docker save -o ~/cache/docker/pro/umbrellanotice_umbrellanotice.tar umbrellanotice_umbrellanotice
+      - save_cache:
+          key: docker-pro-umbrella-{{ .Branch }}-{{ .BuildNum }}
+          paths:
+            - ~/cache/docker/pro
   Push-umbrellanotice-image:
     docker:
       - image: 'circleci/python:3.7.1'
     steps:
       - setup_remote_docker
       - aws-cli/install
+      - restore_cache:
+          keys:
+            - docker-pro-umbrella-{{ .Branch }}-
+            - docker-pro-umbrella-
+      - run:
+          name: Read Dcoker cache
+          command: |
+            if test -d ~/cache/docker/pro/umbrellanotice_umbrellanotice.tar; then docker load -i ~/cache/docker/pro/umbrellanotice_umbrellanotice.tar; fi
       - aws-ecr/build-and-push-image:
           account-url: AWS_ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
