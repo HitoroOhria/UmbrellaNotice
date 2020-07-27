@@ -3,7 +3,7 @@ version: "3"
 services:
   umbrellanotice:
     build:
-      context: .
+      context: ./backend
       dockerfile: docker/umbrellanotice/Dockerfile
     environment:
       TZ: Asia/Tokyo
@@ -17,7 +17,7 @@ services:
     command: circleci
   sidekiq:
     build:
-      context: .
+      context: ./backend
       dockerfile: docker/umbrellanotice/Dockerfile
     environment:
       TZ: Asia/Tokyo
@@ -30,13 +30,13 @@ services:
     command: sidekiq
   redis:
     build:
-      context: .
+      context: ./backend
       dockerfile: docker/redis/Dockerfile
     volumes:
       - socket-data:/run/redis
   mysql:
     build:
-      context: .
+      context: ./backend
       dockerfile: docker/mysql/Dockerfile.ci
     environment:
       MYSQL_ROOT_PASSWORD: password
@@ -44,7 +44,7 @@ services:
       - '33306:3306'
   nginx:
     build:
-      context: .
+      context: ./backend
       dockerfile: docker/nginx/Dockerfile
     volumes:
       - socket-data:/umbrellanotice/tmp/sockets
