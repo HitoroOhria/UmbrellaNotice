@@ -4,6 +4,13 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
+# Ignore Terraform
+/terratorm/*.tfstate
+/terratorm/*.tfstate.*
+/terratorm/.terraform/*
+/terratorm/terraform.tfvars
+/terratorm/todo.yml
+
 # Ignore RuboCop
 /backend/.rubocop_todo.yml
 
