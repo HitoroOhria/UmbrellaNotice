@@ -1,0 +1,19 @@
+# 現在のCircleCIデプロイシステムから修正する必要有り
+contaienr:
+  - ecs
+  - rcr
+  - task-definition
+
+auto-scalign:
+  - auto-scaling
+  - elastic-ip-relation
+
+contents-deliver:
+  - s3
+  - cloud-font
+
+route:
+  - route53
+
+ssl:
+  - acm

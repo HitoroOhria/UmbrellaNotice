@@ -3,7 +3,7 @@ version: '3'
 services:
   umbrellanotice:
     build:
-      context: .
+      context: ./backend
       dockerfile: ./docker/umbrellanotice/Dockerfile
     environment:
       TZ:         Asia/Tokyo
@@ -11,7 +11,7 @@ services:
       LINE_TOKEN: $LINE_TOKEN
       MYSQL_ROOT_PASSWORD: password
     volumes:
-      - .:/umbrellanotice
+      - ./backend:/umbrellanotice
       - public-data:/umbrellanotice/public
       - tmp-data:/umbrellanotice/tmp
       - log-data:/umbrellanotice/log
@@ -23,10 +23,10 @@ services:
     stdin_open: true
   sidekiq:
     build:
-      context: .
+      context: ./backend
       dockerfile: ./docker/umbrellanotice/Dockerfile
     volumes:
-      - .:/umbrellanotice
+      - ./backend:/umbrellanotice
       - public-data:/umbrellanotice/public
       - tmp-data:/umbrellanotice/tmp
       - log-data:/umbrellanotice/log
@@ -37,7 +37,7 @@ services:
     command: sidekiq
   redis:
     build:
-      context: .
+      context: ./backend
       dockerfile: ./docker/redis/Dockerfile
     volumes:
       - socket-data:/run/redis
@@ -46,10 +46,10 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
     volumes:
-      - ./docker/mysql/mysql-confd:/etc/mysql/conf.d
+      - ./backend/docker/mysql/mysql-confd:/etc/mysql/conf.d
   nginx:
     build:
-      context: .
+      context: ./backend
       dockerfile: ./docker/nginx/Dockerfile
     volumes:
       - socket-data:/umbrellanotice/tmp/sockets
