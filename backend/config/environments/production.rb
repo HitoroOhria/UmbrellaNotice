@@ -62,9 +62,9 @@ Rails.application.configure do
   redis_setting = proc { |namespace, expire_time|
     {
       servers: {
-      host: ENV['REDIS_CACHE_HOST'],
-      port: ENV['REDIS_CACHE_PORT'],
-      namespace: namespace
+        host: ENV['REDIS_CACHE_HOST'],
+        port: ENV['REDIS_CACHE_PORT'],
+        namespace: namespace
       },
       expire_in: expire_time
     }
