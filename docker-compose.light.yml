@@ -10,39 +10,19 @@ services:
       LINE_ID:    $LINE_ID
       LINE_TOKEN: $LINE_TOKEN
       MYSQL_ROOT_PASSWORD: password
+      LIGHT_MODE: 'true'
     volumes:
       - ./backend:/rails-app
       - public-data:/rails-app/public
       - tmp-data:/rails-app/tmp
       - log-data:/rails-app/log
-      - socket-data:/rails-app/tmp/sockets
+    ports:
+      - 80:80
     depends_on:
       - mysql
-      - redis
     tty: true
     stdin_open: true
-
-  sidekiq:
-    build:
-      context: ./backend
-      dockerfile: ./docker/rails/Dockerfile
-    volumes:
-      - ./backend:/rails-app
-      - public-data:/rails-app/public
-      - tmp-data:/rails-app/tmp
-      - log-data:/rails-app/log
-      - socket-data:/rails-app/tmp/sockets
-    depends_on:
-      - rails
-      - redis
-    command: sidekiq
-
-  redis:
-    build:
-      context: ./backend
-      dockerfile: ./docker/redis/Dockerfile
-    volumes:
-      - socket-data:/run/redis
+    command: light_mode
 
   mysql:
     image: mysql:8.0
@@ -50,19 +30,6 @@ services:
       MYSQL_ROOT_PASSWORD: password
     volumes:
       - ./backend/docker/mysql/mysql-confd:/etc/mysql/conf.d
-
-  nginx:
-    build:
-      context: ./frontend
-      dockerfile: ./docker/nginx/Dockerfile
-    volumes:
-      - socket-data:/tmp/sockets
-      - react-build-date:/react-app/build
-    ports:
-      - 80:80
-      - 443:443
-    depends_on:
-      - rails
 
   react:
     build:
@@ -74,7 +41,6 @@ services:
       - ./frontend:/react-app:cached
       - node-modules:/react-app/node_modules
       - yarn-cache:/usr/local/share/.cache/yarn/v6
-      - react-build-date:/react-app/build
     ports:
       - 3000:3000
     tty: true
@@ -84,7 +50,5 @@ volumes:
   public-data:
   tmp-data:
   log-data:
-  socket-data:
   node-modules:
   yarn-cache:
-  react-build-date:
