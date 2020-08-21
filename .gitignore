@@ -4,6 +4,11 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
+# Ignore React
+/frontend/node_modules
+/frontend/yarn-error.log
+/frontend/build
+
 # Ignore Terraform
 /terratorm/*.tfstate
 /terratorm/*.tfstate.*
@@ -29,9 +34,6 @@
 
 # Ignore uploaded files in development
 /backend/storage/*
-
-/frontend/node_modules
-/frontend/yarn-error.log
 
 /frontend/public
 .byebug_history
