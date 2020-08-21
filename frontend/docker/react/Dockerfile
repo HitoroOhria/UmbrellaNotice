@@ -19,5 +19,6 @@ WORKDIR /react-app
 
 ENTRYPOINT [ \
   "prehook", "yarn", "--", \
+  "prehook", "yarn build", "--", \
   "prehook", "yarn start", "--" \
 ]
