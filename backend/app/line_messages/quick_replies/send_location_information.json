@@ -1,0 +1,11 @@
+{
+  "items": [
+    {
+      "type": "action",
+      "action": {
+        "type": "location",
+        "label": "位置情報を送信する"
+      }
+    }
+  ]
+}
