@@ -19,7 +19,7 @@ require "action_cable/engine"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module BackendApi
+module Backend
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
@@ -33,8 +33,12 @@ module BackendApi
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
-
     config.time_zone = 'Asia/Tokyo'
+
+    config.generators do |g|
+      g.skip_routes true
+      g.test_framework :rspec
+    end
 
     # キューイングバックエンドを設定
     config.active_job.queue_adapter = :sidekiq unless ENV['LIGHT_MODE']
