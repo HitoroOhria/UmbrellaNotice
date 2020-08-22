@@ -3,6 +3,17 @@ Rails.application.configure do
 
   # Code is not reloaded between requests.
   config.cache_classes = true
+  redis_setting = proc { |namespace, expire_time|
+    {
+      servers: {
+        host: ENV['REDIS_CACHE_HOST'],
+        port: ENV['REDIS_CACHE_PORT'],
+        namespace: namespace
+      },
+      expire_in: expire_time
+    }
+  }
+  config.cache_store = :redis_store, redis_setting.call('cache', 3.month)
 
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both threaded web servers
@@ -54,6 +65,17 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "backend_api_production"
 
   config.action_mailer.perform_caching = false
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.default_url_options = { host: 'www.umbrellanotice.work', protocol: 'https' }
+  ActionMailer::Base.smtp_settings = {
+    address:        'smtp.gmail.com',
+    domain:         'gmail.com',
+    port:           587,
+    authentication: :login,
+    user_name:      Rails.application.credentials.gmail[:user_email],
+    password:       Rails.application.credentials.gmail[:user_password],
+    enable_starttls_auto: true
+  }
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
