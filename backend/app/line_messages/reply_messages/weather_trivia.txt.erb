@@ -1,0 +1,48 @@
+<% CREATOR_TRIVIA_COUNT ||= 1 %>
+<% WEATHER_TRIVIA_COUNT ||= 7 %>
+
+<% creator_trivia_range = 0...CREATOR_TRIVIA_COUNT %>
+<% weather_trivia_range = CREATOR_TRIVIA_COUNT...CREATOR_TRIVIA_COUNT + WEATHER_TRIVIA_COUNT %>
+
+<% trivia_number  = rand(CREATOR_TRIVIA_COUNT + WEATHER_TRIVIA_COUNT) %>
+<% trivia_counter = case trivia_number
+                    when creator_trivia_range
+                      trivia_number + 1
+                    when weather_trivia_range
+                      trivia_number - CREATOR_TRIVIA_COUNT + 1
+                    end %>
+
+<% if creator_trivia_range.include? trivia_number %>
+  【アプリ制作者雑学(レア)】
+  アプリ制作者の好きな食べ物は特にありません！
+  ゆえに、アプリ制作者との対面時に発してはいけない質問No.1です！
+  使用された場合、アプリ制作者は5分間活動を停止します！
+<% else %>
+  【気象雑学 No.<%= trivia_counter %>】(全<%= WEATHER_TRIVIA_COUNT %>個)
+
+  <% case trivia_counter
+     when 1 %>
+    最高気温が25°Cを超えるとビールが飲みたくなるそうです！
+    他にもかき氷は30°C、アイスクリームは27°Cで食べたくなるそうですよ！
+  <% when 2 %>
+    ゲリラ豪雨は1時間程度で止みます！
+    慌てず騒がず落ち着いて対応しましょう。
+    ちなみに、人類の英知をもってしても、ゲリラ豪雨を予測することは困難なようです、、、。
+  <% when 3 %>
+    虹が出る方向には必ず決まりがあります！
+    初志貫徹、素晴らしい精神ですね！
+  <% when 4 %>
+    実は、雨粒のかたちは「肉まん」と同じです！
+    お腹が空いたからといって食べてはいけませんよ！
+  <% when 5 %>
+    降水確率100%は土砂降りというわけではありません！
+    降水確率はその名の通り、雨が降る確立を表しており、雨の程度とは関係がありません！
+  <% when 6 %>
+    気温の低い日にガソリンを入れるとお得です！
+    気温によってガソリンの膨張率が変化するため、寒い日であるほどお得に入れられます！
+  <% when 7 %>
+    雨の日は髪が重くなります！
+    湿気によって髪が水分を吸い、湿気90%で1割重くなると言われています！
+    坊主って最強ですね！
+  <% end %>
+<% end %>
