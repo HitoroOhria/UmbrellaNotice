@@ -29,7 +29,11 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.raise_delivery_errors = true
+
+  config.action_mailer.delivery_method = :test
+
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000, protocol: 'https' }
 
   config.action_mailer.perform_caching = false
 
@@ -42,11 +46,24 @@ Rails.application.configure do
   # Highlight code that triggered database queries in logs.
   config.active_record.verbose_query_logs = true
 
-
   # Raises error for missing translations.
   # config.action_view.raise_on_missing_translations = true
 
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+
+  # Setting session store and Redis
+  if ENV['LIGHT_MODE']
+    redis_setting = proc { |namespace, expire_time|
+      {
+        servers: {
+          path: (Rails.root + 'tmp/sockets/redis.sock').to_s,
+          namespace: namespace
+        },
+        expires_in: expire_time
+      }
+    }
+    config.cache_store = :redis_store, redis_setting.call('cache', 1.day)
+  end
 end
