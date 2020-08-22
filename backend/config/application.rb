@@ -33,5 +33,18 @@ module BackendApi
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    config.time_zone = 'Asia/Tokyo'
+
+    # キューイングバックエンドを設定
+    config.active_job.queue_adapter = :sidekiq unless ENV['LIGHT_MODE']
+
+    # メイラープレビューのパスを変更
+    config.action_mailer.preview_path = "#{Rails.root}/spec/mailers/previews"
+
+    # 多言語対応設定
+    config.i18n.default_locale = :ja
+    config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}').to_s]
+    config.i18n.available_locales = %i[ja en]
   end
 end
