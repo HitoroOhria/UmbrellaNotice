@@ -48,7 +48,7 @@ services:
 
   nginx:
     build:
-      context: ./backend
+      context: ./frontend
       dockerfile: docker/nginx/Dockerfile
     volumes:
       - socket-data:/tmp/sockets
