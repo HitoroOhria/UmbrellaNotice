@@ -24,6 +24,11 @@ WORKDIR /rails-app
 RUN bundle install --without production
 
 ENTRYPOINT [ \
+  "prehook", "pwd", "--", \
+  "prehook", "ls -l", "--", \
+  "prehook", "ls -l tmp/pids", "--", \
+  "prehook", "rm -rf tmp/pids/*", "--", \
+  "prehook", "ls -l tmp/pids", "--", \
   "prehook", "bundle install --without production", "--", \
   "switch", \
       "light_mode=bundle exec rails s -p 80", "--", \
@@ -32,7 +37,6 @@ ENTRYPOINT [ \
   "prehook", "echo sleep 45 seconds for mysql Start Up Comprete", "--", \
   "prehook", "sleep 45", "--", \
   "prehook", "echo finish sleep", "--", \
-  "prehook", "bundle exec rails assets:precompile", "--", \
   "prehook", "bundle exec rails db:create", "--", \
   "prehook", "bundle exec rails db:migrate", "--", \
   "switch", \
