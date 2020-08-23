@@ -14,15 +14,28 @@ Rails.application.configure do
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
-  if Rails.root.join('tmp', 'caching-dev.txt').exist?
-    config.cache_store = :memory_store
-    config.public_file_server.headers = {
-      'Cache-Control' => "public, max-age=#{2.days.to_i}"
-    }
-  else
-    config.action_controller.perform_caching = false
+  # if Rails.root.join('tmp', 'caching-dev.txt').exist?
+  #   config.cache_store = :memory_store
+  #   config.public_file_server.headers = {
+  #     'Cache-Control' => "public, max-age=#{2.days.to_i}"
+  #   }
+  # else
+  #   config.action_controller.perform_caching = false
+  #
+  #   config.cache_store = :null_store
+  # end
 
-    config.cache_store = :null_store
+  unless ENV['LIGHT_MODE']
+    redis_setting = proc { |namespace, expire_time|
+      {
+        servers: {
+          path: (Rails.root + 'tmp/sockets/redis.sock').to_s,
+          namespace: namespace
+        },
+        expires_in: expire_time
+      }
+    }
+    config.cache_store = :redis_cache_store, redis_setting.call('cache', 1.day)
   end
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
@@ -52,18 +65,4 @@ Rails.application.configure do
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
-
-  # Setting session store and Redis
-  if ENV['LIGHT_MODE']
-    redis_setting = proc { |namespace, expire_time|
-      {
-        servers: {
-          path: (Rails.root + 'tmp/sockets/redis.sock').to_s,
-          namespace: namespace
-        },
-        expires_in: expire_time
-      }
-    }
-    config.cache_store = :redis_store, redis_setting.call('cache', 1.day)
-  end
 end
