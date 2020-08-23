@@ -14,7 +14,7 @@ RUN apt update \
   && apt install -y \
        yarn
 
-ADD . /react-app
+RUN mkdir /react-app
 WORKDIR /react-app
 
 ENTRYPOINT [ \
