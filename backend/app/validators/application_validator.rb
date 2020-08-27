@@ -32,6 +32,6 @@ class ApplicationValidator
   # @return [Hash] attributes removed blank attribute.
   def update_params
     params = UPDATE_ATTRS[upcase_class_sym].map { |attr| [attr, send(attr)] }.to_h
-    params.delete_if { |_key, value| value.blank? }
+    params.delete_if { |_key, value| value.nil? }
   end
 end

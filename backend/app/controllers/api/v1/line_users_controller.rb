@@ -1,11 +1,11 @@
-class LineUsersController < ApplicationController
-  # GET /api/v1/line_users/:id?embed=relate_model1,relate_model2.id
+class Api::V1::LineUsersController < ApplicationController
+  # GET /api/v1/line_users/:id?embed=*,relate_model2.id
   def show
     line_user_validator = LineUserValidator.init_with(params)
     return render_400(line_user_validator) if line_user_validator.invalid?
-    return render_404(line_user_validator) unless (line_user = line_user_validator.find)
+    return render_404(line_user_validator) unless (@line_user = line_user_validator.find_by_id)
 
-    render_200(line_user.response)
+    render_200(@line_user, params[:embed].to_s) # change '' if params[:embed] is nil.
   end
 
   # PUT /api/v1/line_users/:id
@@ -13,9 +13,9 @@ class LineUsersController < ApplicationController
   def update
     line_user_validator = LineUserValidator.init_with(params)
     return render_400(line_user_validator) if line_user_validator.invalid?
-    return render_400(line_user_validator) unless (line_user = line_user_validator.update)
+    return render_400(line_user_validator) unless (@line_user = line_user_validator.update)
 
-    render_200(line_user.response)
+    render_200(@line_user)
   end
 
   # DELETE /api/v1/line_users/:id

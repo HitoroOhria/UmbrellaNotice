@@ -10,7 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_22_072955) do
+ActiveRecord::Schema.define(version: 2020_08_23_074948) do
+
+  create_table "line_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "line_id", null: false
+    t.string "notice_time", default: "07:00", null: false
+    t.boolean "silent_notice", default: true, null: false
+    t.string "auth_token"
+    t.string "inherit_token"
+    t.datetime "located_at"
+    t.datetime "locating_form"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["auth_token"], name: "index_line_users_on_auth_token", unique: true
+    t.index ["inherit_token"], name: "index_line_users_on_inherit_token", unique: true
+    t.index ["line_id"], name: "index_line_users_on_line_id", unique: true
+    t.index ["user_id"], name: "index_line_users_on_user_id"
+  end
 
   create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "email"
