@@ -15,7 +15,7 @@ class Api::V1::UsersController < ApplicationController
     return render_400(user_validator) if user_validator.invalid?
     return render_404(user_validator) unless (@user = user_validator.find_by_email)
 
-    render_200(@user, params[:embed].to_s)
+    render_200(@user, params[:embed].to_s) # change '' if params[:embed] is nil.
   end
 
   # PUT /api/v1/users/:email new_email=new@example.com

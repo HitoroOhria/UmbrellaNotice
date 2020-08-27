@@ -119,8 +119,9 @@ RSpec.describe 'Api::V1::Users', type: :request do
       end
 
       # TODO: response.body['lien_user'] = nil. why?
+      # localhost is success. Cause is RSpec?
       # context 'embedがline_userのとき' do
-      #   let(:embed) { 'line_user' }
+      #   let(:embed) { '*' }
       #   let!(:line_user) { create(:line_user, user: user) }
       #
       #   it { is_expected.to have_http_status 200 }

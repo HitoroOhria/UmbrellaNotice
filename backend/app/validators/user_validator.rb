@@ -105,6 +105,6 @@ class UserValidator < ApplicationValidator
                             : [attr, send(attr)]
     end.to_h
 
-    params.delete_if { |_key, value| value.blank? }
+    params.delete_if { |_key, value| value.nil? }
   end
 end
