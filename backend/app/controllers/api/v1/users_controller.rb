@@ -1,58 +1,48 @@
 class Api::V1::UsersController < ApplicationController
-  before_action :validates_params
-
   # POST /api/v1/users email=email_address
   def create
-    handle_error do
-      user = User.create!(email: params[:email])
-      location_url = api_v1_user_url(user.encoded_email)
+    user_validator = UserValidator.init_with(params)
+    return render_400(user_validator) if user_validator.invalid?
+    return render_422(user_validator) unless (user = user_validator.save)
 
-      render_created(user.response_attributes, location: location_url)
-    end
+    location_url = api_v1_user_url(user.encoded_email)
+    render_201('SUCCESS', location: location_url)
   end
 
-  # GET /api/v1/users/:email?embed=relate_model1,relate_model2.id
+  # GET /api/v1/users/:email?embed=*,relate_model
   def show
-    handle_error do
-      user = User.find_by!(email: params[:email])
-      response_json = build_relation_response(user.response_attributes)
-      render_ok(response_json)
-    end
+    user_validator = UserValidator.init_with(params)
+    return render_400(user_validator) if user_validator.invalid?
+    return render_404(user_validator) unless (@user = user_validator.find_by_email)
+
+    render_200(@user, params[:embed].to_s)
   end
 
   # PUT /api/v1/users/:email new_email=new@example.com
   def update
-    handle_error do
-      user = User.find_by!(email: params[:email])
-      user.update!(email: params[:new_email])
-      render_ok(user.response_attributes)
-    end
+    user_validator = UserValidator.init_with(params)
+    return render_400(user_validator) if user_validator.invalid?
+    return render_400(user_validator) unless (@user = user_validator.update)
+
+    render_200(@user)
   end
 
   # DELETE /api/v1/users/:email
   def destroy
-    handle_error do
-      user = User.find_by!(email: params[:email])
-      User.destroy(user.id)
-      render_no_content
-    end
+    user_validator = UserValidator.init_with(params)
+    return render_400(user_validator) if user_validator.invalid?
+    return render_404(user_validator) unless user_validator.destroy
+
+    render_204
   end
 
-  private
+  # POST /api/v1/users/:email/relate_line_user
+  # PARAMS inherit_token
+  def relate_line_user
+    user_validator = UserValidator.init_with(params)
+    return render_400(user_validator) if user_validator.invalid?
+    return render_404(user_validator) unless user_validator.relate_line_user
 
-  def handle_error
-    yield
-  rescue ActiveRecord::RecordInvalid
-    render_unprocessable_entity('Invalid email address.')
-  rescue ActiveRecord::RecordNotUnique
-    render_unprocessable_entity('Email address already exist.')
-  rescue ActiveRecord::RecordNotFound
-    render_not_found("Not fond '#{params[:email]}' user.")
-  end
-
-  def validates_params
-    return if params[:email]
-
-    render_bad_request('You need "email" param.')
+    render_200('SUCCESS')
   end
 end

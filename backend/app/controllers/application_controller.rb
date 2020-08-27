@@ -1,44 +1,48 @@
 class ApplicationController < ActionController::API
   # include Lineable
 
-  # @param [Hash] main_hash is response Model.
-  # @option relation_hash [Hash]  Model relate to main_hash. like { line_user: LineUser }
-  # @return [Hash] like { **User, line_user: LineUser, weather: Weather }
-  # @solve main_hash[:relation] = { **relation_hash }  && main_hash
-  #          #=> { user: User, relation: {...} } {...} is infinite loop.
-  def build_relation_response(main_hash, **relation_hash)
-    { **main_hash, **relation_hash }
+  def render_success(code, json = nil, include = '', location: nil)
+    render status: code, json: json, include: include, location: location
   end
 
-  def render_json(code, response_json, location: nil)
-    render status: code, json: response_json, location: location
+  def render_error(code, error_params)
+    json = {
+      error: true,
+      error_params: error_params
+    }
+
+    render status: code, json: json
   end
 
-  def render_ok(response_json = nil)
-    render_json(200, response_json)
+  # OK
+  def render_200(response_json, include = '')
+    render_success(200, response_json, include)
   end
 
-  def render_created(response_json = nil, location: nil)
-    response.location = location
-    render_json(201, response_json, location: location)
+  # Created
+  def render_201(message, include = '', location: nil)
+    render_success(201, message, include, location: location)
   end
 
-  def render_no_content
-    render_json(204, nil)
+  # No content
+  def render_204
+    render_success(204)
   end
 
+  # Bad request
   # invalid data
-  def render_bad_request(response_json = nil)
-    render_json(400, response_json)
+  def render_400(invalid_record)
+    render_error(400, invalid_record.errors.messages)
   end
 
-  # Not found resource.
-  def render_not_found(response_json = nil)
-    render_json(404, response_json)
+  # Not found
+  def render_404(invalid_record)
+    render_error(404, invalid_record.errors.messages)
   end
 
+  # Unprocessable entity
   # validation error
-  def render_unprocessable_entity(response_json = nil)
-    render_json(422, response_json)
+  def render_422(invalid_record)
+    render_error(422, invalid_record.errors.messages)
   end
 end
