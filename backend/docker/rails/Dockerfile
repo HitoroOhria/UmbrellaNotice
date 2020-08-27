@@ -19,6 +19,9 @@ RUN apt-get update \
        nodejs \
        openjdk-11-jdk
 
+RUN rm -r ~/.bashrc
+ADD ./docker/rails/.bashrc ~/.bashrc
+
 RUN mkdir /rails-app
 WORKDIR /rails-app
 ADD ./Gemfile /rails-app/Gemfile
@@ -26,7 +29,6 @@ ADD ./Gemfile.lock /rails-app/Gemfile.lock
 RUN bundle install --without production
 
 ENTRYPOINT [ \
-  "prehook", "rm -rf tmp/pids/*", "--", \
   "prehook", "bundle install --without production", "--", \
   "switch", \
       "sidekiq=bundle exec sidekiq -q sidekiq", "--", \

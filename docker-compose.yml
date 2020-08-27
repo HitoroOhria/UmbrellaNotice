@@ -1,6 +1,7 @@
-version: '3'
+version: '3.8'
 
 services:
+
   rails:
     build:
       context: ./backend
@@ -13,9 +14,9 @@ services:
     volumes:
       - ./backend:/rails-app
       - public-data:/rails-app/public
-      - tmp-data:/rails-app/tmp
       - log-data:/rails-app/log
       - socket-data:/rails-app/tmp/sockets
+    tmpfs: /rails-app/tmp
     depends_on:
       - mysql
       - redis
@@ -29,9 +30,9 @@ services:
     volumes:
       - ./backend:/rails-app
       - public-data:/rails-app/public
-      - tmp-data:/rails-app/tmp
       - log-data:/rails-app/log
       - socket-data:/rails-app/tmp/sockets
+    tmpfs: /rails-app/tmp
     depends_on:
       - rails
       - redis
@@ -82,7 +83,6 @@ services:
 
 volumes:
   public-data:
-  tmp-data:
   log-data:
   socket-data:
   node-modules:
