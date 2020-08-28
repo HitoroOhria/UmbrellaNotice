@@ -1,5 +1,6 @@
 version: 2.1
 jobs:
+
   RSpec:
     working_directory: ~/umbrellanotice
     docker:
@@ -7,22 +8,22 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - restore_cache:
-          keys:
-            - docker-dev-{{ .Branch }}-
-            - docker-dev-
+      # - restore_cache:
+      #     keys:
+      #       - docker-dev-{{ .Branch }}-
+      #       - docker-dev-
       - run:
           name: Setup environment variable
           command: |
             echo "export COMPOSE_FILE=docker-compose.ci.yml" >> $BASH_ENV
-      - run:
-          name: Read Dcoker cache
-          command: |
-            if test -d ~/cache/docker/dev/umbrellanotice_umbrellanotice.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_umbrellanotice.tar; fi
-            if test -d ~/cache/docker/dev/umbrellanotice_sidekiq.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_sidekiq.tar; fi
-            if test -d ~/cache/docker/dev/umbrellanotice_redis.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_redis.tar; fi
-            if test -d ~/cache/docker/dev/umbrellanotice_mysql.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_mysql.tar; fi
-            if test -d ~/cache/docker/dev/umbrellanotice_nginx.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_nginx.tar; fi
+      # - run:
+      #     name: Read Dcoker cache
+      #     command: |
+      #       if test -d ~/cache/docker/dev/umbrellanotice_umbrellanotice.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_umbrellanotice.tar; fi
+      #       if test -d ~/cache/docker/dev/umbrellanotice_sidekiq.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_sidekiq.tar; fi
+      #       if test -d ~/cache/docker/dev/umbrellanotice_redis.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_redis.tar; fi
+      #       if test -d ~/cache/docker/dev/umbrellanotice_mysql.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_mysql.tar; fi
+      #       if test -d ~/cache/docker/dev/umbrellanotice_nginx.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_nginx.tar; fi
       - run:
           name: Build images
           command: |
@@ -39,82 +40,51 @@ jobs:
       - run:
           name: Run RSpec
           command: docker-compose exec rails rspec
-      - run:
-          name: Output Dcoker Image for cache
-          command: |
-            mkdir -p ~/cache/docker/dev
-            rm -rf ~/chache/docker/dev/*
-            docker save -o ~/cache/docker/dev/umbrellanotice_umbrellanotice.tar umbrellanotice_umbrellanotice
-            docker save -o ~/cache/docker/dev/umbrellanotice_sidekiq.tar umbrellanotice_sidekiq
-            docker save -o ~/cache/docker/dev/umbrellanotice_redis.tar umbrellanotice_redis
-            docker save -o ~/cache/docker/dev/umbrellanotice_mysql.tar umbrellanotice_mysql
-            docker save -o ~/cache/docker/dev/umbrellanotice_nginx.tar umbrellanotice_nginx
-      - save_cache:
-          key: docker-dev-{{ .Branch }}-{{ .BuildNum }}
-          paths:
-            - ~/cache/docker/dev
+      # - run:
+      #     name: Output Dcoker Image for cache
+      #     command: |
+      #       mkdir -p ~/cache/docker/dev
+      #       rm -rf ~/chache/docker/dev/*
+      #       docker save -o ~/cache/docker/dev/umbrellanotice_umbrellanotice.tar umbrellanotice_umbrellanotice
+      #       docker save -o ~/cache/docker/dev/umbrellanotice_sidekiq.tar umbrellanotice_sidekiq
+      #       docker save -o ~/cache/docker/dev/umbrellanotice_redis.tar umbrellanotice_redis
+      #       docker save -o ~/cache/docker/dev/umbrellanotice_mysql.tar umbrellanotice_mysql
+      #       docker save -o ~/cache/docker/dev/umbrellanotice_nginx.tar umbrellanotice_nginx
+      # - save_cache:
+      #     key: docker-dev-{{ .Branch }}-{{ .BuildNum }}
+      #     paths:
+      #       - ~/cache/docker/dev
 
   RuboCop:
     working_directory: ~/umbrellanotice
     docker:
-      - image: circleci/ruby:2.5.1
+      - image: circleci/ruby:2.7.1
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - gemfiles-{{ .Branch }}-{{ checksum "backend/Gemfile.lock" }}
-            - gemfiles-{{ .Branch }}-
-            - gemfiles-master-
       - run:
-          name: install openjdk-8-jdk
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y openjdk-8-jdk
-      - run: bundle config --local path vendor/bundle
-      - run:
-          name: bundle install
-          command: bundle check || bundle install --jobs=8 --clean
-          working_directory: ~/umbrellanotice/backend
+          name: Install Rubocop
+          command: gem install rubocop
       - run:
           name: Run rubocop
-          command: bundle exec rubocop --parallel
+          command: rubocop --parallel
           working_directory: ~/umbrellanotice/backend
-      - save_cache:
-          key: gemfiles-{{ .Branch }}-{{ checksum "backend/Gemfile.lock" }}
-          paths:
-            - backend/vendor/bundle
 
-  Run-assets-precompile:
-    working_directory: ~/umbrellanotice
+  Push-nginx-image:
     docker:
-      - image: circleci/ruby
+      - image: 'circleci/python:3.7.1'
     steps:
-      - checkout
       - setup_remote_docker
-      - restore_cache:
-          keys:
-            - docker-pro-umbrella-{{ .Branch }}-
-            - docker-pro-umbrella-
-      - run:
-          name: Read Dcoker cache
-          command: |
-            if test -d ~/cache/docker/pro/umbrellanotice_umbrellanotice.tar; then docker load -i ~/cache/docker/pro/umbrellanotice_umbrellanotice.tar; fi
-      - run:
-          name: Build image
-          command: docker build -f backend/docker/umbrellanotice/Dockerfile.pro -t umbrellanotice_umbrellanotice ./backend
-      - run:
-          name: Run assets precompile
-          command: docker run -e RAILS_MASTER_KEY umbrellanotice_umbrellanotice bundle exec rails assets:precompile RAILS_ENV=production
-      - run:
-          name: Output Dcoker Image for cache
-          command: |
-            mkdir -p ~/cache/docker/pro
-            rm -rf ~/chache/docker/pro/*
-            docker save -o ~/cache/docker/pro/umbrellanotice_umbrellanotice.tar umbrellanotice_umbrellanotice
-      - save_cache:
-          key: docker-pro-umbrella-{{ .Branch }}-{{ .BuildNum }}
-          paths:
-            - ~/cache/docker/pro
+      - aws-cli/install
+      - aws-ecr/build-and-push-image:
+          account-url: AWS_ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          create-repo: true
+          path: ./frontend
+          dockerfile: ./docker/nginx/Dockerfile.pro
+          region: AWS_REGION
+          repo: umbrellanotice-nginx
+          tag: "${CIRCLE_SHA1}"
 
   Push-umbrellanotice-image:
     docker:
@@ -122,21 +92,14 @@ jobs:
     steps:
       - setup_remote_docker
       - aws-cli/install
-      - restore_cache:
-          keys:
-            - docker-pro-umbrella-{{ .Branch }}-
-            - docker-pro-umbrella-
-      - run:
-          name: Read Dcoker cache
-          command: |
-            if test -d ~/cache/docker/pro/umbrellanotice_umbrellanotice.tar; then docker load -i ~/cache/docker/pro/umbrellanotice_umbrellanotice.tar; fi
       - aws-ecr/build-and-push-image:
           account-url: AWS_ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           create-repo: true
           path: ./backend
-          dockerfile: ./docker/umbrellanotice/Dockerfile.pro
+          dockerfile: ./docker/rails/Dockerfile.pro
+          region: AWS_REGION
           repo: umbrellanotice-app
           tag: "${CIRCLE_SHA1}"
 
@@ -183,32 +146,39 @@ workflows:
   version: 2.1
   test_and_deploy:
     jobs:
+
       - RSpec
       - RuboCop
-      - Run-assets-precompile:
+
+      - Push-nginx-image:
           requires:
-            - RSpec
             - RuboCop
           filters:
             branches:
               only: master
+
       - Push-umbrellanotice-image:
           requires:
-            - RSpec
             - RuboCop
           filters:
             branches:
               only: master
+
       - Push-db-migrate-image:
           requires:
-            - RSpec
             - RuboCop
           filters:
             branches:
               only: master
+
       - Run-db-migrate-task:
           requires:
+            - RSpec
             - Push-db-migrate-image
+          filters:
+            branches:
+              only: master
+
       - aws-ecs/deploy-service-update:
           name: Update-umbrellanotice-container-of-ECS
           family: 'umbrellanotice_task'
@@ -216,9 +186,10 @@ workflows:
           service-name: 'umbrellanotice-rails'
           container-image-name-updates: "container=umbrellanotice,tag=${CIRCLE_SHA1}"
           requires:
-            - Run-assets-precompile
             - Run-db-migrate-task
+            - Push-nginx-image
             - Push-umbrellanotice-image
+
       - aws-ecs/deploy-service-update:
           name: Update-sidekiq-container-of-ECS
           family: 'umbrellanotice_redis'
@@ -226,6 +197,6 @@ workflows:
           service-name: 'umbrellanotice-sidekiq'
           container-image-name-updates: "container=sidekiq,tag=${CIRCLE_SHA1}"
           requires:
-            - Run-assets-precompile
             - Run-db-migrate-task
+            - Push-nginx-image
             - Push-umbrellanotice-image
