@@ -1,0 +1,14 @@
+<result>
+  <version>1.2</version>
+  <address>さいたま市</address>
+  <coordinate>
+    <lat>35.861649</lat>
+    <lng>139.645478</lng>
+    <lat_dms>35,51,41.935</lat_dms>
+    <lng_dms>139,38,43.722</lng_dms>
+  </coordinate>
+  <open_location_code>8Q7XVJ6W+M5</open_location_code>
+  <url>https://www.geocoding.jp/?q=%E3%81%95%E3%81%84%E3%81%9F%E3%81%BE%E5%B8%82</url>
+  <needs_to_verify>yes</needs_to_verify>
+  <google_maps>さいたま市、埼玉県</google_maps>
+</result>
