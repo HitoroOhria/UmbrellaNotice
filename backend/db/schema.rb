@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_23_074948) do
+ActiveRecord::Schema.define(version: 2020_08_27_093938) do
 
   create_table "line_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.bigint "user_id"
@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 2020_08_23_074948) do
     t.string "auth_token"
     t.string "inherit_token"
     t.datetime "located_at"
-    t.datetime "locating_form"
+    t.datetime "locating_from"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["auth_token"], name: "index_line_users_on_auth_token", unique: true
@@ -34,6 +34,16 @@ ActiveRecord::Schema.define(version: 2020_08_23_074948) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
+  end
+
+  create_table "weathers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "line_user_id"
+    t.string "city"
+    t.decimal "lat", precision: 5, scale: 2
+    t.decimal "lon", precision: 5, scale: 2
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["line_user_id"], name: "index_weathers_on_line_user_id"
   end
 
 end

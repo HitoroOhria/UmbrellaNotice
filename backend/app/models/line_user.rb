@@ -2,8 +2,8 @@ class LineUser < ApplicationRecord
   has_secure_token :auth_token
   has_secure_token :inherit_token
 
-  belongs_to :user, optional: true
-  # has_one :weather, dependent: :destroy
+  belongs_to :user,    optional: true
+  has_one    :weather, dependent: :destroy
 
   validates :line_id, uniqueness: { case_sensitive: true }
 

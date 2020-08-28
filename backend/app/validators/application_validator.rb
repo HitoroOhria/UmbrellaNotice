@@ -2,6 +2,7 @@ class ApplicationValidator
   include ActiveModel::Model
 
   # shorthand of ERROR_MSG[:CLASS_OF_INSTANCE].
+  # about ERROR_MSG to config/initializers/error_messages.rb
   def error_msg
     ERROR_MSG[upcase_class_sym]
   end

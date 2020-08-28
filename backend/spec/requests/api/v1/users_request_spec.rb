@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Users', type: :request do
-  let(:error_msg) { ERROR_MSG[:USER] }
+  let(:error_msg)    { ERROR_MSG[:USER] }
   let(:update_attrs) { UPDATE_ATTRS[:USER] }
 
   # Define user.
@@ -21,11 +21,7 @@ RSpec.describe 'Api::V1::Users', type: :request do
     }
   }
 
-  # Overwrite error_params to customize.
-  let(:error_params) {
-    { 'email' => email_error_msgs } # or define email_error_msgs.
-  }
-
+  # Define email_error_params.
   let(:error_response) {
     {
       'error' => true,
@@ -63,8 +59,10 @@ RSpec.describe 'Api::V1::Users', type: :request do
 
     describe '異常系' do
       context 'emailがnilのとき' do
-        let(:email) { nil }
-        let(:email_error_msgs) { [error_msg[:EMAIL][:VALIDATE], "can't be blank"] }
+        let(:email)        { nil }
+        let(:error_params) {
+          { 'email' => [error_msg[:EMAIL][:VALIDATE], "can't be blank"] }
+        }
 
         it { is_expected.to have_http_status 400 }
 
@@ -74,8 +72,10 @@ RSpec.describe 'Api::V1::Users', type: :request do
       end
 
       context 'emailの表記が正しくないとき' do
-        let(:email) { 'Invalid_email_address' }
-        let(:email_error_msgs) { [error_msg[:EMAIL][:VALIDATE]] }
+        let(:email)        { 'Invalid_email_address' }
+        let(:error_params) {
+          { 'email' => [error_msg[:EMAIL][:VALIDATE]] }
+        }
 
         it { is_expected.to have_http_status 400 }
 
@@ -85,7 +85,9 @@ RSpec.describe 'Api::V1::Users', type: :request do
       end
 
       context '既に存在しているemailのとき' do
-        let(:email_error_msgs) { [error_msg[:EMAIL][:EXIST]] }
+        let(:error_params) {
+          { 'email' => [error_msg[:EMAIL][:EXIST]] }
+        }
 
         before do
           post api_v1_users_path, params: { email: email }
@@ -118,8 +120,10 @@ RSpec.describe 'Api::V1::Users', type: :request do
         end
       end
 
-      # TODO: response.body['lien_user'] = nil. why?
-      # localhost is success. Cause is RSpec?
+      # TODO: Why response.body['lien_user'] = nil ?
+      # Same case by render include: nil .
+      # localhost is success.
+      # Cause is RSpec?
       # context 'embedがline_userのとき' do
       #   let(:embed) { '*' }
       #   let!(:line_user) { create(:line_user, user: user) }
@@ -135,8 +139,10 @@ RSpec.describe 'Api::V1::Users', type: :request do
 
     describe '異常系' do
       context 'emailの表記が正しくないとき' do
-        let(:email) { 'Invalid_email_address' }
-        let(:email_error_msgs) { [error_msg[:EMAIL][:VALIDATE]] }
+        let(:email)        { 'Invalid_email_address' }
+        let(:error_params) {
+          { 'email' => [error_msg[:EMAIL][:VALIDATE]] }
+        }
 
         it { is_expected.to have_http_status 400 }
 
@@ -146,8 +152,10 @@ RSpec.describe 'Api::V1::Users', type: :request do
       end
 
       context '存在しないemailを指定したとき' do
-        let(:email) { Faker::Internet.email }
-        let(:email_error_msgs) { [error_msg[:EMAIL][:NOT_FOUND][email]] }
+        let(:email)        { Faker::Internet.email }
+        let(:error_params) {
+          { 'email' => [error_msg[:EMAIL][:NOT_FOUND][email]] }
+        }
 
         it { is_expected.to have_http_status 404 }
 
@@ -159,8 +167,8 @@ RSpec.describe 'Api::V1::Users', type: :request do
   end
 
   describe '#update' do
-    let!(:user) { create(:user) }
-    let(:email) { user.email }
+    let!(:user)     { create(:user) }
+    let(:email)     { user.email }
     let(:new_email) { Faker::Internet.email }
 
     before do
@@ -181,8 +189,10 @@ RSpec.describe 'Api::V1::Users', type: :request do
     describe '異常系' do
       describe 'email' do
         context 'emailの表記が正しくないとき' do
-          let(:email) { 'Invalid_email_address' }
-          let(:email_error_msgs) { [error_msg[:EMAIL][:VALIDATE]] }
+          let(:email)        { 'Invalid_email_address' }
+          let(:error_params) {
+            { 'email' => [error_msg[:EMAIL][:VALIDATE]] }
+          }
 
           it { is_expected.to have_http_status 400 }
 
@@ -192,8 +202,10 @@ RSpec.describe 'Api::V1::Users', type: :request do
         end
 
         context '存在しないemailを指定したとき' do
-          let(:email) { Faker::Internet.email }
-          let(:email_error_msgs) { [error_msg[:EMAIL][:NOT_FOUND][email]] }
+          let(:email)        { Faker::Internet.email }
+          let(:error_params) {
+            { 'email' => [error_msg[:EMAIL][:NOT_FOUND][email]] }
+          }
 
           it { is_expected.to have_http_status 400 }
 
@@ -205,7 +217,7 @@ RSpec.describe 'Api::V1::Users', type: :request do
 
       describe 'new_email' do
         context 'new_emailがnilのとき' do
-          let(:new_email) { nil }
+          let(:new_email)    { nil }
           let(:error_params) {
             { 'attributes' => [error_msg[:ATTRIBUTES][:UPDATE_BLANK][update_attrs]] }
           }
@@ -218,7 +230,7 @@ RSpec.describe 'Api::V1::Users', type: :request do
         end
 
         context 'new_emailの表記が正しくないとき' do
-          let(:new_email) { 'Invalid_email_address' }
+          let(:new_email)    { 'Invalid_email_address' }
           let(:error_params) {
             { 'new_email' => [error_msg[:NEW_EMAIL][:VALIDATE]] }
           }
@@ -251,8 +263,10 @@ RSpec.describe 'Api::V1::Users', type: :request do
 
     describe '異常系' do
       context 'emailの表記が正しくないとき' do
-        let(:email) { 'Invalid_email_address' }
-        let(:email_error_msgs) { [error_msg[:EMAIL][:VALIDATE]] }
+        let(:email)        { 'Invalid_email_address' }
+        let(:error_params) {
+          { 'email' => [error_msg[:EMAIL][:VALIDATE]] }
+        }
 
         it { is_expected.to have_http_status 400 }
 
@@ -262,8 +276,10 @@ RSpec.describe 'Api::V1::Users', type: :request do
       end
 
       context '存在しないemailを指定したとき' do
-        let(:email) { Faker::Internet.email }
-        let(:email_error_msgs) { [error_msg[:EMAIL][:NOT_FOUND][email]] }
+        let(:email)        { Faker::Internet.email }
+        let(:error_params) {
+          { 'email' => [error_msg[:EMAIL][:NOT_FOUND][email]] }
+        }
 
         it { is_expected.to have_http_status 404 }
 
@@ -275,13 +291,16 @@ RSpec.describe 'Api::V1::Users', type: :request do
   end
 
   describe '#relate_line_user' do
-    let!(:user) { create(:user) }
-    let!(:line_user) { create(:line_user) }
-    let(:email) { user.email }
+    let!(:user)         { create(:user) }
+    let!(:line_user)    { create(:line_user) }
+    let(:email)         { user.email }
     let(:inherit_token) { line_user.inherit_token }
 
     before do
-      post relate_line_user_api_v1_user_path(email), params: { inherit_token: inherit_token }
+      post relate_line_user_api_v1_user_path(email),
+           params: {
+             inherit_token: inherit_token
+           }
     end
 
     describe '正常系' do
@@ -299,8 +318,10 @@ RSpec.describe 'Api::V1::Users', type: :request do
     describe '異常系' do
       describe 'email' do
         context 'emailの表記が正しくないとき' do
-          let(:email) { 'Invalid_email_address' }
-          let(:email_error_msgs) { [error_msg[:EMAIL][:VALIDATE]] }
+          let(:email)        { 'Invalid_email_address' }
+          let(:error_params) {
+            { 'email' => [error_msg[:EMAIL][:VALIDATE]] }
+          }
 
           it { is_expected.to have_http_status 400 }
 
@@ -310,8 +331,10 @@ RSpec.describe 'Api::V1::Users', type: :request do
         end
 
         context '存在しないemailを指定したとき' do
-          let(:email) { Faker::Internet.email }
-          let(:email_error_msgs) { [error_msg[:EMAIL][:NOT_FOUND][email]] }
+          let(:email)        { Faker::Internet.email }
+          let(:error_params) {
+            { 'email' => [error_msg[:EMAIL][:NOT_FOUND][email]] }
+          }
 
           it { is_expected.to have_http_status 404 }
 
@@ -324,7 +347,7 @@ RSpec.describe 'Api::V1::Users', type: :request do
       describe 'inherit_token' do
         context 'inherit_tokenの長さが24文字以外のとき' do
           let(:inherit_token) { nil }
-          let(:error_params) {
+          let(:error_params)  {
             { 'inherit_token' => [error_msg[:INHERIT_TOKEN][:NOT_FOUND][inherit_token]] }
           }
 
@@ -337,7 +360,7 @@ RSpec.describe 'Api::V1::Users', type: :request do
 
         context 'inherit_tokenの長さが24文字以外のとき' do
           let(:inherit_token) { 'invalid_token' }
-          let(:error_params) {
+          let(:error_params)  {
             { 'inherit_token' => [error_msg[:INHERIT_TOKEN][:VALIDATE]] }
           }
 
@@ -350,7 +373,7 @@ RSpec.describe 'Api::V1::Users', type: :request do
 
         context '存在しないinherit_tokenを指定したとき' do
           let(:inherit_token) { 'a' * 24 }
-          let(:error_params) {
+          let(:error_params)  {
             { 'inherit_token' => [error_msg[:INHERIT_TOKEN][:NOT_FOUND][inherit_token]] }
           }
 
