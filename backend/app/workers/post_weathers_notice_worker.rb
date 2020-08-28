@@ -4,7 +4,7 @@ class PostWeathersNoticeWorker
   sidekiq_options queue: :sidekiq, retry: false
 
   def perform(line_id, token)
-    uri = URI.parse('https://www.umbrellanotice.work/weathers/line_notice')
+    uri = URI.parse('https://www.umbrellanotice.work/api/v1/weather_information/line_notice')
     req = Net::HTTP::Post.new(uri)
 
     req['Authorization'] = "Token #{token}"
