@@ -13,9 +13,9 @@ Rails.application.routes.draw do
 
       resources :line_users, only: %i[show update destroy]
 
-      resources :weathers, only: %i[show update destroy]
+      resources :weathers,   only: %i[show update destroy]
 
-      resource :weather_infomation, only: [] do
+      resource :weather_information, only: [] do
         post 'trigger'
         post 'line_notice'
       end
