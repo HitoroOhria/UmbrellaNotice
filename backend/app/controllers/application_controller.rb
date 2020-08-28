@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::API
-  # include Lineable
+  include Lineable
 
   def render_success(code, json = nil, include = '', location: nil)
     render status: code, json: json, include: include, location: location
@@ -33,6 +33,11 @@ class ApplicationController < ActionController::API
   # invalid data
   def render_400(invalid_record)
     render_error(400, invalid_record.errors.messages)
+  end
+
+  # Signature error
+  def render_bad_request
+    render status: 400, json: { status: 400, message: 'Bad request' }
   end
 
   # Not found
