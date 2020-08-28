@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::LineUsers", type: :request do
-  let(:error_msg) { ERROR_MSG[:LINE_USER] }
+  let(:error_msg)    { ERROR_MSG[:LINE_USER] }
   let(:update_attrs) { UPDATE_ATTRS[:LINE_USER] }
 
   # Define line_user.
@@ -32,8 +32,8 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
 
   describe '#show' do
     let!(:line_user) { create(:line_user) }
-    let(:id) { line_user.id }
-    let(:embed) { nil }
+    let(:id)         { line_user.id }
+    let(:embed)      { nil }
 
     before do
       get api_v1_line_user_path(id), params: { embed: embed }
@@ -48,8 +48,7 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
         end
       end
 
-      # TODO: response.body['user'] = nil. why?
-      # localhost is success. Cause is RSpec?
+      # TODO: Why response.body['user'] = nil ?
       # context 'embedがuserのとき' do
       #   let(:embed) { 'user' }
       #   let!(:user) { create(:user, line_user: line_user) }
@@ -65,11 +64,9 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
 
     describe '異常系' do
       context '存在しないidを指定したとき' do
-        let(:id) { 10**8 }
+        let(:id)           { 10**8 }
         let(:error_params) {
-          {
-            'id' => [error_msg[:ID][:NOT_FOUND][id]]
-          }
+          { 'id' => [error_msg[:ID][:NOT_FOUND][id]] }
         }
 
         it { is_expected.to have_http_status 404 }
@@ -82,9 +79,9 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
   end
 
   describe '#update' do
-    let!(:line_user) { create(:line_user) }
-    let(:id) { line_user.id }
-    let(:notice_time) { nil }
+    let!(:line_user)    { create(:line_user) }
+    let(:id)            { line_user.id }
+    let(:notice_time)   { nil }
     let(:silent_notice) { nil }
 
     before do
@@ -138,11 +135,9 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
 
       describe 'notice_time' do
         context 'notice_timeの表記が正しくないとき' do
-          let(:notice_time) { 'Invalid_notice_time' }
+          let(:notice_time)  { 'Invalid_notice_time' }
           let(:error_params) {
-            {
-              'notice_time' => [error_msg[:NOTICE_TIME][:VALIDATE]]
-            }
+            { 'notice_time' => [error_msg[:NOTICE_TIME][:VALIDATE]] }
           }
 
           it { is_expected.to have_http_status 400 }
@@ -156,7 +151,7 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
       describe 'silent_notice' do
         context 'silent_noticeが"true"か"false"以外のとき' do
           let(:silent_notice) { 'nil' }
-          let(:error_params) {
+          let(:error_params)  {
             { 'silent_notice' => [error_msg[:SILENT_NOTICE][:VALIDATE]] }
           }
 
@@ -172,7 +167,7 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
 
   describe '#destroy' do
     let!(:line_user) { create(:line_user) }
-    let(:id) { line_user.id }
+    let(:id)         { line_user.id }
 
     before do
       delete api_v1_line_user_path(id)
@@ -188,11 +183,9 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
 
     describe '異常系' do
       context '存在しないidを指定したとき' do
-        let(:id) { 10**8 }
+        let(:id)           { 10**8 }
         let(:error_params) {
-          {
-            'id' => [error_msg[:ID][:NOT_FOUND][id]]
-          }
+          { 'id' => [error_msg[:ID][:NOT_FOUND][id]] }
         }
 
         it { is_expected.to have_http_status 404 }

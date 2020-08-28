@@ -8,7 +8,7 @@ class CreateLineUsers < ActiveRecord::Migration[6.0]
       t.string :auth_token
       t.string :inherit_token
       t.datetime :located_at
-      t.datetime :locating_form
+      t.datetime :locating_from
 
       t.timestamps
     end

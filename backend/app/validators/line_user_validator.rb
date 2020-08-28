@@ -1,5 +1,5 @@
 class LineUserValidator < ApplicationValidator
-  attr_accessor :acton
+  attr_accessor :update_flag # flag of #update.
   attr_accessor :id
   attr_accessor :notice_time
   attr_accessor :silent_notice
@@ -25,6 +25,20 @@ class LineUserValidator < ApplicationValidator
             format: { with: EMBED_REGEX, message: ERROR_MSG[:EMBED][:VALIDATE] },
             if: :embed
 
+  # validate #update.
+  validate :attributes
+
+  # --------------------  validate method  --------------------
+
+  # error if update_params is all blank.
+  def attributes
+    return if update_flag.nil? || update_params.present?
+
+    add_error(:attributes, error_msg[:ATTRIBUTES][:UPDATE_BLANK][update_attrs])
+  end
+
+  # --------------------------  end  --------------------------
+
   class << self
     def init_with(params)
       params = params.permit(:id, :notice_time, :silent_notice, :embed)
@@ -41,13 +55,10 @@ class LineUserValidator < ApplicationValidator
   end
 
   def update
-    return unless (line_user = find_by_id)
+    self.update_flag = true
+    return if !(line_user = find_by_id) || invalid?
 
-    if update_params.blank?
-      add_error(:attributes, error_msg[:ATTRIBUTES][:UPDATE_BLANK][update_attrs])
-    else
-      line_user.update(update_params) ? line_user : fetch_errors_from(line_user)
-    end
+    line_user.update(update_params) ? line_user : fetch_errors_from(line_user)
   end
 
   def destroy
