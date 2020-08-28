@@ -1,7 +1,5 @@
-class Api::V1::WeatherInformationController < ApplicationController
+class Api::V1::WeatherInformationsController < ApplicationController
   before_action :authenticate, only: %i[trigger line_notice]
-
-  protect_from_forgery except: %i[trigger line_notice]
 
   # POST /api/v1/weather_information/trigger
   # PARAMS notice_time

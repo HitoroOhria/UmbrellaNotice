@@ -18,4 +18,8 @@ class LineUser < ApplicationRecord
               presence_only: true,
               message: ->(obj, _data) { obj.error_msg[:SILENT_NOTICE][:VALIDATE] }
             }
+
+  def silent_notice_text
+    silent_notice ? '有効' : '無効'
+  end
 end
