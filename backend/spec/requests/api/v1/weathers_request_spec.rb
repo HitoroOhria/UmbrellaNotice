@@ -1,8 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::Weathers", type: :request do
-  # TODO: stub Weather#geocoging
+  # stub call Geocoding API.
+  let(:geocoding_file_dir)  { 'spec/fixtures/geocoding_api' }
+  let(:geocoding_file_name) { 'success_response.xml' }
+  let(:geocoding_file_path) { Rails.root + geocoding_file_dir + geocoding_file_name }
+  let(:geocoding_response)  { File.open(geocoding_file_path).read }
 
+  before do
+    allow_any_instance_of(Weather).to receive(:call_geocoding_api) { geocoding_response }
+  end
+
+  # defined shorthand.
   let(:error_msg)    { ERROR_MSG[:WEATHER] }
   let(:update_attrs) { UPDATE_ATTRS[:WEATHER] }
 
@@ -99,7 +108,8 @@ RSpec.describe "Api::V1::Weathers", type: :request do
 
     describe '正常系' do
       describe 'city' do
-        let(:city) { 'さいたま市' }
+        let(:city)                { 'さいたま市' }
+        let(:geocoding_file_name) { 'saitama_response.xml' }
 
         it { is_expected.to have_http_status 200 }
 
@@ -126,9 +136,10 @@ RSpec.describe "Api::V1::Weathers", type: :request do
       end
 
       describe 'city,lat,lon' do
-        let(:city) { 'さいたま市' }
-        let(:lat)  { 55.55 }
-        let(:lon)  { 133.33 }
+        let(:city)                { 'さいたま市' }
+        let(:lat)                 { 55.55 }
+        let(:lon)                 { 133.33 }
+        let(:geocoding_file_name) { 'saitama_response.xml' }
 
         it { is_expected.to have_http_status 200 }
 
@@ -161,8 +172,9 @@ RSpec.describe "Api::V1::Weathers", type: :request do
 
       describe 'city' do
         context '存在しないcityを指定したとき' do
-          let(:city)         { 'ほげふが市' }
-          let(:error_params) {
+          let(:city)                { 'ほげふが市' }
+          let(:geocoding_file_name) { 'error_response.xml' }
+          let(:error_params)        {
             { 'city' => [error_msg[:CITY][:NOT_SEARCH][city]] }
           }
 
