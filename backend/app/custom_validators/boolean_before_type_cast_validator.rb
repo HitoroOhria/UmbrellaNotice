@@ -9,8 +9,8 @@ class BooleanBeforeTypeCastValidator < ActiveModel::EachValidator
   end
 
   def boolean?(value)
-    boolean_obj = value.is_a?(FalseClass) || value.is_a?(TrueClass)
-    boolean_str = (value == 'false') || (value == 'true')
+    boolean_obj      = value.is_a?(FalseClass) || value.is_a?(TrueClass)
+    boolean_str      = (value == 'false') || (value == 'true')
     type_casted_true = value.to_s == '1'
 
     boolean_obj || boolean_str || type_casted_true
