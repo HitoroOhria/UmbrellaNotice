@@ -8,7 +8,7 @@
 /backend/coverage
 
 # Ignore React
-/frontend/node_modules
+/**/node_modules
 /frontend/yarn-error.log
 /frontend/build
 
@@ -43,3 +43,4 @@
 
 # Ignore master key for decrypting credentials and more.
 /backend/config/master.key
+node_modules

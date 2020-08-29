@@ -1,9 +1,10 @@
 FROM node:14.7.0 as ReactBuilder
 
 ADD . /react-app
+
 WORKDIR /react-app
-RUN npm install \
-  && npm build
+RUN yarn install \
+  && yarn build
 
 FROM nginx:1.15.8
 
@@ -11,6 +12,7 @@ COPY --from=ReactBuilder /react-app/build /var/www/react-build
 
 RUN rm -f /etc/nginx/conf.d/*
 ADD docker/nginx/nginx.pro.conf /etc/nginx/conf.d/umbrellanotice.conf
+
 RUN apt-get update \
   && apt-get install -y \
         openssl \
