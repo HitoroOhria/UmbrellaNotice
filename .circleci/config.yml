@@ -179,6 +179,17 @@ workflows:
 #              only: master
 
       - aws-ecs/deploy-service-update:
+          name: Update-nginx-container-of-ECS
+          family: 'umbrellanotice_task'
+          cluster-name: $AWS_ECS_ARN
+          service-name: 'umbrellanotice-rails'
+          container-image-name-updates: "container=nginx,tag=${CIRCLE_SHA1}"
+          requires:
+            #            - Run-db-migrate-task
+            - Push-nginx-image
+            - Push-umbrellanotice-image
+
+      - aws-ecs/deploy-service-update:
           name: Update-umbrellanotice-container-of-ECS
           family: 'umbrellanotice_task'
           cluster-name: $AWS_ECS_ARN
