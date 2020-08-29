@@ -12,6 +12,7 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
 ADD . /rails-app
 WORKDIR /rails-app
 RUN mkdir -p tmp/sockets/task tmp/sockets/host log \
-  && bundle install --without development test
+  && bundle config set without 'development test' \
+  && bundle install
 
 CMD bundle exec unicorn_rails -c /rails-app/config/unicorn.rb -E production
