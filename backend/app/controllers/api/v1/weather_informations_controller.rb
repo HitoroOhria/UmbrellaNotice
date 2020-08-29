@@ -43,4 +43,3 @@ class Api::V1::WeatherInformationsController < ApplicationController
     end
   end
 end
-

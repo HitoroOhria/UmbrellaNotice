@@ -22,14 +22,14 @@ RUN apt-get update \
 RUN rm -r ~/.bashrc
 ADD ./docker/rails/.bashrc ~/.bashrc
 
-RUN mkdir /rails-app
+# copy dirctory for up container with no bind in CircleCI.
+ADD . /rails-app
 WORKDIR /rails-app
-ADD ./Gemfile /rails-app/Gemfile
-ADD ./Gemfile.lock /rails-app/Gemfile.lock
-RUN bundle install --without production
+RUN bundle config set without 'production' \
+  && bundle install
 
 ENTRYPOINT [ \
-  "prehook", "bundle install --without production", "--", \
+  "prehook", "bundle install", "--", \
   "switch", \
       "sidekiq=bundle exec sidekiq -q sidekiq", "--", \
   "prehook", "echo Sleep 45 seconds for comprete MySQL start up.", "--", \
