@@ -45,5 +45,8 @@ module Backend
 
     # メイラープレビューのパスを変更
     config.action_mailer.preview_path = "#{Rails.root}/spec/mailers/previews"
+
+    # Ignore line_messages dir from Zeitwerk auto load.
+    Rails.autoloaders.main.ignore(Rails.root.join('app/line_messages'))
   end
 end

@@ -4,13 +4,13 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
-/backend_old/*
+# Ignore SimpleCov
+/backend/coverage
 
 # Ignore React
-/frontend/node_modules
+/**/node_modules
 /frontend/yarn-error.log
 /frontend/build
-/frontend/public
 
 # Ignore Terraform
 /terratorm/*.tfstate
@@ -39,7 +39,8 @@
 /backend/storage/*
 /backend/public/*
 
-.byebug_history
+/**/.byebug_history
 
 # Ignore master key for decrypting credentials and more.
 /backend/config/master.key
+node_modules
