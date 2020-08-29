@@ -5,6 +5,7 @@ class Api::V1::LineApisController < ApplicationController
 
   attr_accessor :event, :line_user
 
+  # POST /api/v!/line_api/webhock
   def webhock
     events.each do |item|
       self.event     = item
