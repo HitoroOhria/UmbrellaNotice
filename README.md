@@ -1,5 +1,7 @@
 # :closed_umbrella: Umbrella Notice (天気予報通知アプリ)
 
+2020/8/29 Bitbucket --> GitHub へ移行
+
 ## アプリケーションURL
 [https://www.umbrellanotice.work](https://www.umbrellanotice.work)
 
