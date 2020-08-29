@@ -14,11 +14,12 @@
 # Ignore RuboCop
 /backend/.rubocop_todo.yml
 
-# Ignore Rubumine
-/.idea
+# Ignore IDE
+/**/.idea
+/**/.vscode
 
 # Ignore bundler config.
-/.bundle
+/**/.bundle
 
 # Ignore all logfiles and tempfiles.
 /backend/log/*
@@ -29,10 +30,10 @@
 # Ignore uploaded files in development
 /backend/storage/*
 
-/node_modules
-/yarn-error.log
+/frontend/node_modules
+/frontend/yarn-error.log
 
-/public/assets
+/frontend/public
 .byebug_history
 
 # Ignore master key for decrypting credentials and more.

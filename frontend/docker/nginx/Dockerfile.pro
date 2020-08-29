@@ -1,3 +1,10 @@
+FROM node:14.7.0
+
+ADD . /react-app
+WORKDIR /react-app
+RUN npm install \
+  && npm build
+
 FROM nginx:1.15.8
 
 RUN rm -f /etc/nginx/conf.d/*

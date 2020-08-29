@@ -8,9 +8,9 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
        build-essential \
        nodejs \
        openjdk-8-jdk
-ADD . /umbrellanotice
-WORKDIR /umbrellanotice
+ADD . /rails-app
+WORKDIR /rails-app
 RUN mkdir -p tmp/sockets/task tmp/sockets/host log \
   && bundle install --without development test
 
-CMD sh /umbrellanotice/docker/umbrellanotice/production_set_up.sh
+CMD sh /rails-app/docker/rails/production_set_up.sh

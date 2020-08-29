@@ -1,4 +1,4 @@
-FROM nginx:1.15.8
+FROM nginx:1.19.1
 
 RUN rm -f /etc/nginx/conf.d/*
 ADD docker/nginx/nginx.conf /etc/nginx/conf.d/umbrellanotice.conf

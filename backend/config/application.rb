@@ -31,7 +31,7 @@ module Webapp
     config.paths.add 'lib', eager_load: true
 
     # キューイングバックエンドを設定
-    config.active_job.queue_adapter = :sidekiq
+    config.active_job.queue_adapter = :sidekiq unless ENV['LIGHT_MODE']
 
     # メイラープレビューのパスを変更
     config.action_mailer.preview_path = "#{Rails.root}/spec/mailers/previews"
