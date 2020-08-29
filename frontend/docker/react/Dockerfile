@@ -10,9 +10,7 @@ RUN apt update \
   && rm entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz \
   && mv entrykit /bin/entrykit \
   && chmod +x /bin/entrykit \
-  && entrykit --symlink \
-  && apt install -y \
-       yarn
+  && entrykit --symlink
 
 RUN mkdir /react-app
 WORKDIR /react-app
