@@ -14,4 +14,4 @@ WORKDIR /rails-app
 RUN mkdir -p tmp/sockets/task tmp/sockets/host log \
   && bundle install --without development test
 
-CMD sh /rails-app/docker/rails/production_set_up.sh
+CMD bundle exec unicorn_rails -c /umbrellanotice/config/unicorn.rb -E production
