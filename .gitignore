@@ -4,13 +4,10 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
-/backend_old/*
-
 # Ignore React
 /frontend/node_modules
 /frontend/yarn-error.log
 /frontend/build
-/frontend/public
 
 # Ignore Terraform
 /terratorm/*.tfstate
