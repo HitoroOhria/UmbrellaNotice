@@ -7,7 +7,7 @@ end
 
 $worker  = 2
 $timeout = 120
-$app_dir = '/umbrellanotice'
+$app_dir = '/rails-app'
 $pid     = File.expand_path 'tmp/pids/unicorn.pid', $app_dir
 $std_log = '/dev/stdout'
 

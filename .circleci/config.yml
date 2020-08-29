@@ -38,7 +38,7 @@ jobs:
             sleep 90
       - run:
           name: Run RSpec
-          command: docker-compose exec umbrellanotice rspec
+          command: docker-compose exec rails rspec
       - run:
           name: Output Dcoker Image for cache
           command: |
@@ -52,7 +52,8 @@ jobs:
       - save_cache:
           key: docker-dev-{{ .Branch }}-{{ .BuildNum }}
           paths:
-            - ~/cache
+            - ~/cache/docker/dev
+
   RuboCop:
     working_directory: ~/umbrellanotice
     docker:
@@ -82,6 +83,7 @@ jobs:
           key: gemfiles-{{ .Branch }}-{{ checksum "backend/Gemfile.lock" }}
           paths:
             - backend/vendor/bundle
+
   Run-assets-precompile:
     working_directory: ~/umbrellanotice
     docker:
@@ -112,7 +114,8 @@ jobs:
       - save_cache:
           key: docker-pro-umbrella-{{ .Branch }}-{{ .BuildNum }}
           paths:
-            - ~/cache
+            - ~/cache/docker/pro
+
   Push-umbrellanotice-image:
     docker:
       - image: 'circleci/python:3.7.1'
@@ -136,6 +139,7 @@ jobs:
           dockerfile: ./docker/umbrellanotice/Dockerfile.pro
           repo: umbrellanotice-app
           tag: "${CIRCLE_SHA1}"
+
   Push-db-migrate-image:
     docker:
       - image: 'circleci/python:3.7.1'
@@ -152,6 +156,7 @@ jobs:
           region: AWS_REGION
           repo: umbrellanotice-db-migration
           tag: "${CIRCLE_SHA1}"
+
   Run-db-migrate-task:
     docker:
       - image: 'circleci/python:3.7.1'

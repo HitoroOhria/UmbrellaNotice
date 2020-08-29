@@ -67,18 +67,22 @@ Rails.application.configure do
   config.log_level = :debug
 
   # Setting session store and Redis
-  redis_setting = proc { |namespace, expire_time|
-    {
-      servers: {
-        path: (Rails.root + 'tmp/sockets/redis.sock').to_s,
-        namespace: namespace
-      },
-      expires_in: expire_time
+  if ENV['LIGHT_MODE']
+    config.session_store = :cookie_store
+  else
+    redis_setting = proc { |namespace, expire_time|
+      {
+        servers: {
+          path: (Rails.root + 'tmp/sockets/redis.sock').to_s,
+          namespace: namespace
+        },
+        expires_in: expire_time
+      }
     }
-  }
-  config.session_store :redis_store, redis_setting.call('session', 90.minute)
-  config.cache_store = :redis_store, redis_setting.call('cache', 1.day)
-  config.assets.configure do |env|
-    env.cache = ActiveSupport::Cache.lookup_store :redis_store, redis_setting.call('asset', 1.day)
+    config.session_store :redis_store, redis_setting.call('session', 90.minute)
+    config.cache_store = :redis_store, redis_setting.call('cache', 1.day)
+    config.assets.configure do |env|
+      env.cache = ActiveSupport::Cache.lookup_store :redis_store, redis_setting.call('asset', 1.day)
+    end
   end
 end

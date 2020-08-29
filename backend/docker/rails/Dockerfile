@@ -19,12 +19,14 @@ RUN apt-get update \
        nodejs \
        openjdk-8-jdk
 
-ADD . /umbrellanotice
-WORKDIR /umbrellanotice
+ADD . /rails-app
+WORKDIR /rails-app
 RUN bundle install --without production
 
 ENTRYPOINT [ \
   "prehook", "bundle install --without production", "--", \
+  "switch", \
+      "light_mode=bundle exec rails s -p 80", "--", \
   "switch", \
       "sidekiq=bundle exec sidekiq -q sidekiq", "--", \
   "prehook", "echo sleep 45 seconds for mysql Start Up Comprete", "--", \
@@ -34,7 +36,7 @@ ENTRYPOINT [ \
   "prehook", "bundle exec rails db:create", "--", \
   "prehook", "bundle exec rails db:migrate", "--", \
   "switch", \
-      "circleci=bundle exec unicorn_rails -c /umbrellanotice/config/unicorn.rb -E development", "--", \
+      "circleci=bundle exec unicorn_rails -c /rails-app/config/unicorn.rb -E development", "--", \
   "prehook", "bundle exec rails db:seed", "--", \
-  "prehook", "development=bundle exec unicorn_rails -c /umbrellanotice/config/unicorn.rb -E development", "--" \
+  "prehook", "development=bundle exec unicorn_rails -c /rails-app/config/unicorn.rb -E development", "--" \
 ]
