@@ -1,6 +1,10 @@
 class ApplicationController < ActionController::API
   include Lineable
 
+  def credentials
+    Rails.application.credentials
+  end
+
   def render_success(code, json = nil, include = '', location: nil)
     render status: code, json: json, include: include, location: location
   end
