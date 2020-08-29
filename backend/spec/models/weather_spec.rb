@@ -30,10 +30,6 @@ RSpec.describe Weather, type: :model do
 
       it { is_expected.to be_truthy }
 
-      it '関連したUserファクトリーを作成すること' do
-        expect(weather.user).to be_present
-      end
-
       it '関連したLineUserファクトリーを作成すること' do
         expect(weather.line_user).to be_present
       end

@@ -90,12 +90,12 @@ RSpec.describe "RichMenuables", type: :controller do
       end
 
       it 'シリアル番号入力ページのリンクを返すこと' do
-        is_expected.to include new_users_line_user_url
+        is_expected.to include 'https://www.umbrellanotice.work/user'
       end
     end
 
     context 'ユーザー登録が済んでいる時' do
-      let!(:user) { create(:user, weather: weather) }
+      let!(:user) { create(:user, line_user: line_user) }
 
       it 'ユーザー登録済みである旨のメッセージを返すこと' do
         is_expected.to include 'Umbrella Notice アカウントと LINE アカウントは連携済みです！'
@@ -108,7 +108,7 @@ RSpec.describe "RichMenuables", type: :controller do
 
     context '関するユーザーが存在しない時' do
       it 'アカウント登録ページのURLを返すこと' do
-        is_expected.to include new_user_registration_url
+        is_expected.to include 'https://www.umbrellanotice.work/user'
       end
     end
   end

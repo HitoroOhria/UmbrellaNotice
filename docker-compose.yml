@@ -1,66 +1,90 @@
-version: '3'
+version: '3.8'
 
 services:
-  umbrellanotice:
+
+  rails:
     build:
       context: ./backend
-      dockerfile: ./docker/umbrellanotice/Dockerfile
+      dockerfile: ./docker/rails/Dockerfile
     environment:
       TZ:         Asia/Tokyo
       LINE_ID:    $LINE_ID
       LINE_TOKEN: $LINE_TOKEN
       MYSQL_ROOT_PASSWORD: password
     volumes:
-      - ./backend:/umbrellanotice
-      - public-data:/umbrellanotice/public
-      - tmp-data:/umbrellanotice/tmp
-      - log-data:/umbrellanotice/log
-      - socket-data:/umbrellanotice/tmp/sockets
+      - ./backend:/rails-app
+      - public-data:/rails-app/public
+      - log-data:/rails-app/log
+      - socket-data:/rails-app/tmp/sockets
+    tmpfs: /rails-app/tmp
     depends_on:
       - mysql
       - redis
     tty: true
     stdin_open: true
+
   sidekiq:
     build:
       context: ./backend
-      dockerfile: ./docker/umbrellanotice/Dockerfile
+      dockerfile: ./docker/rails/Dockerfile
     volumes:
-      - ./backend:/umbrellanotice
-      - public-data:/umbrellanotice/public
-      - tmp-data:/umbrellanotice/tmp
-      - log-data:/umbrellanotice/log
-      - socket-data:/umbrellanotice/tmp/sockets
+      - ./backend:/rails-app
+      - public-data:/rails-app/public
+      - log-data:/rails-app/log
+      - socket-data:/rails-app/tmp/sockets
+    tmpfs: /rails-app/tmp
     depends_on:
-      - umbrellanotice
+      - rails
       - redis
     command: sidekiq
+
   redis:
     build:
       context: ./backend
       dockerfile: ./docker/redis/Dockerfile
     volumes:
       - socket-data:/run/redis
+
   mysql:
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: password
     volumes:
       - ./backend/docker/mysql/mysql-confd:/etc/mysql/conf.d
+
   nginx:
     build:
-      context: ./backend
+      context: ./frontend
       dockerfile: ./docker/nginx/Dockerfile
     volumes:
-      - socket-data:/umbrellanotice/tmp/sockets
+      - socket-data:/tmp/sockets
+      - react-build-date:/react-app/build
     ports:
       - 80:80
       - 443:443
     depends_on:
-      - umbrellanotice
+      - rails
+
+  react:
+    build:
+      context: ./frontend
+      dockerfile: ./docker/react/Dockerfile
+    environment:
+      PORT: 3000
+    volumes:
+      - ./frontend:/react-app:cached
+      - node-modules:/react-app/node_modules
+      - yarn-cache:/usr/local/share/.cache/yarn/v6
+      - react-build-date:/react-app/build
+    ports:
+      - 3000:3000
+    tty: true
+    stdin_open: true
 
 volumes:
   public-data:
-  tmp-data:
   log-data:
   socket-data:
+  node-modules:
+  yarn-cache:
+  react-build-date:

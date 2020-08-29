@@ -1,14 +1,28 @@
 class Weather < ApplicationRecord
   include WEBrick::HTTPUtils
 
-  belongs_to :user,      optional: true
   belongs_to :line_user, optional: true
 
-  validates :lat,  numericality: { greater_than_or_equal_to: -90,  less_than_or_equal_to: 90 }
-  validates :lon,  numericality: { greater_than_or_equal_to: -180, less_than_or_equal_to: 180 }
+  validates :lat,
+            numericality: {
+              greater_than_or_equal_to: -90,
+              less_than_or_equal_to: 90,
+              message: ->(obj, _data) { obj.error_msg[:LAT][:VALIDATE] }
+            }
 
-  before_validation -> { self.city += '市' }, if:     [:will_save_change_to_city?, -> { city.present? }],
-                                              unless: -> { /.+[市区]/.match(city) }
+  validates :lon,
+            numericality: {
+              greater_than_or_equal_to: -180,
+              less_than_or_equal_to: 180,
+              message: ->(obj, _data) { obj.error_msg[:LON][:VALIDATE] }
+            }
+
+  before_validation -> { self.city += '市' },
+                    if: [
+                      :will_save_change_to_city?,
+                      -> { city.present? }
+                    ],
+                    unless: -> { /.+[市区]/.match(city) }
 
   def forecast
     @forecast ||= one_call_api
@@ -57,10 +71,10 @@ class Weather < ApplicationRecord
   def save_location(lat: 0, lon: 0)
     self.lat = lat.round(2)
     self.lon = lon.round(2)
-
     save
-    line_user.located_at || line_user.update_attributes(located_at: Time.zone.now, silent_notice: true)
-    line_user.locating_from && line_user.update_attribute(:locating_from, nil)
+
+    line_user.located_at || line_user.update(located_at: Time.zone.now)
+    line_user.locating_from && line_user.update(locating_from: nil)
   end
 
   private
@@ -97,7 +111,7 @@ class Weather < ApplicationRecord
 
   # 引数に対応する API コールメソッドを呼び出す
   # API コール時にエラーが発生した場合、3回までリトライする
-  # 取得できた場合 => APIレスポンス
+  # 取得できた場合      => APIレスポンス
   # 取得できなかった場合 => false
   def call_api_and_handle_error(api_name)
     retry_counter = 0
@@ -106,20 +120,17 @@ class Weather < ApplicationRecord
     rescue OpenURI::HTTPError => e
       retry_counter += 1
       retry_message(e, retry_counter)
+      return false if retry_counter > RETRY_CALL_API_COUNT
 
-      (retry_counter <= RETRY_CALL_API_COUNT) ? (sleep RETRY_CALL_API_WAIT_TIME) && retry
-                                              : false
+      (sleep RETRY_CALL_API_WAIT_TIME) && retry
     end
   end
 
   def retry_message(exception, retry_count)
-    if retry_count <= RETRY_CALL_API_COUNT
-      logger.error "[Error] #{exception.class} が発生しました。"
-      logger.error "#{RETRY_CALL_API_WAIT_TIME}sec 待機後に再接続します。"
-      logger.error "この処理は#{RETRY_CALL_API_COUNT}回まで繰り返されます。(現在: #{retry_count}回目)"
+    if retry_count > RETRY_CALL_API_COUNT
+      logger.error error_msg[:CALL_API][:FAILURE][exception]
     else
-      logger.error "[Error] #{exception.class} の再接続に失敗しました。"
-      logger.error exception.backtrace
+      logger.error error_msg[:CALL_API][:RETRY][exception, retry_count]
     end
   end
 
@@ -168,18 +179,21 @@ class Weather < ApplicationRecord
   #  - (2) 雨量が 0 < RAIN_FALL_JUDGMENT [mm] の場合、天気を雨から曇りに変更
   def refill_rain(json_forecast)
     json_forecast[:hourly].each do |hourly|
-      hourly[:rain] = { '1h': 0 } if hourly[:rain].nil?
-      rain_fall     = hourly[:rain][:'1h']
+      hourly[:rain] ||= { '1h': 0 }
+      rain_fall = hourly[:rain][:'1h']
 
       next if rain_fall.zero? || RAIN_FALL_JUDGMENT <= rain_fall
 
-      hourly[:weather].each do |weather|
-        weather[:id]          = 804
-        weather[:main]        = 'Clouds'
-        weather[:description] = 'overcast clouds'
-        weather[:icon]        = '04d'
-      end
+      hourly[:weather].each { |weather| remake_cloudy(weather) }
     end
+
     json_forecast
+  end
+
+  def remake_cloudy(weather)
+    weather[:id]          = 804
+    weather[:main]        = 'Clouds'
+    weather[:description] = 'overcast clouds'
+    weather[:icon]        = '04d'
   end
 end

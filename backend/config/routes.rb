@@ -1,27 +1,29 @@
 Rails.application.routes.draw do
-  devise_for :users, controllers: {
-    omniauth_callbacks: 'users/omniauth_callbacks'
-  }
+  namespace :api do
+    namespace :v1 do
 
-  root  'static_pages#home'
-  get   'about',                to: 'static_pages#about'
-  get   'policy',               to: 'static_pages#policy'
-  get   'terms',                to: 'static_pages#terms'
-  post  'lines/webhock',        to: 'line_api#webhock'
-  post  'weathers/trigger',     to: 'weathers#trigger'
-  post  'weathers/line_notice', to: 'weathers#line_notice'
-  match '/oauth2callback',      to: Google::Auth::WebUserAuthorizer::CallbackApp, via: :all
+      resources :users,
+                only: %i[create show update destroy],
+                param: :email,
+                email: /[^\/]+/ do
+        member do
+          post 'relate_line_user'
+        end
+      end
 
-  namespace :users do
-    get  'line_login',          to: 'line_callbacks#line_login'
-    get  'line_callbacks',      to: 'line_callbacks#callback'
+      resources :line_users, only: %i[show update destroy]
 
-    resources :line_users,      only: %i[new create]
-  end
+      resources :weathers,   only: %i[show update destroy]
 
-  resources :users, only: [:show]
+      resource :weather_information, only: [] do
+        post 'trigger'
+        post 'line_notice'
+      end
 
-  if Rails.env.development?
-    get 'weathers/information', to: 'weathers#information'
+      resource :line_api, only: [] do
+        post 'webhock'
+      end
+
+    end
   end
 end

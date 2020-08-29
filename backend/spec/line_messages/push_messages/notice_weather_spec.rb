@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "notice_weather", type: :view do
   let(:file_name) { 'notice_weather' }
-  let(:line_user) { build(:line_user_with_weather) }
+  let(:line_user) { build(:line_user_with_weather, silent_notice: false) }
   let(:weather)   { line_user.weather }
   let(:locals)    { { line_user: line_user, weather: weather } }
 

@@ -14,20 +14,31 @@ Rails.application.configure do
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
-  if Rails.root.join('tmp', 'caching-dev.txt').exist?
-    config.action_controller.perform_caching = true
+  # if Rails.root.join('tmp', 'caching-dev.txt').exist?
+  #   config.cache_store = :memory_store
+  #   config.public_file_server.headers = {
+  #     'Cache-Control' => "public, max-age=#{2.days.to_i}"
+  #   }
+  # else
+  #   config.action_controller.perform_caching = false
+  #
+  #   config.cache_store = :null_store
+  # end
 
-    config.cache_store = :memory_store
-    config.public_file_server.headers = {
-      'Cache-Control' => "public, max-age=#{2.days.to_i}"
+  unless ENV['LIGHT_MODE']
+    redis_setting = proc { |namespace, expire_time|
+      {
+        servers: {
+          path: (Rails.root + 'tmp/sockets/redis.sock').to_s,
+          namespace: namespace
+        },
+        expires_in: expire_time
+      }
     }
-  else
-    config.action_controller.perform_caching = false
-
-    config.cache_store = :null_store
+    config.cache_store = :redis_cache_store, redis_setting.call('cache', 1.day)
   end
 
-  # Store uploaded files on the local file system (see config/storage.yml for options)
+  # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
   # Don't care if the mailer can't send.
@@ -39,7 +50,6 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
-
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
 
@@ -49,36 +59,10 @@ Rails.application.configure do
   # Highlight code that triggered database queries in logs.
   config.active_record.verbose_query_logs = true
 
-  # Debug mode disables concatenation and preprocessing of assets.
-  # This option may cause significant delays in view rendering with a large
-  # number of complex assets.
-  config.assets.debug = true
-
-  # Suppress logger output for asset requests.
-  config.assets.quiet = true
-
-  # Raises error for missing translations
+  # Raises error for missing translations.
   # config.action_view.raise_on_missing_translations = true
 
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
-
-  config.log_level = :debug
-
-  # Setting session store and Redis
-  redis_setting = proc { |namespace, expire_time|
-    {
-      servers: {
-        path: (Rails.root + 'tmp/sockets/redis.sock').to_s,
-        namespace: namespace
-      },
-      expires_in: expire_time
-    }
-  }
-  config.session_store :redis_store, redis_setting.call('session', 90.minute)
-  config.cache_store = :redis_store, redis_setting.call('cache', 1.day)
-  config.assets.configure do |env|
-    env.cache = ActiveSupport::Cache.lookup_store :redis_store, redis_setting.call('asset', 1.day)
-  end
 end

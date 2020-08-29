@@ -4,6 +4,14 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
+/backend_old/*
+
+# Ignore React
+/frontend/node_modules
+/frontend/yarn-error.log
+/frontend/build
+/frontend/public
+
 # Ignore Terraform
 /terratorm/*.tfstate
 /terratorm/*.tfstate.*
@@ -14,11 +22,12 @@
 # Ignore RuboCop
 /backend/.rubocop_todo.yml
 
-# Ignore Rubumine
-/.idea
+# Ignore IDE
+/**/.idea
+/**/.vscode
 
 # Ignore bundler config.
-/.bundle
+/**/.bundle
 
 # Ignore all logfiles and tempfiles.
 /backend/log/*
@@ -28,11 +37,8 @@
 
 # Ignore uploaded files in development
 /backend/storage/*
+/backend/public/*
 
-/node_modules
-/yarn-error.log
-
-/public/assets
 .byebug_history
 
 # Ignore master key for decrypting credentials and more.

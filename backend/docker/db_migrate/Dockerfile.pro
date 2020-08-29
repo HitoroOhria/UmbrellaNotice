@@ -1,16 +1,19 @@
-FROM ruby:2.5.1
+FROM ruby:2.7.1
 
 RUN apt-get update && apt-get install -y \
        build-essential \
-       nodejs
+       nodejs \
+       yarn
 
-RUN gem install rails -v 5.2.4 \
-  && rails new sandbox
+RUN gem install 'rails:6.0.3.2' 'mysql2:0.5.3' \
+  && rails new sandbox --database=mysql --skip-test  --skip-turbolinks --skip-bundle --api
 WORKDIR /sandbox
-RUN echo "gem 'mysql2', '0.5.3'" >> Gemfile
-RUN bundle install
-RUN mkdir tmp/sockets
-RUN rm -r config/database.yml
+
+RUN bundle config set without 'development test' \
+  && bundle install \
+  && mkdir tmp/sockets \
+  && rm -r config/database.yml
+
 ADD config/database.yml config/database.yml
 ADD db/migrate db/migrate
 ADD db/schema.rb db/schema.rb

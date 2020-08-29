@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+
+  rails:
+    build:
+      context: ./backend
+      dockerfile: ./docker/rails/Dockerfile
+    environment:
+      TZ:         Asia/Tokyo
+      LINE_ID:    $LINE_ID
+      LINE_TOKEN: $LINE_TOKEN
+      MYSQL_ROOT_PASSWORD: password
+      LIGHT_MODE: 'true'
+    volumes:
+      - ./backend:/rails-app
+      - public-data:/rails-app/public
+      - log-data:/rails-app/log
+    tmpfs: /rails-app/tmp
+    ports:
+      - 80:80
+    depends_on:
+      - mysql
+    tty: true
+    stdin_open: true
+    command: light_mode
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - ./backend/docker/mysql/mysql-confd:/etc/mysql/conf.d
+
+  react:
+    build:
+      context: ./frontend
+      dockerfile: ./docker/react/Dockerfile
+    environment:
+      PORT: 3000
+    volumes:
+      - ./frontend:/react-app:cached
+      - node-modules:/react-app/node_modules
+      - yarn-cache:/usr/local/share/.cache/yarn/v6
+    ports:
+      - 3000:3000
+    tty: true
+    stdin_open: true
+
+volumes:
+  public-data:
+  log-data:
+  node-modules:
+  yarn-cache:

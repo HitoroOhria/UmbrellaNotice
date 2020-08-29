@@ -1,39 +1,43 @@
 version: "3"
 
 services:
-  umbrellanotice:
+
+  rails:
     build:
       context: ./backend
-      dockerfile: docker/umbrellanotice/Dockerfile
+      dockerfile: docker/rails/Dockerfile
     environment:
       TZ: Asia/Tokyo
       RAILS_MASTER_KEY: $RAILS_MASTER_KEY
       MYSQL_ROOT_PASSWORD: password
     volumes:
-      - socket-data:/umbrellanotice/tmp/sockets
+      - socket-data:/rails-app/tmp/sockets
     depends_on:
       - mysql
       - redis
     command: circleci
+
   sidekiq:
     build:
       context: ./backend
-      dockerfile: docker/umbrellanotice/Dockerfile
+      dockerfile: docker/rails/Dockerfile
     environment:
       TZ: Asia/Tokyo
       RAILS_MASTER_KEY: $RAILS_MASTER_KEY
     depends_on:
-      - umbrellanotice
+      - rails
       - redis
     volumes:
-      - socket-data:/umbrellanotice/tmp/sockets
+      - socket-data:/rails-app/tmp/sockets
     command: sidekiq
+
   redis:
     build:
       context: ./backend
       dockerfile: docker/redis/Dockerfile
     volumes:
       - socket-data:/run/redis
+
   mysql:
     build:
       context: ./backend
@@ -42,16 +46,17 @@ services:
       MYSQL_ROOT_PASSWORD: password
     ports:
       - '33306:3306'
+
   nginx:
     build:
-      context: ./backend
+      context: ./frontend
       dockerfile: docker/nginx/Dockerfile
     volumes:
-      - socket-data:/umbrellanotice/tmp/sockets
+      - socket-data:/tmp/sockets
     ports:
       - 80:80
     depends_on:
-    - umbrellanotice
+    - rails
 
 volumes:
   socket-data:
