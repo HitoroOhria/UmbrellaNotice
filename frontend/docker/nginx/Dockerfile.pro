@@ -3,7 +3,8 @@ FROM node:14.7.0
 ADD . /react-app
 WORKDIR /react-app
 RUN npm install \
-  && npm build
+  && npm build \
+  && rm -rf dokcer node_modules public src
 
 FROM nginx:1.15.8
 
@@ -12,7 +13,7 @@ ADD docker/nginx/nginx.pro.conf /etc/nginx/conf.d/umbrellanotice.conf
 
 RUN apt-get update \
   && apt-get install -y \
-       openssl \
+        openssl \
   && mkdir /etc/ssl/ca \
   && cd /etc/ssl/ca \
   && openssl req -new -newkey rsa:2048 -keyout server.key -nodes -out server.csr -subj "/C=JP/ST=Fukushima/O=UmbrellaNotice/CN=www.umbrellanotice.work" \
