@@ -9,8 +9,8 @@ jobs:
       - setup_remote_docker
       - restore_cache:
           keys:
-            - docker-dev-{{ .Branch }}-
-            - docker-dev-
+            - docker-dev-{{ .Branch }}
+            - docker-dev
       - run:
           name: Setup environment variable
           command: |
@@ -18,11 +18,11 @@ jobs:
       - run:
           name: Read Dcoker cache
           command: |
-            if test -d ~/cache/docker/dev/umbrellanotice_umbrellanotice.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_umbrellanotice.tar; fi
-            if test -d ~/cache/docker/dev/umbrellanotice_sidekiq.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_sidekiq.tar; fi
-            if test -d ~/cache/docker/dev/umbrellanotice_redis.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_redis.tar; fi
-            if test -d ~/cache/docker/dev/umbrellanotice_mysql.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_mysql.tar; fi
-            if test -d ~/cache/docker/dev/umbrellanotice_nginx.tar; then docker load -i ~/cache/docker/dev/umbrellanotice_nginx.tar; fi
+            if test -d ~/cache/umbrellanotice_umbrellanotice.tar; then docker load -i ~/cache/umbrellanotice_umbrellanotice.tar; fi
+            if test -d ~/cache/umbrellanotice_sidekiq.tar; then docker load -i ~/cache/umbrellanotice_sidekiq.tar; fi
+            if test -d ~/cache/umbrellanotice_redis.tar; then docker load -i ~/cache/umbrellanotice_redis.tar; fi
+            if test -d ~/cache/umbrellanotice_mysql.tar; then docker load -i ~/cache/umbrellanotice_mysql.tar; fi
+            if test -d ~/cache/umbrellanotice_nginx.tar; then docker load -i ~/cache/umbrellanotice_nginx.tar; fi
       - run:
           name: Build images
           command: |
@@ -42,17 +42,17 @@ jobs:
       - run:
           name: Output Dcoker Image for cache
           command: |
-            mkdir -p ~/cache/docker/dev
-            rm -rf ~/chache/docker/dev/*
-            docker save -o ~/cache/docker/dev/umbrellanotice_umbrellanotice.tar umbrellanotice_umbrellanotice
-            docker save -o ~/cache/docker/dev/umbrellanotice_sidekiq.tar umbrellanotice_sidekiq
-            docker save -o ~/cache/docker/dev/umbrellanotice_redis.tar umbrellanotice_redis
-            docker save -o ~/cache/docker/dev/umbrellanotice_mysql.tar umbrellanotice_mysql
-            docker save -o ~/cache/docker/dev/umbrellanotice_nginx.tar umbrellanotice_nginx
+            mkdir -p ~/cache
+            rm -rf ~/chache/*
+            docker save -o ~/cache/umbrellanotice_umbrellanotice.tar umbrellanotice_umbrellanotice
+            docker save -o ~/cache/umbrellanotice_sidekiq.tar umbrellanotice_sidekiq
+            docker save -o ~/cache/umbrellanotice_redis.tar umbrellanotice_redis
+            docker save -o ~/cache/umbrellanotice_mysql.tar umbrellanotice_mysql
+            docker save -o ~/cache/umbrellanotice_nginx.tar umbrellanotice_nginx
       - save_cache:
           key: docker-dev-{{ .Branch }}-{{ .BuildNum }}
           paths:
-            - ~/cache/docker/dev
+            - ~/cache
   RuboCop:
     working_directory: ~/umbrellanotice
     docker:
@@ -91,12 +91,12 @@ jobs:
       - setup_remote_docker
       - restore_cache:
           keys:
-            - docker-pro-umbrella-{{ .Branch }}-
-            - docker-pro-umbrella-
+            - docker-pro-umbrella-{{ .Branch }}
+            - docker-pro-umbrella
       - run:
           name: Read Dcoker cache
           command: |
-            if test -d ~/cache/docker/pro/umbrellanotice_umbrellanotice.tar; then docker load -i ~/cache/docker/pro/umbrellanotice_umbrellanotice.tar; fi
+            if test -d ~/cache/umbrellanotice_umbrellanotice.tar; then docker load -i ~/cache/umbrellanotice_umbrellanotice.tar; fi
       - run:
           name: Build image
           command: docker build -f backend/docker/umbrellanotice/Dockerfile.pro -t umbrellanotice_umbrellanotice ./backend
@@ -106,13 +106,13 @@ jobs:
       - run:
           name: Output Dcoker Image for cache
           command: |
-            mkdir -p ~/cache/docker/pro
-            rm -rf ~/chache/docker/pro/*
-            docker save -o ~/cache/docker/pro/umbrellanotice_umbrellanotice.tar umbrellanotice_umbrellanotice
+            mkdir -p ~/cache
+            rm -rf ~/chache/*
+            docker save -o ~/cache/umbrellanotice_umbrellanotice.tar umbrellanotice_umbrellanotice
       - save_cache:
           key: docker-pro-umbrella-{{ .Branch }}-{{ .BuildNum }}
           paths:
-            - ~/cache/docker/pro
+            - ~/cache
   Push-umbrellanotice-image:
     docker:
       - image: 'circleci/python:3.7.1'
@@ -121,12 +121,12 @@ jobs:
       - aws-cli/install
       - restore_cache:
           keys:
-            - docker-pro-umbrella-{{ .Branch }}-
-            - docker-pro-umbrella-
+            - docker-pro-umbrella-{{ .Branch }}
+            - docker-pro-umbrella
       - run:
           name: Read Dcoker cache
           command: |
-            if test -d ~/cache/docker/pro/umbrellanotice_umbrellanotice.tar; then docker load -i ~/cache/docker/pro/umbrellanotice_umbrellanotice.tar; fi
+            if test -d ~/cache/umbrellanotice_umbrellanotice.tar; then docker load -i ~/cache/umbrellanotice_umbrellanotice.tar; fi
       - aws-ecr/build-and-push-image:
           account-url: AWS_ECR_ACCOUNT_URL
           aws-access-key-id: AWS_ACCESS_KEY_ID
