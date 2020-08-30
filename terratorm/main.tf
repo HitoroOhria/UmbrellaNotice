@@ -19,3 +19,23 @@ module "base" {
   alb_certificate_arn    = var.alb_certificate_arn
   allow_ssh_cidr_for_ecs = var.allow_ssh_cidr_for_ecs
 }
+
+////TODO: not terraform conversion.
+//contaienr:
+//  - ecs
+//  - rcr
+//  - task-definition
+//
+//auto-scalign:
+//  - auto-scaling
+//  - elastic-ip-relation
+//
+//contents-deliver:
+//  - s3
+//  - cloud-font
+//
+//route:
+//  - route53
+//
+//ssl:
+//  - acm
