@@ -146,11 +146,11 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
 
 ## 開発環境
 - Visual Studio Code
-    - TypeScript
-    - React v16.13.1
+    - TypeScript - v3.7.5
+    - React -  v16.13.1
 - RubyMine
-    - Ruby v2.7.1
-    - Rails v6.0.3.2
+    - Ruby - v2.7.1
+    - Rails - v6.0.3.2
 - Docker
     - コンテナ構成
         - Nginx
