@@ -6,7 +6,8 @@
 
 LINE公式アカウントにて、毎朝設定した地域の天気予報を取得し、雨が降る場合のみ通知を送信するアプリケーションです。
 
-[https://www.umbrellanotice.work](https://www.umbrellanotice.work)
+ - [Web ホームページ](https://www.umbrellanotice.work)
+ - [LINE 公式アカウント](https://lin.ee/Q28r1Nv)
 
 ## アプリケーションの画面
 
