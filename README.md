@@ -131,10 +131,6 @@ LINE公式アカウントにて、毎朝設定した地域の天気予報を取�
 - **定期イベント**
     - AWS Lambda
 
-- **コンテンツ配信**
-    - AWS S3
-    - AWS CloudFont
-
 - **ログ管理**
     - AWS CloudWatch
 
