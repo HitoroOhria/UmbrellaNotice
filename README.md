@@ -46,6 +46,7 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
         - 天気予報の位置設定の変更
         - アカウント紐付けIDの発行
         - プロフィール画面リンク
+
 - ### Webサイト
     - 静的ページ
         - ホーム
@@ -56,6 +57,7 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
         - ログイン / ログアウト
         - アカウント削除
         - ユーザー情報の変更
+
 - ### Web API
     - 各リソースのCRUD
     - LINE Messaging API のハンドリング
@@ -67,6 +69,7 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
    - Docker
    - Docker Compose
    - ENTRYKIT
+
 - **フロントエンド**
    - Nginx
    - React
@@ -75,12 +78,14 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
         - Redux
         - Redux Thunk
         - Amplify
+
 - **バックエンド**
    - Unicorn
    - Rails
         - Active Model Serializers
         - Sidekiq
         - Redis Rails
+
 - **デプロイ**
     - CircleCI
 - **テスト,品質管理**
@@ -89,6 +94,7 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
     - SimpleCov
     - ESLint
     - Prettier
+
 - **インフラ**
     - Terraform
     - AWS ECS (EC2)
@@ -101,24 +107,32 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
     - AWS VPC
     - AWS Route53
     - AWS CertificateManager
+
 - **データーベース**
     - MySQL
     - AWS RDS
+
 - **キャッシュストア**
     - AWS ElasticCache (Redis)
+
 - **定期イベント**
     - AWS Lambda
+
 - **コンテンツ配信**
     - AWS S3
     - AWS CloudFont
+
 - **ログ管理**
     - AWS CloudWatch
+
 - **機密情報管理**
     - Rails Credentials
     - AWS SystemsManager (パラメータストア)
+
 - **LINE**
     - 公式アカウント
     - リッチメニュー
+
 - **外部API**
     - LINE
         - Login API
