@@ -5,7 +5,7 @@ class Api::V1::LineApisController < ApplicationController
 
   attr_accessor :event, :line_user
 
-  # POST /api/v!/line_api/webhock
+  # POST /api/v1/line_api/webhock
   def webhock
     events.each do |item|
       self.event     = item
@@ -26,6 +26,7 @@ class Api::V1::LineApisController < ApplicationController
   def control_event
     if !line_user.located_at || line_user.locating_from
       reply_files = %w[finish_location_setting send_location_information]
+
       corresponding_type? ? location_setting : reply(*reply_files)
     elsif event.is_a?(Line::Bot::Event::Postback)
       rich_menus(event, line_user)
@@ -46,20 +47,21 @@ class Api::V1::LineApisController < ApplicationController
 
     case event.type
     when 'text'
-      save_location_form_text(weather) || reply('invalid_city_name', 'send_location_information')
+      save_location_from_text(weather) || reply('invalid_city_name', 'send_location_information')
     when 'location'
-      save_location_form_coord(weather)
+      save_location_from_coord(weather)
     end
 
     reply('completed_location_setting')
   end
 
-  def save_location_form_text(weather)
+  def save_location_from_text(weather)
     text = event.message['text']
+
     weather.compensate_city(text) && (coord = weather.city_to_coord) && weather.save_location(**coord)
   end
 
-  def save_location_form_coord(weather)
+  def save_location_from_coord(weather)
     message      = event.message
     coord        = { lat: message['latitude'], lon: message['longitude'] }
     weather.city = nil
