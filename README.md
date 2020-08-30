@@ -2,20 +2,19 @@
 
 2020/8/29 Bitbucket --> GitHub へ移行
 
-## アプリケーションURL
-[https://www.umbrellanotice.work](https://www.umbrellanotice.work)
-
 ## アプリケーションの概要
 
 LINE公式アカウントにて、雨が降る場合に天気予報を通知するアプリケーションです。
 
+[https://www.umbrellanotice.work](https://www.umbrellanotice.work)
+
 ## アプリケーションの画面
 
-### Webホームページ
+- ### Webホームページ
 
 ![Webホームページ](https://user-images.githubusercontent.com/60952535/91653921-b005d400-eadf-11ea-90f5-99f4961d89ad.png)
 
-### Line 公式アカウント
+- ### Line 公式アカウント
 
 |天気予報通知|リッチメニュー|
 |---|---|
