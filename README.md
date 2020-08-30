@@ -160,9 +160,11 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
 - Visual Studio Code
     - TypeScript - v3.7.5
     - React -  v16.13.1
+
 - RubyMine
     - Ruby - v2.7.1
     - Rails - v6.0.3.2
+
 - Docker
     - コンテナ構成
         - Nginx
@@ -170,6 +172,7 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
         - Sidekiq
         - Redis
         - MySQL
+
 - CircleCI
 - RuboCop
 - RSpec
