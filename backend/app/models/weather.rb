@@ -71,10 +71,11 @@ class Weather < ApplicationRecord
   def save_location(lat: 0, lon: 0)
     self.lat = lat.round(2)
     self.lon = lon.round(2)
-    save
+    return unless save
 
     line_user.located_at || line_user.update(located_at: Time.zone.now)
     line_user.locating_from && line_user.update(locating_from: nil)
+    true
   end
 
   private
