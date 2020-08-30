@@ -19,8 +19,8 @@ RUN apt-get update \
        nodejs \
        openjdk-11-jdk
 
-RUN rm -r ~/.bashrc
-ADD ./docker/rails/.bashrc ~/.bashrc
+RUN rm -r /root/.bashrc
+ADD ./docker/rails/.bashrc /root/.bashrc
 
 # copy dirctory for up container with no bind in CircleCI.
 ADD . /rails-app
