@@ -13,9 +13,27 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
 
 ## クラウドアーキテクチャ
 
+## 特に見ていただきたい点
+
+- ### インフラ面
+    - Dockerを使い、ECS(EC2)/ECRで本番環境をスケーラブルに運用している点。
+    - Terraformを使い、本番環境インフラをコードで管理している点。
+    - CircleCIを使い、CI/CDパイプラインを構築している点。
+    - AWSを使い、CDNにより高速なコンテンツ配信を行っている点。
+
+- ### バックエンド面
+    - 外部API（OpenWeatherMapAPI,GeocodingAPI）を利用し、機能を追加している点。
+    - APIパラメータのバリデーションを別クラスに切り出し、運用・保守性を向上している点。
+    - E2Eテストにて高カバレッジ(95.14%)を実現できている点。
+
+- ### フロントエンド面
+    - Reactを採用し、SPAにて配信している点。
+    - TypeScriptにより、型安全なコードを記述している点。
+    - Amplifyを採用し、フルマネージドサービスを利用してログイン/ログアウトを実装している点。
+
 ## アプリケーションの機能
 
-- LINE公式アカウント
+- ### LINE公式アカウント
     - 天気予報通知
     - フォロー
         - 位置情報設定
@@ -28,7 +46,8 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
         - 天気予報の位置設定の変更
         - アカウント紐付けIDの発行
         - プロフィール画面リンク
-- Web
+
+- ### Webサイト
     - 静的ページ
         - ホーム
         - 利用規約
@@ -38,18 +57,20 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
         - ログイン / ログアウト
         - アカウント削除
         - ユーザー情報の変更
-- Web API
+
+- ### Web API
     - 各リソースのCRUD
     - LINE Messaging API のハンドリング
     - AWS Lambda イベントの非同期処理
 
 ## アプリケーションの使用技術
 
-- 仮想化技術
+- **仮想化技術**
    - Docker
    - Docker Compose
    - ENTRYKIT
-- フロントエンド
+
+- **フロントエンド**
    - Nginx
    - React
         - TypeScript
@@ -57,20 +78,24 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
         - Redux
         - Redux Thunk
         - Amplify
-- バックエンド
+
+- **バックエンド**
    - Unicorn
    - Rails
         - Active Model Serializers
         - Sidekiq
         - Redis Rails
-- デプロイ
+
+- **デプロイ**
     - CircleCI
-- テスト,品質管理
+- **テスト,品質管理**
     - RSpec
     - RuboCop
+    - SimpleCov
     - ESLint
     - Prettier
-- インフラ
+
+- **インフラ**
     - Terraform
     - AWS ECS (EC2)
         - Nginx
@@ -82,25 +107,33 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
     - AWS VPC
     - AWS Route53
     - AWS CertificateManager
-- データーベース
+
+- **データーベース**
     - MySQL
     - AWS RDS
-- キャッシュストア
+
+- **キャッシュストア**
     - AWS ElasticCache (Redis)
-- 定期イベント
+
+- **定期イベント**
     - AWS Lambda
-- コンテンツ配信
+
+- **コンテンツ配信**
     - AWS S3
     - AWS CloudFont
-- ログ管理
+
+- **ログ管理**
     - AWS CloudWatch
-- 機密情報管理
+
+- **機密情報管理**
     - Rails Credentials
     - AWS SystemsManager (パラメータストア)
-- LINE
+
+- **LINE**
     - 公式アカウント
     - リッチメニュー
-- API
+
+- **外部API**
     - LINE
         - Login API
         - Messaging API
@@ -113,11 +146,11 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
 
 ## 開発環境
 - Visual Studio Code
-    - TypeScript
-    - React v16.13.1
+    - TypeScript - v3.7.5
+    - React -  v16.13.1
 - RubyMine
-    - Ruby v2.7.1
-    - Rails v6.0.3.2
+    - Ruby - v2.7.1
+    - Rails - v6.0.3.2
 - Docker
     - コンテナ構成
         - Nginx
@@ -128,3 +161,4 @@ LINE公式アカウントにて、雨が降る場合に天気予報を通知す�
 - CircleCI
 - RuboCop
 - RSpec
+- SimpleCov
