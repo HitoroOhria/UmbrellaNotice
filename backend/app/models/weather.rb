@@ -32,6 +32,11 @@ class Weather < ApplicationRecord
     @geocoding ||= geocoding_api
   end
 
+  def reset_geocoding(city_name = nil)
+    self.city = city_name if city_name
+
+    @geocoding = geocoding_api
+  end
   # @return [String] like 'Shibuya'.
   def romaji_city
     return unless city
