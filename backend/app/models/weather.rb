@@ -32,6 +32,7 @@ class Weather < ApplicationRecord
     @geocoding ||= geocoding_api
   end
 
+  # @return [String] like 'Shibuya'.
   def romaji_city
     return unless city
 
@@ -44,10 +45,16 @@ class Weather < ApplicationRecord
     rain_falls.any? { |rain_fall| rain_fall >= RAIN_FALL_JUDGMENT }
   end
 
-  # city_name で geocoding_api を呼び出せるか検証する
-  # 成功した場合、レスポンスの行政区分を含んだ表記を self.city に保存する
-  def compensate_city(city_name)
-    self.city = city_name
+  # validate city can call Geocoding API.
+  def city_is_valid?(city_name = nil)
+    self.city = city_name if city_name
+
+    geocoding ? true : false
+  end
+
+  # save self.city included administrative division.
+  def complement_city(city_name = nil)
+    self.city = city_name if city_name
     xml_doc   = geocoding
     return unless xml_doc
 
@@ -55,10 +62,10 @@ class Weather < ApplicationRecord
     self.city = location.slice(/(.+)、.+/, 1)
   end
 
-  # self.city の市名の座標を返す
-  # 有効な市名の場合 => { lat: Float, lon: Float }
-  # 無効な市名の場合 => false
-  def city_to_coord
+  # @return [Hash] coord of self.city like { lat: Float, lon: Float }.
+  # @return [FalseClass] if failure call Geocoding API.
+  def city_to_coord(city_name = nil)
+    self.city = city_name if city_name
     xml_doc = geocoding
     return false unless xml_doc
 
@@ -68,40 +75,42 @@ class Weather < ApplicationRecord
     { lat: latitude, lon: longitude }
   end
 
+  # update line_user.located_at unless finish location setting.
+  # update line_user.locating_from to nil if resetting location.
   def save_location(lat: 0, lon: 0)
     self.lat = lat.round(2)
     self.lon = lon.round(2)
     return unless save
 
-    line_user.located_at || line_user.update(located_at: Time.zone.now)
-    line_user.locating_from && line_user.update(locating_from: nil)
+    line_user.update(located_at: Time.zone.now) unless line_user.located_at
+    line_user.update(locating_from: nil)        if     line_user.locating_from
     true
   end
 
   private
 
-  # Geocoing API を呼び出す
-  # 成功した場合 => REXML::Document
-  # 失敗した場合 => false
+  # call Geocoding API.
+  # @return [REXML::Document]
+  # @return [FalseClass] if failure call Geocoding API.
   def geocoding_api
     sio_response = call_api_and_handle_error('geocoding')
     return false unless sio_response
 
     xml_doc = REXML::Document.new(sio_response)
-    xml_doc.elements['/result/error'].blank? && xml_doc
+    xml_doc.elements['/result/error'].present? ? false : xml_doc
   end
 
-  # Current Weather API を呼び出す
-  # 取得できた場合 => Hash
-  # 取得できなかった場合 => false
+  # call Current Weather API.
+  # @return [Hash]
+  # @return [FalseClass] if failure call API.
   def current_weather_api
     sio_response = call_api_and_handle_error('current_weather')
-    sio_response && JSON.parse(sio_response.read, symbolize_names: true)
+    sio_response ? JSON.parse(sio_response.read, symbolize_names: true) : false
   end
 
-  # One Call API を呼び出す
-  # 取得できた場合 => Hash
-  # 取得できなかった場合 => false
+  # call One Call API.
+  # @return [Hash]
+  # @return [FalseClass] if failure call API.
   def one_call_api
     sio_response = call_api_and_handle_error('one_call')
     return false unless sio_response
@@ -110,10 +119,10 @@ class Weather < ApplicationRecord
     refill_rain(json_forecast)
   end
 
-  # 引数に対応する API コールメソッドを呼び出す
-  # API コール時にエラーが発生した場合、3回までリトライする
-  # 取得できた場合      => APIレスポンス
-  # 取得できなかった場合 => false
+  # call API method by argument.
+  # retry 3times when happened error calling api.
+  # @return [StringIO]
+  # @return [FalseClass] if failure call API.
   def call_api_and_handle_error(api_name)
     retry_counter = 0
     begin
@@ -167,7 +176,7 @@ class Weather < ApplicationRecord
     OpenURI.open_uri(base_uri + request_params.to_query)
   end
 
-  # OpenWeatherApi の city に対応するローマ字に変換する
+  # change city to matched city of OpenWeatherAPI.
   def to_romaji(text)
     kunrei_moji = Zipang.to_slug(text).gsub(/\-/, '').gsub(/m(?!(a|i|u|e|o|m))/, 'n').to_kunrei
     kunrei_moji.gsub(/si/, 'shi').gsub(/ti/, 'chi').gsub(/tu/, 'tsu').gsub(/zyu/, 'ju')

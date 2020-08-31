@@ -23,11 +23,12 @@ class Api::V1::LineApisController < ApplicationController
     @events ||= line_client.parse_events_from(request.body.read)
   end
 
+  # control event set location or Rich Menu or send trivia.
   def control_event
-    if !line_user.located_at || line_user.locating_from
-      reply_files = %w[finish_location_setting send_location_information]
+    if setting_location?
+      need_finish_location_setting = %w[finish_location_setting send_location_information]
 
-      corresponding_type? ? location_setting : reply(*reply_files)
+      can_location_setting_type? ? location_setting : reply(*need_finish_location_setting)
     elsif event.is_a?(Line::Bot::Event::Postback)
       rich_menus(event, line_user)
     else
@@ -35,13 +36,18 @@ class Api::V1::LineApisController < ApplicationController
     end
   end
 
-  def corresponding_type?
-    corresponding_types = %w[text location]
-    event_type          = event.try(:type)
-
-    corresponding_types.include?(event_type)
+  def setting_location?
+    !line_user.located_at || line_user.locating_from
   end
 
+  def can_location_setting_type?
+    event_type        = event.try(:type)
+    can_setting_types = %w[text location]
+
+    can_setting_types.include?(event_type)
+  end
+
+  # set location from text or coord.
   def location_setting
     weather = Weather.find_or_initialize_by(line_user: line_user)
 
@@ -57,8 +63,9 @@ class Api::V1::LineApisController < ApplicationController
 
   def save_location_from_text(weather)
     text = event.message['text']
+    return unless weather.city_is_valid?(text)
 
-    weather.compensate_city(text) && (coord = weather.city_to_coord) && weather.save_location(**coord)
+    weather.complement_city && (coord = weather.city_to_coord) && weather.save_location(**coord)
   end
 
   def save_location_from_coord(weather)
