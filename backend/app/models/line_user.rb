@@ -22,4 +22,8 @@ class LineUser < ApplicationRecord
   def silent_notice_text
     silent_notice ? '有効' : '無効'
   end
+
+  def setting_location?
+    !located_at || locating_from
+  end
 end

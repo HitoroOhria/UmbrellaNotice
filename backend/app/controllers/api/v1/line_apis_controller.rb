@@ -25,10 +25,10 @@ class Api::V1::LineApisController < ApplicationController
 
   # control event set location or Rich Menu or send trivia.
   def control_event
-    if setting_location?
+    if line_user.setting_location?
       need_finish_location_setting = %w[finish_location_setting send_location_information]
 
-      can_location_setting_type? ? location_setting : reply(*need_finish_location_setting)
+      location_setting_event_type? ? location_setting : reply(*need_finish_location_setting)
     elsif event.is_a?(Line::Bot::Event::Postback)
       rich_menus(event, line_user)
     else
@@ -36,15 +36,11 @@ class Api::V1::LineApisController < ApplicationController
     end
   end
 
-  def setting_location?
-    !line_user.located_at || line_user.locating_from
-  end
+  def location_setting_event_type?
+    event_type             = event.try(:type)
+    location_setting_types = %w[text location]
 
-  def can_location_setting_type?
-    event_type        = event.try(:type)
-    can_setting_types = %w[text location]
-
-    can_setting_types.include?(event_type)
+    location_setting_types.include?(event_type)
   end
 
   # set location from text or coord.
