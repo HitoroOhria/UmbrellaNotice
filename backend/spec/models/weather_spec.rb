@@ -180,8 +180,8 @@ RSpec.describe Weather, type: :model do
     end
   end
 
-  describe '#compensate_city(city_name)' do
-    subject(:compensate_city) { weather.compensate_city('渋谷') }
+  describe '#complement_city(city_name)' do
+    subject(:complement_city) { weather.complement_city('渋谷') }
 
     context '#geocodingのリターンがfalseの時' do
       let(:geocoding_api_response) { false }
