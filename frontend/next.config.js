@@ -11,5 +11,5 @@ module.exports = withImages({
     REACT_APP_AMPLIFY_WEB_CLIENT_ID: env.REACT_APP_AMPLIFY_WEB_CLIENT_ID,
     REACT_APP_AMPLIFY_IDENTITY_POOL_ID: env.REACT_APP_AMPLIFY_IDENTITY_POOL_ID,
   },
-  assetPrefix: isProd ? 'https://satatic.umbrellanotice.work' : '',
+  assetPrefix: isProd ? 'https://static.umbrellanotice.work' : '',
 });

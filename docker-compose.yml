@@ -58,24 +58,20 @@ services:
       dockerfile: ./docker/nginx/Dockerfile
     volumes:
       - socket-data:/tmp/sockets
-      - react-build-date:/react-app/build
     ports:
       - 80:80
       - 443:443
     depends_on:
       - rails
 
-  react:
+  next:
     build:
       context: ./frontend
-      dockerfile: ./docker/react/Dockerfile
-    environment:
-      PORT: 3000
+      dockerfile: ./docker/next/Dockerfile
     volumes:
-      - ./frontend:/react-app:cached
-      - node-modules:/react-app/node_modules
+      - ./frontend:/next-app:cached
+      - node-modules:/next-app/node_modules
       - yarn-cache:/usr/local/share/.cache/yarn/v6
-      - react-build-date:/react-app/build
     ports:
       - 3000:3000
     tty: true
@@ -87,4 +83,3 @@ volumes:
   socket-data:
   node-modules:
   yarn-cache:
-  react-build-date:

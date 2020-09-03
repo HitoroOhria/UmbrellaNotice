@@ -42,10 +42,11 @@
     "typescript-fsa-reducers": "^1.2.1"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3000",
+    "socket": "node server.js",
     "debug": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3000",
     "type-check": "tsc"
   },
   "eslintConfig": {
