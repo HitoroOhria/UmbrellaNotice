@@ -1,4 +1,4 @@
-FROM node:14.7.0
+FROM node:14.9.0-alpine
 
 ENV ENTRYKIT_VERSION 0.4.0
 
