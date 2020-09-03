@@ -21,7 +21,7 @@ export const updateCognitoUser = (
   }
 
   await Auth.updateUserAttributes(cognitoUser, attributes)
-    .then((res: "SUCCESS" | string) => {
+    .then((_res: "SUCCESS" | string) => {
       const alert: Omit<AlertState, "open"> = {
         severity: "success",
         messages: ["変更に成功しました！"],
@@ -29,7 +29,7 @@ export const updateCognitoUser = (
 
       dispatch(alertActions.openAlert(alert));
     })
-    .catch((error: AmplifyError) => {
+    .catch((_error: AmplifyError) => {
       const alert: Omit<AlertState, "open"> = {
         severity: "error",
         messages: ["無効なメ−ルアドレスです"],
@@ -45,7 +45,7 @@ export const changeCognitoUserPassword = (
   newPassword: string
 ) => async (dispatch: Dispatch) => {
   await Auth.changePassword(cognitoUser, oldPassword, newPassword)
-    .then((res: "SUCCESS" | string) => {
+    .then((_res: "SUCCESS" | string) => {
       const alert: Omit<AlertState, "open"> = {
         severity: "success",
         messages: ["変更に成功しました！"],

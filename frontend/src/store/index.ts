@@ -11,6 +11,10 @@ import weahterReducer from "./weather/reducer";
 import lineUserReducer from "./lineUser/reducer";
 import cognitoReucer from "./cognito/reducer";
 
+const composeEnhancers = (() => {
+  return (typeof window != 'undefined' && (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
+})();
+
 const store = createStore(
   combineReducers<RootState>({
     alert: alertReducer,
@@ -22,11 +26,7 @@ const store = createStore(
     lineUser: lineUserReducer,
     cognito: cognitoReucer,
   }),
-  compose(
-    applyMiddleware(thunk),
-    (window as any).__REDUX_DEVTOOLS_EXTENSION__ &&
-      (window as any).__REDUX_DEVTOOLS_EXTENSION__()
-  )
+  composeEnhancers(applyMiddleware(thunk))
 );
 
 export default store;

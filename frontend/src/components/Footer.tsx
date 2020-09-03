@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import React, { FC } from "react";
+import { FC } from "react";
 import { jsx } from "@emotion/core";
 
 const Footer: FC = () => {

@@ -1,13 +1,13 @@
 {
-  "name": "frontend",
+  "name": "umbrellanotice-frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@aws-amplify/ui-react": "0.2.14",
     "@emotion/core": "10.0.0",
     "@material-ui/core": "^4.9.8",
     "@material-ui/icons": "",
     "@material-ui/lab": "^4.0.0-alpha.47",
-    "@aws-amplify/ui-react": "0.2.14",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -21,11 +21,13 @@
     "@types/react-redux": "^7.1.5",
     "@types/react-router": "^5.1.3",
     "@types/react-router-dom": "^5.1.3",
-    "aws-amplify": "^3.0.23",
     "amazon-cognito-identity-js": "^4.3.4",
+    "aws-amplify": "^3.0.23",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.0",
     "lodash": "^4.17.15",
+    "next": "^9.5.3",
+    "next-images": "^1.4.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-helmet": "^6.1.0",
@@ -35,15 +37,16 @@
     "react-scripts": "3.4.0",
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
-    "typescript": "~3.7.2",
+    "typescript": "^4.0.0",
     "typescript-fsa": "^3.0.0",
     "typescript-fsa-reducers": "^1.2.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "next dev",
+    "debug": "NODE_OPTIONS='--inspect' next dev",
+    "build": "next build",
+    "start": "next start",
+    "type-check": "tsc"
   },
   "eslintConfig": {
     "extends": "react-app"
