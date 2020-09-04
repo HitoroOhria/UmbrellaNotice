@@ -251,7 +251,7 @@ workflows:
 
       - Push-rails-image:
           requires:
-            - RuboCop
+            - Run-install-node-modules-task
           filters:
             branches:
               only: master
