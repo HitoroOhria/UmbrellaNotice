@@ -1,3 +1,5 @@
+#!/bin/sh
+
 alias r='rails'
 alias rs='rspec'
 alias be='bundle exec'

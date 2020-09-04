@@ -1,13 +1,11 @@
-FROM ruby:2.7.1
+FROM ruby:2.7.1-alpine
 
-ENV JAVA_HOME /usr/lib/jvm/java-1.11.0-openjdk-amd64
+ENV JAVA_HOME /usr/lib/jvm/java-11openjdk
 
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
-  && apt-get update \
-  && apt-get install -y \
-       build-essential \
-       nodejs \
-       openjdk-11-jdk
+RUN apk --update add \
+         alpine-sdk \
+         nodejs \
+         openjdk11
 
 ADD . /rails-app
 WORKDIR /rails-app

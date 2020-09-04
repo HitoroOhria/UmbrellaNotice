@@ -72,8 +72,8 @@ services:
       - ./frontend:/next-app:cached
       - node-modules:/next-app/node_modules
       - yarn-cache:/usr/local/share/.cache/yarn/v6
-    ports:
-      - 3000:3000
+#    ports:
+#      - 3000:3000
     tty: true
     stdin_open: true
 

@@ -1,10 +1,9 @@
-FROM ruby:2.7.1
+FROM ruby:2.7.1-alpine
 
 ENV ENTRYKIT_VERSION 0.4.0
-ENV JAVA_HOME /usr/lib/jvm/java-1.11.0-openjdk-amd64
+ENV JAVA_HOME /usr/lib/jvm/java-11openjdk
 
-RUN apt-get update \
-  && apt-get install -y \
+RUN apk --update add \
        openssl \
   && rm -rf /var/cache/apk/* \
   && wget https://github.com/progrium/entrykit/releases/download/v${ENTRYKIT_VERSION}/entrykit_${ENTRYKIT_VERSION}_Linux_x86_64.tgz \
@@ -13,18 +12,18 @@ RUN apt-get update \
   && mv entrykit /bin/entrykit \
   && chmod +x /bin/entrykit \
   && entrykit --symlink \
-  && curl -sL https://deb.nodesource.com/setup_10.x | bash - \
-  && apt-get install -y \
-       build-essential \
+#  && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
+  && apk add \
+       alpine-sdk \
        nodejs \
-       openjdk-11-jdk
+       openjdk11
 
-RUN rm -r /root/.bashrc
-ADD ./docker/rails/.bashrc /root/.bashrc
+ADD ./docker/rails/aliases.sh /root/.profile
 
 # copy dirctory for up container with no bind in CircleCI.
 ADD . /rails-app
 WORKDIR /rails-app
+
 RUN bundle config set without 'production' \
   && bundle install
 
