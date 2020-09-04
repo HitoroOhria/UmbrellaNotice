@@ -28,15 +28,16 @@ ADD . /rails-app
 WORKDIR /rails-app
 
 RUN bundle config set without 'production' \
-  && bundle install
+  && bundle config set path 'vendor/bundle'
 
 ENTRYPOINT [ \
-  "prehook", "bundle install", "--", \
   "switch", \
-      "sidekiq=bundle exec sidekiq -q sidekiq", "--", \
-  "prehook", "echo Sleep 45 seconds for comprete MySQL start up.", "--", \
-  "prehook", "sleep 45", "--", \
-  "prehook", "echo Finish sleep.", "--", \
+        "sidekiq=echo sleep 600 seconds for finish bunsle install. sleeping now Zzz...", "--", \
+  "switch", \
+        "sidekiq=sleep 600", "--", \
+  "switch", \
+        "sidekiq=bundle exec sidekiq -q sidekiq", "--", \
+  "prehook", "bundle install", "--", \
   "prehook", "bundle exec rails db:create", "--", \
   "prehook", "bundle exec rails db:migrate", "--", \
   "switch", \

@@ -11,6 +11,7 @@ services:
       RAILS_MASTER_KEY: $RAILS_MASTER_KEY
       MYSQL_ROOT_PASSWORD: password
     volumes:
+      - bundler-libs:/rails-app/vendor/bundle
       - socket-data:/rails-app/tmp/sockets
     depends_on:
       - mysql
@@ -28,6 +29,7 @@ services:
       - rails
       - redis
     volumes:
+      - bundler-libs:/rails-app/vendor/bundle
       - socket-data:/rails-app/tmp/sockets
     command: sidekiq
 
@@ -60,3 +62,4 @@ services:
 
 volumes:
   socket-data:
+  bundler-libs:

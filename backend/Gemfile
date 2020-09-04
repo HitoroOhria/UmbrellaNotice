@@ -10,6 +10,7 @@ gem 'unicorn',  '5.4.1'
 gem 'unicorn-worker-killer'
 gem 'puma',     '~> 4.1'
 gem 'bootsnap', '>= 1.4.2', require: false
+gem 'tzinfo-data'
 gem 'rjb'
 gem 'zipang'
 gem 'romkan'
@@ -49,5 +50,3 @@ group :test do
   gem 'bullet'
   gem 'simplecov', require: false
 end
-
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
