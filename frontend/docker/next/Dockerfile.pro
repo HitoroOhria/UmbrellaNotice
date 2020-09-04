@@ -20,8 +20,9 @@ FROM node:14.9.0-alpine
 
 COPY --from=NextBuilder /next-app/.next /var/www/next-app/.next
 
-ADD package.json   /var/www/next-app/package.json
-ADD next.config.js /var/www/next-app/next.config.json
+ADD package.json      /var/www/next-app/package.json
+ADD package-lock.json /var/www/next-app/package-lock.json
+ADD next.config.js    /var/www/next-app/next.config.js
 
 WORKDIR /var/www/next-app
 
