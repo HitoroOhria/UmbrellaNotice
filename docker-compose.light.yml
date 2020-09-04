@@ -14,7 +14,7 @@ services:
       LIGHT_MODE: 'true'
     volumes:
       - ./backend:/rails-app
-      - bundler-libs:/rails-app/vender/bundle
+      - bundler-libs:/rails-app/vendor/bundle
       - public-data:/rails-app/public
       - log-data:/rails-app/log
     tmpfs: /rails-app/tmp

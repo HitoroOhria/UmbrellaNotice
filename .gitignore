@@ -25,6 +25,7 @@
 # Rails
 /backend/coverage
 /backend/.rubocop_todo.yml
+/backend/vendor/bundle/*
 
 # IDE
 /**/.idea

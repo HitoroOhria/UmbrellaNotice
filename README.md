@@ -93,6 +93,7 @@ LINE公式アカウントにて、毎朝設定した地域の天気予報を取�
         - Redux
         - Redux Thunk
         - Amplify
+   - Next.js
 
 - **バックエンド**
    - Unicorn

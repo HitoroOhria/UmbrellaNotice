@@ -28,7 +28,7 @@ ADD . /rails-app
 WORKDIR /rails-app
 
 RUN bundle config set without 'production' \
-  && bundle config set path 'vendor/bundle'
+  && bundle config set path '/rails-app/vendor/bundle'
 
 ENTRYPOINT [ \
   "switch", \
