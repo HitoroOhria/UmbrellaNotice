@@ -245,9 +245,9 @@ workflows:
       - Run-install-node-modules-task:
           requires:
             - Push-next-image
-            filters:
-              branches:
-                only: master
+          filters:
+            branches:
+              only: master
 
       - Push-rails-image:
           requires:
