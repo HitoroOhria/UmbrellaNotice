@@ -150,8 +150,8 @@ jobs:
 #      - aws-ecs/run-task:
 #          cluster:            $AWS_ECS_ARN
 #          task-definition:    umbrellanotice_install_node_modules
-#          subnet-ids:         AWS_FARGATE_SUBNET_IDS
-#          security-group-ids: AWS_FARGATE_SG_IDS
+#          subnet-ids:         $AWS_FARGATE_SUBNET_IDS
+#          security-group-ids: $AWS_FARGATE_SG_IDS
 
   Push-rails-image:
     docker:
@@ -205,8 +205,8 @@ jobs:
       - aws-ecs/run-task:
           cluster:            $AWS_ECS_ARN
           task-definition:    umbrellanotice_db_migrate
-          subnet-ids:         AWS_FARGATE_SUBNET_IDS
-          security-group-ids: AWS_FARGATE_SG_IDS
+          subnet-ids:         $AWS_FARGATE_SUBNET_IDS
+          security-group-ids: $AWS_FARGATE_SG_IDS
 
 orbs:
   aws-cli: circleci/aws-cli@1.3.0
@@ -280,7 +280,7 @@ workflows:
           aws-secret-access-key:        $AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
           container-image-name-updates: "container=nginx,tag=${CIRCLE_SHA1}"
           requires:
-            - Run-db-migrate-task
+#            - Run-db-migrate-task
             - Push-assets-to-S3
             - Push-nginx-image
             - Push-rails-image
@@ -294,21 +294,21 @@ workflows:
           aws-secret-access-key:        $AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
           container-image-name-updates: "container=next,tag=${CIRCLE_SHA1}"
           requires:
-            - Run-db-migrate-task
+#            - Run-db-migrate-task
             - Push-assets-to-S3
             - Push-nginx-image
             - Push-rails-image
 
       - aws-ecs/deploy-service-update:
-          name:                         Update-umbrellanotice-container-of-ECS
+          name:                         Update-rails-container-of-ECS
           family:                       'umbrellanotice_task'
           service-name:                 'app-1a'
           cluster-name:                 $AWS_ECS_ARN
           aws-access-key-id:            $AWS_ACCESS_KEY_ID_ECS_ECR_USER
           aws-secret-access-key:        $AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
-          container-image-name-updates: "container=umbrellanotice,tag=${CIRCLE_SHA1}"
+          container-image-name-updates: "container=rails,tag=${CIRCLE_SHA1}"
           requires:
-            - Run-db-migrate-task
+#            - Run-db-migrate-task
             - Push-assets-to-S3
             - Push-nginx-image
             - Push-rails-image
@@ -322,7 +322,7 @@ workflows:
           aws-secret-access-key:        $AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
           container-image-name-updates: "container=sidekiq,tag=${CIRCLE_SHA1}"
           requires:
-            - Run-db-migrate-task
+#            - Run-db-migrate-task
             - Push-assets-to-S3
             - Push-nginx-image
             - Push-rails-image
