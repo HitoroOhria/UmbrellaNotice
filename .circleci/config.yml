@@ -218,58 +218,58 @@ workflows:
   version: 2.1
   test_and_deploy:
     jobs:
-      - RSpec
+#      - RSpec
       - RuboCop
 
       - Push-nginx-image:
           requires:
             - RuboCop
-          filters:
-            branches:
-              only: master
+#          filters:
+#            branches:
+#              only: master
 
       - Push-next-image:
           requires:
             - RuboCop
-          filters:
-            branches:
-              only: master
+#          filters:
+#            branches:
+#              only: master
 
       - Push-assets-to-S3:
           requires:
             - Push-next-image
-          filters:
-            branches:
-              only: master
+#          filters:
+#            branches:
+#              only: master
 
       - Run-install-node-modules-task:
           requires:
             - Push-next-image
-          filters:
-            branches:
-              only: master
+#          filters:
+#            branches:
+#              only: master
 
       - Push-rails-image:
           requires:
             - Run-install-node-modules-task
-          filters:
-            branches:
-              only: master
+#          filters:
+#            branches:
+#              only: master
 
       - Push-db-migrate-image:
           requires:
             - RuboCop
-          filters:
-            branches:
-              only: master
+#          filters:
+#            branches:
+#              only: master
 
       - Run-db-migrate-task:
           requires:
-            - RSpec
+#            - RSpec
             - Push-db-migrate-image
-          filters:
-            branches:
-              only: master
+#          filters:
+#            branches:
+#              only: master
 
       - aws-ecs/deploy-service-update:
           name:                         Update-nginx-container-of-ECS

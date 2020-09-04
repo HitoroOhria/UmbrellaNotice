@@ -3,7 +3,9 @@ FROM ruby:2.7.1-alpine
 RUN apk --update add \
        alpine-sdk \
        nodejs \
-       yarn
+       yarn \
+       mysql-client \
+       mysql-dev
 
 RUN gem install 'rails:6.0.3.2' 'mysql2:0.5.3' \
   && rails new sandbox --database=mysql --skip-test  --skip-turbolinks --skip-bundle --api

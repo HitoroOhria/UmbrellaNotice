@@ -1,11 +1,15 @@
 FROM ruby:2.7.1-alpine
 
-ENV JAVA_HOME /usr/lib/jvm/java-11openjdk
+ENV JAVA_HOME /usr/lib/jvm/java-11openjdk/
+ENV PATH      $JAVA_HOME/bin:$PATH
 
 RUN apk --update add \
+         openssl \
          alpine-sdk \
          nodejs \
-         openjdk11
+         openjdk11 \
+         mysql-client \
+         mysql-dev
 
 ADD . /rails-app
 WORKDIR /rails-app

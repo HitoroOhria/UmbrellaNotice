@@ -1,7 +1,8 @@
 FROM ruby:2.7.1-alpine
 
 ENV ENTRYKIT_VERSION 0.4.0
-ENV JAVA_HOME /usr/lib/jvm/java-11openjdk
+ENV JAVA_HOME        /usr/lib/jvm/java-11-openjdk
+ENV PATH             $JAVA_HOME/bin:$PATH
 
 RUN apk --update add \
        openssl \
@@ -12,11 +13,12 @@ RUN apk --update add \
   && mv entrykit /bin/entrykit \
   && chmod +x /bin/entrykit \
   && entrykit --symlink \
-#  && curl -sL https://deb.nodesource.com/setup_14.x | bash - \
   && apk add \
        alpine-sdk \
        nodejs \
-       openjdk11
+       openjdk11 \
+       mysql-client \
+       mysql-dev
 
 ADD ./docker/rails/aliases.sh /root/.profile
 
