@@ -15,6 +15,6 @@ RUN mkdir /next-app
 WORKDIR /next-app
 
 ENTRYPOINT [ \
-  "prehook", "yarn", "--", \
-  "prehook", "yarn dev", "--" \
+  "prehook", "npm install", "--", \
+  "prehook", "npm run dev", "--" \
 ]

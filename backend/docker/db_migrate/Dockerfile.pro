@@ -1,5 +1,9 @@
 FROM ruby:2.7.1-alpine
 
+ENV JAVA_HOME        /usr/lib/jvm/java-11-openjdk
+ENV PATH             $JAVA_HOME/bin:$PATH
+ENV LD_LIBRARY_PATH  $JAVA_HOME/lib/server
+
 RUN apk --update add \
        alpine-sdk \
        nodejs \
