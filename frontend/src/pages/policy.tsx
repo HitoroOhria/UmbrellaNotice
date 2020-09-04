@@ -1,33 +1,21 @@
 /** @jsx jsx */
-import React, { FC } from "react";
-import Helmet from "react-helmet";
+import { FC } from "react";
 import { jsx } from "@emotion/core";
 
-import { makeDisplayArticle } from "../../domain/services/agreement";
-import { OUTSIDE_URL } from "../../domain/services/url";
+import Layout from "../components/Layout";
+import ArticleLayout from "../components/ArticleLayout";
+import Heading from "../components/Heading";
+
+import { makeDisplayArticle } from "../domain/services/agreement";
+import { OUTSIDE_URL } from "../domain/services/url";
 
 const Policy: FC = () => {
   const displayArticle = makeDisplayArticle();
 
   return (
-    <div>
-      <Helmet>
-        <title>Policy - Umbrella Notice</title>
-      </Helmet>
-
-      <div
-        css={{
-          width: "80%",
-          margin: "0 auto",
-          h3: { marginTop: 40 },
-          p: { marginTop: 20 },
-          ol: { margin: "20px 0 0 50px", listStylePosition: "outside" },
-          ul: { margin: "20px 0 0 50px", listStylePosition: "outside" },
-        }}
-      >
-        <h1 css={{ marginTop: 100, textAlign: "center" }}>
-          <span>プライバシーポリシー</span>
-        </h1>
+    <Layout title={"policy"}>
+      <ArticleLayout>
+        <Heading>プライバシーポリシー</Heading>
         <div css={{ marginTop: 40 }}>
           <p>
             Umbrella
@@ -206,8 +194,8 @@ const Policy: FC = () => {
             <li>Eメールアドレス： umbrellanotice@gmail.com</li>
           </ul>
         </div>
-      </div>
-    </div>
+      </ArticleLayout>
+    </Layout>
   );
 };
 

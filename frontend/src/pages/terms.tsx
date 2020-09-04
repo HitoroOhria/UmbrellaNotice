@@ -1,32 +1,20 @@
 /** @jsx jsx */
-import React, { FC } from "react";
-import Helmet from "react-helmet";
+import { FC } from "react";
 import { jsx } from "@emotion/core";
 
-import { makeDisplayArticle } from "../../domain/services/agreement";
+import Layout from "../components/Layout";
+import ArticleLayout from "../components/ArticleLayout";
+import Heading from "../components/Heading";
+
+import { makeDisplayArticle } from "../domain/services/agreement";
 
 const Terms: FC = () => {
   const displayArticle = makeDisplayArticle();
 
   return (
-    <div>
-      <Helmet>
-        <title>Policy - Umbrella Notice</title>
-      </Helmet>
-
-      <div
-        css={{
-          width: "80%",
-          margin: "0 auto",
-          h3: { marginTop: 40 },
-          p: { marginTop: 20 },
-          ol: { margin: "20px 0 0 50px", listStylePosition: "outside" },
-          ul: { margin: "20px 0 0 50px", listStylePosition: "outside" },
-        }}
-      >
-        <h1 css={{ marginTop: 100, textAlign: "center" }}>
-          <span>利用規約</span>
-        </h1>
+    <Layout title={"terms"}>
+      <ArticleLayout>
+        <Heading>利用規約</Heading>
         <div css={{ marginTop: 40 }}>
           <p>
             この利用規約（以下，「本規約」といいます。）は，Umbrella
@@ -232,8 +220,8 @@ const Terms: FC = () => {
             </li>
           </ol>
         </div>
-      </div>
-    </div>
+      </ArticleLayout>
+    </Layout>
   );
 };
 

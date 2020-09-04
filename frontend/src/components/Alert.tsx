@@ -1,4 +1,4 @@
-import React from "react";
+import { FC } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import MuiAlert from "@material-ui/lab/Alert";
 import { Snackbar } from "@material-ui/core";
@@ -6,7 +6,7 @@ import { Snackbar } from "@material-ui/core";
 import { RootState } from "../domain/entity/rootState";
 import alertActions from "../store/alert/actions";
 
-const Alert = () => {
+const Alert: FC = () => {
   const alert = useSelector((state: RootState) => state.alert);
   const dispatch = useDispatch();
 

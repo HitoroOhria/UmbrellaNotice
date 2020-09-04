@@ -37,6 +37,7 @@ class Weather < ApplicationRecord
 
     @geocoding = geocoding_api
   end
+
   # @return [String] like 'Shibuya'.
   def romaji_city
     return unless city

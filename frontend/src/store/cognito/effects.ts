@@ -1,6 +1,5 @@
 import { Dispatch } from "redux";
 import { Auth } from "aws-amplify";
-import cognitoActions from "./actions";
 
 import alertActions from "../alert/actions";
 import { AlertState } from "../../domain/entity/alert";

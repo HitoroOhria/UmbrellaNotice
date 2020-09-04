@@ -7,11 +7,11 @@ const initState: DialogState = {
 };
 
 const dialogReucer = reducerWithInitialState(initState)
-  .case(dialogActions.openUserEmailDialog, (preState, payload) => ({
+  .case(dialogActions.openUserEmailDialog, (preState, _payload) => ({
     ...preState,
     isUserEmailDialogOpen: true,
   }))
-  .case(dialogActions.closeUserEmailDialog, (preState, payload) => ({
+  .case(dialogActions.closeUserEmailDialog, (preState, _payload) => ({
     ...preState,
     isUserEmailDialogOpen: false,
   }));

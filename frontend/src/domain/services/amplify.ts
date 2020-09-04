@@ -1,12 +1,43 @@
+export const AMPLIFY_FORM = {
+  SIGN_UP: [
+    {
+      type: "email",
+      label: "メールアドレス",
+      placeholder: "メールアドレスを入力して下さい",
+      required: true,
+    },
+    {
+      type: "password",
+      label: "パスワード",
+      placeholder: "パスワードを入力して下さい",
+      required: true,
+    },
+  ],
+  SIGN_IN: [
+    {
+      type: "email",
+      label: "メールアドレス",
+      placeholder: "メールアドレスを入力して下さい",
+      required: true,
+    },
+    {
+      type: "password",
+      label: "パスワード",
+      placeholder: "パスワードを入力して下さい",
+      required: true,
+    },
+  ],
+};
+
 export const AMPLIFY_CONFIGURE = {
   Auth: {
-    region: "ap-northeast-1",
-    userPoolId: "ap-northeast-1_Q8all7Bj4",
-    userPoolWebClientId: "4fe82ns6lg17h5ln2s5362lgj2",
-    identityPoolId: "ap-northeast-1:bcc2f574-48ef-4ede-9338-d6fff354b311",
+    region: process.env.REACT_APP_AMPLIFY_REGION,
+    userPoolId: process.env.REACT_APP_AMPLIFY_USER_POOL_ID,
+    userPoolWebClientId: process.env.REACT_APP_AMPLIFY_WEB_CLIENT_ID,
+    identityPoolId: process.env.REACT_APP_AMPLIFY_IDENTITY_POOL_ID,
     authenticationFlowType: "USER_PASSWORD_AUTH",
     // oauth: {
-    //   domain: "umbrellanotice.auth.ap-northeast-1.amazoncognito.com",
+    //   domain: process.env.REACT_APP_AMPLIFY_DOMAIN,
     //   redirectSignIn: "https://localhost:3000/user",
     //   redirectSignOut: "https://localhost:3000/",
     //   scope: [

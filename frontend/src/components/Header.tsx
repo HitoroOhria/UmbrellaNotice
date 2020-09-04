@@ -1,6 +1,6 @@
 /** @jsx jsx */
-import React, { FC } from "react";
-import { Link } from "react-router-dom";
+import { FC } from "react";
+import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { jsx } from "@emotion/core";
 
@@ -11,10 +11,6 @@ import { AuthState } from "@aws-amplify/ui-components";
 import menuDrawerActions from "../store/menuDrawer/actions";
 import { signOut } from "../store/cognito/effects";
 import { RootState } from "../domain/entity/rootState";
-import appLogo from "../images/appLogo.png";
-import appLogoWhite from "../images/appLogoWhite.png";
-
-import { AmplifySignOut } from "@aws-amplify/ui-react";
 
 const Header: FC = () => {
   const dispatch = useDispatch();
@@ -45,16 +41,22 @@ const Header: FC = () => {
       }}
     >
       {/* APP LOGO */}
-      <Link to="/" css={{ textDecoration: "none" }} onClick={handleLogoClick}>
-        <div
+      <Link href="/">
+        <a
           css={{
+            textDecoration: "none",
             display: "flex",
             justifyContent: "space-between",
           }}
+          onClick={handleLogoClick}
         >
           {/* APP LOGO Image */}
           <img
-            src={MenuIconOnTopView ? appLogo : appLogoWhite}
+            src={
+              MenuIconOnTopView
+                ? "/images/appLogo.png"
+                : "/images/appLogoWhite.png"
+            }
             alt="logo"
             css={{
               width: 45,
@@ -73,7 +75,7 @@ const Header: FC = () => {
           >
             Umbrella Notice
           </div>
-        </div>
+        </a>
       </Link>
       {/* MENU Icon */}
       <div css={{ display: "flex", justifyContent: "space-between" }}>

@@ -21,12 +21,12 @@ module "base" {
 }
 
 ////TODO: not terraform conversion.
-//contaienr:
+//container:
 //  - ecs
 //  - rcr
 //  - task-definition
 //
-//auto-scalign:
+//auto-scaling:
 //  - auto-scaling
 //  - elastic-ip-relation
 //

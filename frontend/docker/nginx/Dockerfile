@@ -1,15 +1,11 @@
-FROM nginx:1.19.1
+FROM nginx:1.19.2-alpine
 
 RUN rm -f /etc/nginx/conf.d/*
 ADD docker/nginx/nginx.conf /etc/nginx/conf.d/umbrellanotice.conf
 
-RUN apt-get update \
-  && apt-get install -y \
-       wget \
-  && cd /usr/local/bin \
-  && wget https://github.com/FiloSottile/mkcert/releases/download/v1.1.2/mkcert-v1.1.2-linux-amd64 \
-  && chmod +x mkcert-v1.1.2-linux-amd64 \
-  && mv mkcert-v1.1.2-linux-amd64 mkcert \
+RUN wget https://github.com/FiloSottile/mkcert/releases/download/v1.4.1/mkcert-v1.4.1-linux-amd64 \
+  && chmod +x mkcert-v1.4.1-linux-amd64 \
+  && mv mkcert-v1.4.1-linux-amd64 /usr/local/bin/mkcert \
   && mkdir /etc/ssl/ca \
   && cd /etc/ssl/ca \
   && mkcert -install \

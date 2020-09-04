@@ -1,9 +1,9 @@
 /** @jsx jsx */
-import React, { FC } from "react";
+import { FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { jsx } from "@emotion/core";
 
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { IconButton, Drawer } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 
@@ -11,8 +11,6 @@ import menuDrawerActions from "../store/menuDrawer/actions";
 import { RootState } from "../domain/entity/rootState";
 import { MENU_DRAWER_ITEMS } from "../domain/services/menuDrawer";
 import { OUTSIDE_URL } from "../domain/services/url";
-
-import appLogo from "../images/appLogo.png";
 
 const MenuDrawer: FC = () => {
   const dispatch = useDispatch();
@@ -29,12 +27,7 @@ const MenuDrawer: FC = () => {
 
   return (
     <Drawer anchor="right" open={isMenuDrawerOpen} onClose={handleClose}>
-      <div
-        css={{
-          marginRight: 25,
-          marginLeft: 25,
-        }}
-      >
+      <div css={{ margin: "0 25px" }}>
         {/* Header */}
         <div
           css={{
@@ -45,17 +38,19 @@ const MenuDrawer: FC = () => {
           }}
         >
           {/* APP LOGO */}
-          <Link to="/">
-            <img
-              css={{
-                width: 50,
-                height: 45,
-                marginTop: 7,
-              }}
-              src={appLogo}
-              alt="logo"
-              onClick={handleClick}
-            />
+          <Link href="/">
+            <a>
+              <img
+                css={{
+                  width: 50,
+                  height: 45,
+                  marginTop: 7,
+                }}
+                src="/images/appLogo.png"
+                alt="logo"
+                onClick={handleClick}
+              />
+            </a>
           </Link>
           {/* Close Icon */}
           <IconButton aria-label="close" onClick={handleClose}>
@@ -103,8 +98,10 @@ const MenuDrawer: FC = () => {
                               <span>− {CHILD_ITEM.NAME}</span>
                             </a>
                           ) : (
-                            <Link to={CHILD_ITEM.URL} onClick={handleClick}>
-                              <span>− {CHILD_ITEM.NAME}</span>
+                            <Link href={CHILD_ITEM.URL}>
+                              <a onClick={handleClick}>
+                                <span>− {CHILD_ITEM.NAME}</span>
+                              </a>
                             </Link>
                           )}
                         </h3>
