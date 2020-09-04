@@ -1,5 +1,6 @@
 /** @jsx jsx */
 import { FC, useEffect } from "react";
+import { GetServerSideProps } from 'next'
 import { jsx } from "@emotion/core";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../domain/entity/rootState";
@@ -50,6 +51,12 @@ import { WEATHER_LABEL } from "../domain/services/weather";
 Amplify.configure(AMPLIFY_CONFIGURE);
 I18n.putVocabularies(AMPLIFY_DICT);
 I18n.setLanguage("ja");
+
+export const getServerSideProps: GetServerSideProps = async (_context) => {
+  return {
+    props: {},
+  }
+}
 
 const User: FC = () => {
   const dispatch = useDispatch();
