@@ -16,7 +16,7 @@ working_directory $app_dir
 stderr_path $std_log
 stdout_path $std_log
 timeout $timeout
-listen  $listen
+listen 8080
 pid $pid
 logger Logger.new($stdout)
 
