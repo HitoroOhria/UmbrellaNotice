@@ -6,8 +6,8 @@
 
 LINE公式アカウントにて、毎朝設定した地域の天気予報を取得し、雨が降る場合のみ通知を送信するアプリケーションです。
 
- - [Web ホームページ](https://www.umbrellanotice.work)
- - [LINE 公式アカウント](https://lin.ee/Q28r1Nv)
+ - [Web ホームページ](https://www.umbrellanotice.work){:target="_blank"}
+ - [LINE 公式アカウント](https://lin.ee/Q28r1Nv){:target="_blank"}
 
 ## アプリケーションの画面
 
@@ -37,7 +37,7 @@ LINE公式アカウントにて、毎朝設定した地域の天気予報を取�
     - 外部API（OpenWeatherMapAPI,GeocodingAPI）を利用し、機能を追加している点。
     - Sidekiqを採用し、大規模アクセスを考慮した非同期処理を実装している点。
     - APIパラメータのバリデーションを別クラスに切り出し、可読性・保守性を向上している点。
-    - 配信用のLINEメッセージを動的に作成できる[独自ライブラリ](https://github.com/HirotoOhria/line_message_creator)を作成し、組み込んでいる点。
+    - 配信用のLINEメッセージを動的に作成できる[独自ライブラリ](https://github.com/HirotoOhria/line_message_creator){:target="_blank"}を作成し、組み込んでいる点。
     - E2Eテストにて高カバレッジ(95.14%)を実現できている点。
 
 - ### フロントエンド面
