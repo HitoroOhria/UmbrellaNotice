@@ -1,5 +1,6 @@
 FROM node:14.9.0-alpine as NextBuilder
 
+ENV CIRCLE_SHA1                        $CIRCLE_SHA1
 ENV REACT_APP_AMPLIFY_REGION           $AWS_REGION
 ENV REACT_APP_AMPLIFY_USER_POOL_ID     $REACT_APP_AMPLIFY_USER_POOL_ID
 ENV REACT_APP_AMPLIFY_WEB_CLIENT_ID    $REACT_APP_AMPLIFY_WEB_CLIENT_ID
@@ -22,4 +23,4 @@ RUN npm install \
 
 # WORKDIR /var/www/next-app
 
-CMD npm run prod
+CMD npm run prodStart

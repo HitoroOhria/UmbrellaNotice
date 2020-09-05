@@ -32,9 +32,7 @@ RUN bundle config set without 'production' \
 
 ENTRYPOINT [ \
   "switch", \
-        "sidekiq=echo sleep 600 seconds for finish bunsle install. sleeping now Zzz...",
-        "sidekiq=sleep 600",
-        "bundle exec sidekiq -q sidekiq", "--", \
+        "sidekiq=bundle exec sidekiq -q sidekiq", "--", \
   "prehook", "bundle install", "--", \
   "prehook", "bundle exec rails db:create", "--", \
   "prehook", "bundle exec rails db:migrate", "--", \
