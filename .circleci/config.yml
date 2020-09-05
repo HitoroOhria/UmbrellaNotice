@@ -223,58 +223,58 @@ workflows:
   version: 2.1
   test_and_deploy:
     jobs:
-#      - RSpec
+      - RSpec
       - RuboCop
 
       - Push-nginx-image:
           requires:
             - RuboCop
-#          filters:
-#            branches:
-#              only: master
+          filters:
+            branches:
+              only: master
 
       - Push-next-image:
           requires:
             - RuboCop
-#          filters:
-#            branches:
-#              only: master
+          filters:
+            branches:
+              only: master
 
       - Push-assets-to-S3:
           requires:
             - Push-next-image
-#          filters:
-#            branches:
-#              only: master
+          filters:
+            branches:
+              only: master
 
-#      - Run-install-node-modules-task:
-#          requires:
-#            - Push-next-image
-#          filters:
-#            branches:
-#              only: master
+      - Run-install-node-modules-task:
+          requires:
+            - Push-next-image
+          filters:
+            branches:
+              only: master
 
-      - Push-rails-image #:
-#          requires:
-#            - Run-install-node-modules-task
-#          filters:
-#            branches:
-#              only: master
+      - Push-rails-image:
+          requires:
+            - Run-install-node-modules-task
+          filters:
+            branches:
+              only: master
 
       - Push-db-migrate-image:
           requires:
             - RuboCop
-#          filters:
-#            branches:
-#              only: master
+          filters:
+            branches:
+              only: master
 
       - Run-db-migrate-task:
           requires:
-#            - RSpec
+            - RSpec
             - Push-db-migrate-image
-#          filters:
-#            branches:
-#              only: master
+          filters:
+            branches:
+              only: master
 
       - aws-ecs/deploy-service-update:
           name:                         Update-nginx-container-of-ECS
@@ -285,7 +285,7 @@ workflows:
           aws-secret-access-key:        $AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
           container-image-name-updates: "container=nginx,tag=${CIRCLE_SHA1}"
           requires:
-#            - Run-db-migrate-task
+            - Run-db-migrate-task
             - Push-assets-to-S3
             - Push-nginx-image
             - Push-rails-image
@@ -299,10 +299,7 @@ workflows:
           aws-secret-access-key:        $AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
           container-image-name-updates: "container=next,tag=${CIRCLE_SHA1}"
           requires:
-#            - Run-db-migrate-task
-            - Push-assets-to-S3
-            - Push-nginx-image
-            - Push-rails-image
+            - Update-nginx-container-of-ECS
 
       - aws-ecs/deploy-service-update:
           name:                         Update-rails-container-of-ECS
@@ -313,10 +310,7 @@ workflows:
           aws-secret-access-key:        $AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
           container-image-name-updates: "container=rails,tag=${CIRCLE_SHA1}"
           requires:
-#            - Run-db-migrate-task
-            - Push-assets-to-S3
-            - Push-nginx-image
-            - Push-rails-image
+            - Update-next-container-of-ECS
 
       - aws-ecs/deploy-service-update:
           name:                         Update-sidekiq-container-of-ECS
@@ -327,7 +321,4 @@ workflows:
           aws-secret-access-key:        $AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
           container-image-name-updates: "container=sidekiq,tag=${CIRCLE_SHA1}"
           requires:
-#            - Run-db-migrate-task
-            - Push-assets-to-S3
-            - Push-nginx-image
-            - Push-rails-image
+            - Update-rails-container-of-ECS
