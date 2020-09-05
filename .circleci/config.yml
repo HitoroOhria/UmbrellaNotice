@@ -102,6 +102,11 @@ jobs:
           dockerfile:            ./docker/next/Dockerfile.pro
           repo:                  umbrellanotice-next
           tag:                   "${CIRCLE_SHA1}"
+          extra-build-args:      "--build-arg CIRCLE_SHA1=$CIRCLE_SHA1 \
+                                  --build-arg REACT_APP_AMPLIFY_REGION=$REACT_APP_AMPLIFY_REGION \
+                                  --build-arg REACT_APP_AMPLIFY_USER_POOL_ID=$REACT_APP_AMPLIFY_USER_POOL_ID \
+                                  --build-arg REACT_APP_AMPLIFY_WEB_CLIENT_ID=$REACT_APP_AMPLIFY_WEB_CLIENT_ID \
+                                  --build-arg REACT_APP_AMPLIFY_IDENTITY_POOL_ID=$REACT_APP_AMPLIFY_IDENTITY_POOL_ID"
 
   Push-assets-to-S3:
     working_directory: ~/umbrellanotice
@@ -119,7 +124,7 @@ jobs:
           name: Build next-app
           command: |
             sudo npm install
-            npm run-script build
+            npm run build
           working_directory: ~/umbrellanotice/frontend
       - aws-s3/sync:
           arguments: |
