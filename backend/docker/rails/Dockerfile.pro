@@ -10,7 +10,8 @@ RUN apk --update add \
          nodejs \
          openjdk11 \
          mysql-client \
-         mysql-dev
+         mysql-dev \
+         less
 
 ADD . /rails-app
 WORKDIR /rails-app

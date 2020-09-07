@@ -8,6 +8,7 @@ Rails.application.routes.draw do
                 email: /[^\/]+/ do
         member do
           post 'relate_line_user'
+          post 'release_line_user'
         end
       end
 
