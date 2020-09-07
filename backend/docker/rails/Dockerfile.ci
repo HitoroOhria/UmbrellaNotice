@@ -29,16 +29,13 @@ ADD . /rails-app
 WORKDIR /rails-app
 
 RUN bundle config set without 'production' \
-  && bundle config set path '/rails-app/vendor/bundle'
+  && bundle config set path '/rails-app/vendor/bundle' \
+  && bundle install
 
 ENTRYPOINT [ \
   "switch", \
         "sidekiq=bundle exec sidekiq -q sidekiq", "--", \
-  "prehook", "bundle install", "--", \
   "prehook", "bundle exec rails db:create", "--", \
   "prehook", "bundle exec rails db:migrate", "--", \
-  "prehook", "bundle exec rails db:seed", "--", \
-  "switch", \
-        "light_mode=bundle exec rails s -p 80", "--", \
   "prehook", "development=bundle exec unicorn_rails -c /rails-app/config/unicorn.rb -E development", "--" \
 ]

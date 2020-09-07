@@ -12,7 +12,6 @@ services:
       MYSQL_ROOT_PASSWORD: password
     volumes:
       - bundler-libs:/rails-app/vendor/bundle
-      - socket-data:/rails-app/tmp/sockets
     depends_on:
       - mysql
       - redis
@@ -49,17 +48,5 @@ services:
     ports:
       - '33306:3306'
 
-  nginx:
-    build:
-      context: ./frontend
-      dockerfile: docker/nginx/Dockerfile
-    volumes:
-      - socket-data:/tmp/sockets
-    ports:
-      - 80:80
-    depends_on:
-    - rails
-
 volumes:
-  socket-data:
   bundler-libs:
