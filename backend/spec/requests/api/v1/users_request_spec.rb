@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe 'Api::V1::Users', type: :request do
   let(:error_msg)    { ERROR_MSG[:USER] }
   let(:update_attrs) { UPDATE_ATTRS[:USER] }
-  let(:success_json) { { success: true } }
+  let(:success_json) { { 'success' => true } }
 
   # Define user.
   let(:success_response) {
