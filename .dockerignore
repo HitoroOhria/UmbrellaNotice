@@ -1,0 +1,5 @@
+# Next.js
+frontend/node_modules
+
+# Rails
+backend/vendor/bundle
