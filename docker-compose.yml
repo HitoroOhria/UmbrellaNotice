@@ -28,6 +28,9 @@ services:
     build:
       context: ./backend
       dockerfile: ./docker/rails/Dockerfile
+    environment:
+      TZ: Asia/Tokyo
+      MYSQL_ROOT_PASSWORD: password
     volumes:
       - ./backend:/rails-app
       - bundler-libs:/rails-app/vendor/bundle

@@ -35,6 +35,9 @@ RUN bundle config set without 'production' \
 ENTRYPOINT [ \
   "switch", \
         "sidekiq=bundle exec sidekiq -q sidekiq", "--", \
+  "prehook", "echo sleep 45 seconds for finish MySql container set up.", "--", \
+  "prehook", "sleep 45", "--", \
+  "prehook", "echo finish sleep.", "--", \
   "prehook", "bundle exec rails db:create", "--", \
   "prehook", "bundle exec rails db:migrate", "--", \
   "prehook", "development=bundle exec unicorn_rails -c /rails-app/config/unicorn.rb -E development", "--" \
