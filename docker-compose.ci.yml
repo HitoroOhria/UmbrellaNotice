@@ -5,14 +5,13 @@ services:
   rails:
     build:
       context: ./backend
-      dockerfile: docker/rails/Dockerfile
+      dockerfile: docker/rails/Dockerfile.ci
     environment:
       TZ: Asia/Tokyo
       RAILS_MASTER_KEY: $RAILS_MASTER_KEY
       MYSQL_ROOT_PASSWORD: password
     volumes:
       - bundler-libs:/rails-app/vendor/bundle
-      - socket-data:/rails-app/tmp/sockets
     depends_on:
       - mysql
       - redis
@@ -21,7 +20,7 @@ services:
   sidekiq:
     build:
       context: ./backend
-      dockerfile: docker/rails/Dockerfile
+      dockerfile: docker/rails/Dockerfile.ci
     environment:
       TZ: Asia/Tokyo
       RAILS_MASTER_KEY: $RAILS_MASTER_KEY
@@ -49,17 +48,5 @@ services:
     ports:
       - '33306:3306'
 
-  nginx:
-    build:
-      context: ./frontend
-      dockerfile: docker/nginx/Dockerfile
-    volumes:
-      - socket-data:/tmp/sockets
-    ports:
-      - 80:80
-    depends_on:
-    - rails
-
 volumes:
-  socket-data:
   bundler-libs:
