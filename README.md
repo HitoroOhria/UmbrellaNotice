@@ -9,6 +9,9 @@ LINE公式アカウントにて、毎朝設定した地域の天気予報を取�
  - [Web ホームページ](https://www.umbrellanotice.work){:target="_blank"}
  - [LINE 公式アカウント](https://lin.ee/Q28r1Nv){:target="_blank"}
 
+Webはテストユーザーログインで、LINE公式アカウントは登録無しでサクッと利用できます。<br>
+ぜひ遊びに来てください！:coffee:
+
 ## アプリケーションの画面
 
 - ### Webホームページ
