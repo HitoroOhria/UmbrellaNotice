@@ -3,6 +3,7 @@ import userActions from "./actions";
 import { UserState } from "../../domain/entity/user";
 
 const initState: UserState = {
+  id: 0,
   email: "",
   oldPassword: "",
   newPassword: "",
@@ -27,6 +28,9 @@ const userReucer = reducerWithInitialState(initState)
   .case(userActions.toggleShowNewPassword, (preState, _payload) => ({
     ...preState,
     showNewPassword: !preState.showNewPassword,
+  })).case(userActions.fetchUser.done, (preState, payload) => ({
+    ...preState,
+    ...payload.result
   }));
 
 export default userReucer;

@@ -3,19 +3,26 @@ import weatherActions from "./actions";
 import { WeatherState } from "../../domain/entity/weather";
 
 const initState: WeatherState = {
-  location: "",
-  noticeTime: "",
-  silentNotice: true,
+  id: 0,
+  city: "",
+  lat: undefined,
+  lon: undefined,
 };
 
 const weatherReucer = reducerWithInitialState(initState)
-  .case(weatherActions.setWeatherValue, (preState, payload) => ({
+  .case(weatherActions.setValue, (preState, payload) => ({
     ...preState,
     ...payload,
   }))
-  .case(weatherActions.toggleSilentNotice, (preState, _payload) => ({
+  .case(weatherActions.fetchWeather.done, (preState, payload) => ({
     ...preState,
-    silentNotice: !preState.silentNotice,
+    ...payload.result
+  }))
+  .case(weatherActions.relateUser.done, (_preState, payload) => ({
+    ...payload.result,
+  })).case(weatherActions.updateValue.done, (preState, payload) => ({
+    ...preState,
+    ...payload.result
   }));
 
 export default weatherReucer;

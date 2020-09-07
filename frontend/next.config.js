@@ -15,10 +15,13 @@ const withImages = require("next-images");
 
 module.exports = withImages({
   env: {
+    REACT_APP_IS_PROD: isProd,
     REACT_APP_AMPLIFY_REGION: env.REACT_APP_AMPLIFY_REGION,
     REACT_APP_AMPLIFY_USER_POOL_ID: env.REACT_APP_AMPLIFY_USER_POOL_ID,
     REACT_APP_AMPLIFY_WEB_CLIENT_ID: env.REACT_APP_AMPLIFY_WEB_CLIENT_ID,
     REACT_APP_AMPLIFY_IDENTITY_POOL_ID: env.REACT_APP_AMPLIFY_IDENTITY_POOL_ID,
+    REACT_APP_TEST_USER_EMAIL: env.REACT_APP_TEST_USER_EMAIL,
+    REACT_APP_TEST_USER_PASSWORD: env.REACT_APP_TEST_USER_PASSWORD,
   },
   assetPrefix: isProd ? "https://static.umbrellanotice.work" : "",
   generateBuildId: async () => {

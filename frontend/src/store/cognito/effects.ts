@@ -1,18 +1,16 @@
 import { Dispatch } from "redux";
 import { Auth } from "aws-amplify";
 
-import alertActions from "../alert/actions";
-import { AlertState } from "../../domain/entity/alert";
+import { openAlert } from "../../domain/services/alert";
+
+export const signIn = (email: string, password: string) => async (dispatch: Dispatch) => {
+  await Auth.signIn(email, password).then(() => {
+    openAlert(dispatch, "success", ["ログインしました！"]);
+  });
+}
 
 export const signOut = () => async (dispatch: Dispatch) => {
-  console.log("click sign out");
-
   await Auth.signOut().then(() => {
-    const alert: Omit<AlertState, "open"> = {
-      severity: "success",
-      messages: ["ログアウトしました！"],
-    };
-
-    dispatch(alertActions.openAlert(alert));
+    openAlert(dispatch, "success", ["ログアウトしました！"]);
   });
 };

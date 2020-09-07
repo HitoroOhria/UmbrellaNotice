@@ -1,7 +1,6 @@
 export type AlertState = {
-  severity: AlertSeverity;
+  isLoading: boolean;
+  severity: "error" | "warning" | "info" | "success";
   messages: string[];
   open: boolean;
 };
-
-export type AlertSeverity = "error" | "warning" | "info" | "success";

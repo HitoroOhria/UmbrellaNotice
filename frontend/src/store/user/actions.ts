@@ -8,6 +8,7 @@ const userActions = {
   initPasswords: actionCreator<{}>("INIT_PASSWORDS"),
   toggleShowOldPassword: actionCreator<{}>("TOGGLE_SHOW_OLD_PASSWORD"),
   toggleShowNewPassword: actionCreator<{}>("TOGGLE_SHOW_NEW_PASSWORD"),
+  fetchUser: actionCreator.async<{},Partial<UserState> ,{}>("FETCH_USER")
 };
 
 export default userActions;
