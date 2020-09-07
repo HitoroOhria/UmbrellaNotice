@@ -6,7 +6,19 @@ class ApplicationController < ActionController::API
     Rails.application.credentials
   end
 
+  def success_json
+    { success: true }
+  end
+
+  # default return is self.
+  def convert_embed(params)
+    embed = params[:embed]
+    embed.nil? ? '' : embed
+  end
+
   def render_success(code, json = nil, include = '', location: nil)
+    response.headers['Access-Control-Expose-Headers'] = 'Location' if location
+
     render status: code, json: json, include: include, location: location
   end
 
@@ -20,7 +32,8 @@ class ApplicationController < ActionController::API
   end
 
   # OK
-  def render_200(response_json, include = '')
+  def render_200(response_json, params = { embed: '' })
+    include = convert_embed(params)
     render_success(200, response_json, include)
   end
 
@@ -31,7 +44,7 @@ class ApplicationController < ActionController::API
 
   # No content
   def render_204
-    render_success(204)
+    render_success(204, {})
   end
 
   # Bad request

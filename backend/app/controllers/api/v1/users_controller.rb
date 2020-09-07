@@ -6,7 +6,7 @@ class Api::V1::UsersController < ApplicationController
     return render_422(user_validator) unless (user = user_validator.save)
 
     location_url = api_v1_user_url(user.encoded_email)
-    render_201('SUCCESS', location: location_url)
+    render_201(success_json, location: location_url)
   end
 
   # GET /api/v1/users/:email?embed=*,relate_model
@@ -15,7 +15,7 @@ class Api::V1::UsersController < ApplicationController
     return render_400(user_validator) if user_validator.invalid?
     return render_404(user_validator) unless (@user = user_validator.find_by_email)
 
-    render_200(@user, params[:embed].to_s) # change '' if params[:embed] is nil.
+    render_200(@user, params)
   end
 
   # PUT /api/v1/users/:email new_email=new@example.com
@@ -43,6 +43,15 @@ class Api::V1::UsersController < ApplicationController
     return render_400(user_validator) if user_validator.invalid?
     return render_404(user_validator) unless user_validator.relate_line_user
 
-    render_200('SUCCESS')
+    render_200(success_json)
+  end
+
+  # POST /api/v1/users/:email/release_line_user
+  def release_line_user
+    user_validator = UserValidator.init_with(params)
+    return render_400(user_validator) if user_validator.invalid?
+    return render_404(user_validator) unless user_validator.release_line_user
+
+    render_200(success_json)
   end
 end

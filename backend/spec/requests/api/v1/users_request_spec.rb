@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe 'Api::V1::Users', type: :request do
   let(:error_msg)    { ERROR_MSG[:USER] }
   let(:update_attrs) { UPDATE_ATTRS[:USER] }
+  let(:success_json) { { success: true } }
 
   # Define user.
   let(:success_response) {
@@ -47,7 +48,7 @@ RSpec.describe 'Api::V1::Users', type: :request do
       end
 
       it '成功メッセージを返すこと' do
-        expect(response.body).to eq 'SUCCESS'
+        expect(response.body).to eq success_json
       end
 
       it 'Userを1つ作成すること' do
@@ -307,7 +308,7 @@ RSpec.describe 'Api::V1::Users', type: :request do
       it { is_expected.to have_http_status 200 }
 
       it '成功メッセージを返すこと' do
-        expect(response.body).to eq 'SUCCESS'
+        expect(response.body).to eq success_json
       end
 
       it 'line_user.user_idにuser.idがセットされていること' do

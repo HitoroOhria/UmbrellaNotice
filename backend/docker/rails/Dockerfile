@@ -2,7 +2,7 @@ FROM ruby:2.7.1-alpine
 
 ENV ENTRYKIT_VERSION 0.4.0
 ENV JAVA_HOME        /usr/lib/jvm/java-11-openjdk
-ENV PATH             $JAVA_HOME/bin:/rails-root/bin:$PATH
+ENV PATH             $JAVA_HOME/bin:/rails-app/bin:$PATH
 ENV LD_LIBRARY_PATH  $JAVA_HOME/lib/server
 
 RUN apk --update add \
@@ -19,7 +19,8 @@ RUN apk --update add \
        nodejs \
        openjdk11 \
        mysql-client \
-       mysql-dev
+       mysql-dev \
+       less
 
 ADD ./docker/rails/aliases.sh /root/.profile
 
