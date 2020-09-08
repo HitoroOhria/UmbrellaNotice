@@ -24,10 +24,11 @@ gem 'line_message_creator'
 # gem 'rack-cors'
 
 group :development, :test do
+  gem 'debase'
+  gem 'ruby-debug-ide'
   gem 'pry-rails'
-  gem 'pry-doc'
   gem 'pry-remote'
-  gem 'pry-byebug'
+  gem 'pry-doc'
   gem 'rails-erd'
   gem 'brakeman'
 end
