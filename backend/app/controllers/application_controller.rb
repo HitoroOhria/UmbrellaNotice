@@ -13,10 +13,10 @@ class ApplicationController < ActionController::API
   # default return is self.
   def convert_embed(params)
     embed = params[:embed]
-    embed.nil? ? '' : embed
+    embed.nil? ? '*' : embed
   end
 
-  def render_success(code, json = nil, include = '', location: nil)
+  def render_success(code, json = {}, include = '', location: nil)
     response.headers['Access-Control-Expose-Headers'] = 'Location' if location
 
     render status: code, json: json, include: include, location: location
