@@ -11,7 +11,6 @@ class Api::V1::LineUsersController < ApplicationController
   # PUT /api/v1/line_users/:id
   # PARAMS notice_time silent_notice
   def update
-    puts params
     line_user_validator = LineUserValidator.init_with(params)
     return render_400(line_user_validator) if line_user_validator.invalid?
     return render_400(line_user_validator) unless (@line_user = line_user_validator.update)
