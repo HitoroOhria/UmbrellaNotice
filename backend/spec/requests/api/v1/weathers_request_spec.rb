@@ -15,30 +15,16 @@ RSpec.describe "Api::V1::Weathers", type: :request do
   let(:error_msg)    { ERROR_MSG[:WEATHER] }
   let(:update_attrs) { UPDATE_ATTRS[:WEATHER] }
 
-  # Define weather.
-  let(:success_response) {
+  # Define weather
+  let(:weather_data) {
     {
-      'id' => weather.id,
-      'city' => weather.city,
-      'lat' => weather.lat.to_s,
-      'lon' => weather.lon.to_s
-    }
-  }
-
-  # Define user if used.
-  let(:user_response) {
-    {
-      'id' => user.id,
-      'email' => user.email
-    }
-  }
-
-  # Define line_user if used.
-  let(:line_user_response) {
-    {
-      'id' => line_user.id,
-      'notice_time' => line_user.notice_time,
-      'silent_notice' => line_user.silent_notice
+      'id' => weather.id.to_s,
+      'type' => 'weather',
+      'attributes' => {
+        'city' => weather.city,
+        'lat' => weather.lat.to_s,
+        'lon' => weather.lon.to_s
+      }
     }
   }
 
@@ -49,7 +35,7 @@ RSpec.describe "Api::V1::Weathers", type: :request do
     }
   }
 
-  subject { response }
+  subject { JSON.parse(response.body)['data']&.slice("id", "type", "attributes") }
 
   describe '#show' do
     let!(:weather) { create(:base_weather) }
@@ -62,16 +48,14 @@ RSpec.describe "Api::V1::Weathers", type: :request do
 
     describe '正常系' do
       context 'embedがnilのとき' do
-        it { is_expected.to have_http_status 200 }
+        it "HTTPステータスコード200を返すこと" do
+          expect(response).to have_http_status 200
+        end
 
         it 'idに対応したWeatherモデル属性のJSONを返すこと' do
-          expect(JSON.parse(response.body)).to eq success_response
+          is_expected.to eq weather_data
         end
       end
-
-      # TODO: Why response.body['user'] = nil ?
-      # context 'embedがline_userのとき' do
-      # end
     end
 
     describe '異常系' do
@@ -81,7 +65,9 @@ RSpec.describe "Api::V1::Weathers", type: :request do
           { 'id' => [error_msg[:ID][:NOT_FOUND][id]] }
         }
 
-        it { is_expected.to have_http_status 404 }
+        it "HTTPステータスコード404を返すこと" do
+          expect(response).to have_http_status 404
+        end
 
         it 'エラーレスポンスを返すこと' do
           expect(JSON.parse(response.body)).to eq error_response
@@ -111,14 +97,16 @@ RSpec.describe "Api::V1::Weathers", type: :request do
         let(:city)                { 'さいたま市' }
         let(:geocoding_file_name) { 'saitama_response.xml' }
 
-        it { is_expected.to have_http_status 200 }
+        it "HTTPステータスコード200を返すこと" do
+          expect(response).to have_http_status 200
+        end
 
         it 'city,lat,lonを更新したWeatherモデルの属性のJSONを返すこと' do
           updated_weather = build(:weather, :saitama)
           weather.city    = updated_weather.city
           weather.lat     = updated_weather.lat
           weather.lon     = updated_weather.lon
-          expect(JSON.parse(response.body)).to eq success_response
+          is_expected.to eq weather_data
         end
       end
 
@@ -126,12 +114,14 @@ RSpec.describe "Api::V1::Weathers", type: :request do
         let(:lat) { 55.55 }
         let(:lon) { 133.33 }
 
-        it { is_expected.to have_http_status 200 }
+        it "HTTPステータスコード200を返すこと" do
+          expect(response).to have_http_status 200
+        end
 
         it '更新後のWeatherモデルの属性のJSONを返すこと' do
           weather.lat = lat
           weather.lon = lon
-          expect(JSON.parse(response.body)).to eq success_response
+          is_expected.to eq weather_data
         end
       end
 
@@ -141,14 +131,16 @@ RSpec.describe "Api::V1::Weathers", type: :request do
         let(:lon)                 { 133.33 }
         let(:geocoding_file_name) { 'saitama_response.xml' }
 
-        it { is_expected.to have_http_status 200 }
+        it "HTTPステータスコード200を返すこと" do
+          expect(response).to have_http_status 200
+        end
 
         it 'cityのlat,lonで更新したWeatherモデルの属性のJSONを返すこと' do
           updated_weather = build(:weather, :saitama)
           weather.city    = updated_weather.city
           weather.lat     = updated_weather.lat
           weather.lon     = updated_weather.lon
-          expect(JSON.parse(response.body)).to eq success_response
+          is_expected.to eq weather_data
         end
       end
     end
@@ -162,7 +154,9 @@ RSpec.describe "Api::V1::Weathers", type: :request do
             }
           }
 
-          it { is_expected.to have_http_status 400 }
+          it "HTTPステータスコード400を返すこと" do
+            expect(response).to have_http_status 400
+          end
 
           it 'エラーレスポンスを返すこと' do
             expect(JSON.parse(response.body)).to eq error_response
@@ -178,7 +172,9 @@ RSpec.describe "Api::V1::Weathers", type: :request do
             { 'city' => [error_msg[:CITY][:NOT_SEARCH][city]] }
           }
 
-          it { is_expected.to have_http_status 400 }
+          it "HTTPステータスコード400を返すこと" do
+            expect(response).to have_http_status 400
+          end
 
           it 'エラーレスポンスを返すこと' do
             expect(JSON.parse(response.body)).to eq error_response
@@ -196,7 +192,9 @@ RSpec.describe "Api::V1::Weathers", type: :request do
             { 'lon' => [error_msg[:LON][:BLANK]] }
           }
 
-          it { is_expected.to have_http_status 400 }
+          it "HTTPステータスコード400を返すこと" do
+            expect(response).to have_http_status 400
+          end
 
           it 'エラーレスポンスを返すこと' do
             expect(JSON.parse(response.body)).to eq error_response
@@ -209,7 +207,9 @@ RSpec.describe "Api::V1::Weathers", type: :request do
             { 'lat' => [error_msg[:LAT][:BLANK]] }
           }
 
-          it { is_expected.to have_http_status 400 }
+          it "HTTPステータスコード400を返すこと" do
+            expect(response).to have_http_status 400
+          end
 
           it 'エラーレスポンスを返すこと' do
             expect(JSON.parse(response.body)).to eq error_response
@@ -222,7 +222,9 @@ RSpec.describe "Api::V1::Weathers", type: :request do
             { 'lat' => [error_msg[:LAT][:VALIDATE]] }
           }
 
-          it { is_expected.to have_http_status 400 }
+          it "HTTPステータスコード400を返すこと" do
+            expect(response).to have_http_status 400
+          end
 
           it 'エラーレスポンスを返すこと' do
             expect(JSON.parse(response.body)).to eq error_response
@@ -235,7 +237,9 @@ RSpec.describe "Api::V1::Weathers", type: :request do
             { 'lat' => [error_msg[:LAT][:VALIDATE]] }
           }
 
-          it { is_expected.to have_http_status 400 }
+          it "HTTPステータスコード400を返すこと" do
+            expect(response).to have_http_status 400
+          end
 
           it 'エラーレスポンスを返すこと' do
             expect(JSON.parse(response.body)).to eq error_response
@@ -248,7 +252,9 @@ RSpec.describe "Api::V1::Weathers", type: :request do
             { 'lon' => [error_msg[:LON][:VALIDATE]] }
           }
 
-          it { is_expected.to have_http_status 400 }
+          it "HTTPステータスコード400を返すこと" do
+            expect(response).to have_http_status 400
+          end
 
           it 'エラーレスポンスを返すこと' do
             expect(JSON.parse(response.body)).to eq error_response
@@ -261,7 +267,9 @@ RSpec.describe "Api::V1::Weathers", type: :request do
             { 'lon' => [error_msg[:LON][:VALIDATE]] }
           }
 
-          it { is_expected.to have_http_status 400 }
+          it "HTTPステータスコード400を返すこと" do
+            expect(response).to have_http_status 400
+          end
 
           it 'エラーレスポンスを返すこと' do
             expect(JSON.parse(response.body)).to eq error_response
@@ -280,7 +288,9 @@ RSpec.describe "Api::V1::Weathers", type: :request do
     end
 
     describe '正常系' do
-      it { is_expected.to have_http_status 204 }
+      it "HTTPステータスコード204を返すこと" do
+        expect(response).to have_http_status 204
+      end
 
       it 'レスポンスボディは空であること' do
         expect(response.body).to be_empty
@@ -294,7 +304,9 @@ RSpec.describe "Api::V1::Weathers", type: :request do
           { 'id' => [error_msg[:ID][:NOT_FOUND][id]] }
         }
 
-        it { is_expected.to have_http_status 404 }
+        it "HTTPステータスコード404を返すこと" do
+          expect(response).to have_http_status 404
+        end
 
         it 'エラーレスポンスを返すこと' do
           expect(JSON.parse(response.body)).to eq error_response

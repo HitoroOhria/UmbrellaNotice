@@ -24,7 +24,7 @@ RSpec.describe 'Api::V1::Users', type: :request do
     }
   }
 
-  subject { JSON.parse(response.body)['data']&.slice(*%w[id type attributes]) }
+  subject { JSON.parse(response.body)['data']&.slice("id", "type", "attributes") }
 
   describe '#create' do
     let(:email) { Faker::Internet.email }
