@@ -18,7 +18,7 @@ import {
 export const callUserCreate = async (
   email: string
 ): Promise<successRes | errorRes> => {
-  const url = BACKEND_URL.USER;
+  const url = BACKEND_URL.USER();
   const params = { email };
 
   return await post(url, params);

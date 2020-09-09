@@ -175,24 +175,7 @@ jobs:
           repo:                  umbrellanotice-app
           tag:                   "${CIRCLE_SHA1}"
 
-  Push-db-migrate-image:
-    docker:
-      - image: 'circleci/python:3.7.1'
-    steps:
-      - setup_remote_docker
-      - aws-cli/install
-      - aws-ecr/build-and-push-image:
-          region:                AWS_REGION
-          account-url:           AWS_ECR_ACCOUNT_URL
-          aws-access-key-id:     AWS_ACCESS_KEY_ID_ECS_ECR_USER
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
-          create-repo:           true
-          path:                  ./backend
-          dockerfile:            ./docker/db_migrate/Dockerfile.pro
-          repo:                  umbrellanotice-db-migration
-          tag:                   "${CIRCLE_SHA1}"
-
-  Run-db-migrate-task:
+  Push-and-Run-db-migrate-image:
     docker:
       - image: 'circleci/python:3.7.1'
     environment:
@@ -204,14 +187,22 @@ jobs:
           aws-region:            AWS_REGION
           aws-access-key-id:     AWS_ACCESS_KEY_ID_ECS_ECR_USER
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
+      - aws-ecr/build-and-push-image:
+          region:                AWS_REGION
+          account-url:           AWS_ECR_ACCOUNT_URL
+          create-repo:           true
+          path:                  ./backend
+          dockerfile:            ./docker/db_migrate/Dockerfile.pro
+          repo:                  umbrellanotice-db-migration
+          tag:                   "${CIRCLE_SHA1}"
       - aws-ecs/update-task-definition:
           family:                       umbrellanotice_db_migrate
           container-image-name-updates: "container=db_migrate,tag=${CIRCLE_SHA1}"
       - aws-ecs/run-task:
-          cluster:            $AWS_ECS_ARN
-          task-definition:    umbrellanotice_db_migrate
-          subnet-ids:         $AWS_FARGATE_SUBNET_IDS
-          security-group-ids: $AWS_FARGATE_SG_IDS
+          cluster:               $AWS_ECS_ARN
+          task-definition:       umbrellanotice_db_migrate
+          subnet-ids:            $AWS_FARGATE_SUBNET_IDS
+          security-group-ids:    $AWS_FARGATE_SG_IDS
 
 orbs:
   aws-cli: circleci/aws-cli@1.3.0
@@ -261,17 +252,9 @@ workflows:
             branches:
               only: master
 
-      - Push-db-migrate-image:
+      - Push-and-Run-db-migrate-image:
           requires:
             - RuboCop
-          filters:
-            branches:
-              only: master
-
-      - Run-db-migrate-task:
-          requires:
-            - RSpec
-            - Push-db-migrate-image
           filters:
             branches:
               only: master
@@ -285,7 +268,7 @@ workflows:
           aws-secret-access-key:        $AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
           container-image-name-updates: "container=nginx,tag=${CIRCLE_SHA1}"
           requires:
-            - Run-db-migrate-task
+            - Push-and-Run-db-migrate-image
             - Push-assets-to-S3
             - Push-nginx-image
             - Push-rails-image
