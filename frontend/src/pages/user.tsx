@@ -229,7 +229,7 @@ const UerEmailDialog: FC = () => {
   const handleClose = () => dispatch(dialogActinos.closeUserEmailDialog({}));
 
   const handleAgree = () => {
-    if (cognitoUser?.attributes.email == TEST_USER.EMAIL) {
+    if (cognitoUser?.attributes.email === TEST_USER.EMAIL) {
       openAlert(dispatch, "error", [
         "テストユーザーのため、メールアドレスの変更はできません。",
       ]);
