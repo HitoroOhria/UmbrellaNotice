@@ -37,6 +37,8 @@ services:
     build:
       context: ./frontend
       dockerfile: ./docker/next/Dockerfile
+    environment:
+      CHOKIDAR_USEPOLLING: 'true'
     volumes:
       - ./frontend:/next-app:cached
       - node-modules:/react-app/node_modules
