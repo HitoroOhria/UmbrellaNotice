@@ -12,9 +12,7 @@ const backendUrlMaker = (resource: Resource) => {
   const baseUrl = `${origin}/api/v1/${resource}`;
 
   return (identifier?: string | number, extraUrl?: string) => {
-    if (identifier === undefined) {
-      return baseUrl;
-    }
+    if (identifier === undefined) return baseUrl;
 
     const encodedTdentifier = encodeURIComponent(identifier);
 

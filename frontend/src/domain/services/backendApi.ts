@@ -18,9 +18,10 @@ import {
 export const callUserCreate = async (
   email: string
 ): Promise<successRes | errorRes> => {
-  const url = BACKEND_URL.USER(email);
+  const url = BACKEND_URL.USER;
+  const params = { email };
 
-  return await post(url);
+  return await post(url, params);
 };
 
 export const callUserShow = async (
@@ -46,8 +47,8 @@ export const callUserRelateLineUser = async (
   email: string,
   inherit_token: string
 ): Promise<successRes | errorRes> => {
-  const url = BACKEND_URL.USER(email, 'relate_line_user');
-  const params = { inherit_token }
+  const url = BACKEND_URL.USER(email, "relate_line_user");
+  const params = { inherit_token };
 
   return await post(url, params);
 };
@@ -55,7 +56,7 @@ export const callUserRelateLineUser = async (
 export const callUserReleaseLineUser = async (
   email: string
 ): Promise<successRes | errorRes> => {
-  const url = BACKEND_URL.USER(email, 'release_line_user');
+  const url = BACKEND_URL.USER(email, "release_line_user");
 
   return await post(url);
 };
