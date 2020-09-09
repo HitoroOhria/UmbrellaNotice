@@ -93,7 +93,7 @@ class UserValidator < ApplicationValidator
 
   def release_line_user
     return unless (user = find_by_email)
-    return unless (line_user = user.LineUser)
+    return unless (line_user = user.line_user)
 
     line_user.user = nil
     line_user.save!

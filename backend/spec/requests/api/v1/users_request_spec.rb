@@ -61,9 +61,9 @@ RSpec.describe 'Api::V1::Users', type: :request do
           { 'email' => [error_msg[:EMAIL][:VALIDATE], "can't be blank"] }
         }
 
-        it "HTTPステータスコード20400すこと" do
-            expect(response).to have_http_status 400
-          end
+        it "HTTPステータスコード400を返すこと" do
+          expect(response).to have_http_status 400
+        end
 
         it 'エラーレスポンスを返すこと' do
           expect(JSON.parse(response.body)).to eq error_response
@@ -76,9 +76,9 @@ RSpec.describe 'Api::V1::Users', type: :request do
           { 'email' => [error_msg[:EMAIL][:VALIDATE]] }
         }
 
-        it "HTTPステータスコード20400すこと" do
-            expect(response).to have_http_status 400
-          end
+        it "HTTPステータスコード400返すこと" do
+          expect(response).to have_http_status 400
+        end
 
         it 'エラーレスポンスを返すこと' do
           expect(JSON.parse(response.body)).to eq error_response
@@ -396,6 +396,64 @@ RSpec.describe 'Api::V1::Users', type: :request do
           let(:inherit_token) { 'a' * 24 }
           let(:error_params)  {
             { 'inherit_token' => [error_msg[:INHERIT_TOKEN][:NOT_FOUND][inherit_token]] }
+          }
+
+          it "HTTPステータスコード404を返すこと" do
+            expect(response).to have_http_status 404
+          end
+
+          it 'エラーレスポンスを返すこと' do
+            expect(JSON.parse(response.body)).to eq error_response
+          end
+        end
+      end
+    end
+  end
+
+  describe '#release_line_user' do
+    let!(:user)      { create(:user) }
+    let!(:line_user) { create(:line_user, user: user) }
+    let(:email)      { user.email }
+
+    before do
+      post release_line_user_api_v1_user_path(email)
+    end
+
+    describe '正常系' do
+      it "HTTPステータスコード200を返すこと" do
+        expect(response).to have_http_status 200
+      end
+
+      it '成功メッセージを返すこと' do
+        expect(JSON.parse(response.body)).to eq success_json
+      end
+
+      it 'line_userとuserが関連付けられていないこと' do
+        expect(line_user.reload.user).to eq nil
+      end
+    end
+
+    describe '異常系' do
+      describe 'email' do
+        context 'emailの表記が正しくないとき' do
+          let(:email)        { 'Invalid_email_address' }
+          let(:error_params) {
+            { 'email' => [error_msg[:EMAIL][:VALIDATE]] }
+          }
+
+          it "HTTPステータスコード400を返すこと" do
+            expect(response).to have_http_status 400
+          end
+
+          it 'エラーレスポンスを返すこと' do
+            expect(JSON.parse(response.body)).to eq error_response
+          end
+        end
+
+        context '存在しないemailを指定したとき' do
+          let(:email)        { Faker::Internet.email }
+          let(:error_params) {
+            { 'email' => [error_msg[:EMAIL][:NOT_FOUND][email]] }
           }
 
           it "HTTPステータスコード404を返すこと" do
