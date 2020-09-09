@@ -5,13 +5,13 @@ ENV PATH             $JAVA_HOME/bin:$PATH
 ENV LD_LIBRARY_PATH  $JAVA_HOME/lib/server
 
 RUN apk --update add \
-         openssl \
-         alpine-sdk \
-         nodejs \
-         openjdk11 \
-         mysql-client \
-         mysql-dev \
-         less
+      openssl \
+      alpine-sdk \
+      nodejs \
+      openjdk11 \
+      mysql-client \
+      mysql-dev \
+      less
 
 ADD . /rails-app
 WORKDIR /rails-app
