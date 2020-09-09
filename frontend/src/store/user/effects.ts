@@ -6,48 +6,43 @@ import userActions from "./actions";
 import lineUserActions from "../lineUser/actions";
 
 import { AmplifyError } from "../../domain/entity/amplify";
-import { LineUserState } from "../../domain/entity/lineUser";
 
 import {
+  callUserShow,
+  callUserCreate,
   serializeUser,
   serializeLineUser,
   serializeWeather,
-} from "../../domain/services/serialize";
-import { get, post } from "../../domain/services/http";
-import { BACKEND_URL } from "../../domain/services/url";
+} from "../../domain/services/backendApi";
 import { loadingAlert, openAlert } from "../../domain/services/alert";
 import weatherActions from "../weather/actions";
 
-export const fetchData = (email: string | undefined) => async (
+export const fetchData = (email: string) => async (
   dispatch: Dispatch
 ) => {
-  const url = BACKEND_URL.USER(email && "undefined");
-  const params = { embed: "line_user.weather" };
-  const json = await get(url, params);
+  const json = await callUserShow(email, "line_user.weather");
 
-  if (json.error) {
-    const postUrl = BACKEND_URL.USER();
-    const postParams = { email: email };
-    await post(postUrl, postParams);
+  if ("error" in json) {
+    await callUserCreate(email);
 
-    const getUrl = BACKEND_URL.USER(email);
-    const json = await get(getUrl);
-    const user = serializeUser(json);
+    const json = await callUserShow(email);
+    if ("error" in json) return;
+
+    const user = serializeUser(json.data);
 
     dispatch(userActions.fetchUser.done({ result: user, params: {} }));
-  } else if (json.line_user) {
-    const user = serializeUser(json);
-    const lineUser: Partial<LineUserState> = serializeLineUser(json.line_user);
-    lineUser.relatedUser = true;
-    const weather = serializeWeather(json.line_user.weather);
+  } else if (json.included) {
+    const user = serializeUser(json.data);
+    const lineUser = serializeLineUser(json.included[0]);
+    const weather = serializeWeather(json.included[1]);
 
     dispatch(userActions.fetchUser.done({ result: user, params: {} }));
     dispatch(
-      lineUserActions.fetchLineUser.done({ result: lineUser, params: {} })
+      lineUserActions.relateUser.done({ result: lineUser, params: {} })
     );
     dispatch(weatherActions.fetchWeather.done({ result: weather, params: {} }));
   } else {
-    const user = serializeUser(json);
+    const user = serializeUser(json.data);
 
     dispatch(userActions.fetchUser.done({ result: user, params: {} }));
   }

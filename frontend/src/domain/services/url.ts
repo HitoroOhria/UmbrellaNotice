@@ -1,5 +1,5 @@
 import { isProd, DOMAIN } from "./app";
-import { Resource } from "../entity/backend";
+import { Resource } from "../entity/backendApi";
 
 export const ORIGIN = {
   DEV: `http://${DOMAIN.DEV}`,

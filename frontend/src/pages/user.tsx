@@ -153,7 +153,10 @@ const EditUser: FC = () => {
   const cognitoUser = useSelector((state: RootState) => state.cognito.user);
 
   useEffect(() => {
-    dispatch(fetchData(cognitoUser?.attributes.email));
+    if (cognitoUser) {
+      dispatch(fetchData(cognitoUser.attributes.email));
+      dispatch(userActions.setUserValue({ email: cognitoUser.attributes.email }));
+    }
   }, [cognitoUser?.attributes.email]);
 
   const handleChange = (member: Partial<UserState>) =>

@@ -3,16 +3,17 @@ import { Dispatch } from "redux";
 import weatherActions from "./actions";
 import lineUserActions from "../lineUser/actions";
 
-import { put } from "../../domain/services/http";
-import { BACKEND_URL } from "../../domain/services/url";
 import { loadingAlert, openAlert } from "../../domain/services/alert";
 import {
+  callLineUserUpdate,
+  callWeatherUpdate,
   serializeLineUser,
   serializeWeather,
-} from "../../domain/services/serialize";
+} from "../../domain/services/backendApi";
 
 import { LineUserState } from "../../domain/entity/lineUser";
 import { WeatherState } from "../../domain/entity/weather";
+import { updateWeatherAttr } from "../../domain/entity/backendApi";
 
 export const updateWeather = (
   lineUser: LineUserState,
@@ -20,13 +21,11 @@ export const updateWeather = (
 ) => async (dispatch: Dispatch) => {
   loadingAlert(dispatch);
 
-  const lineUserUrl = BACKEND_URL.LINE_USER(lineUser.id);
   const lineUserParams = {
     notice_time: lineUser.noticeTime,
     silent_notice: lineUser.silentNotice,
   };
 
-  const weatherUrl = BACKEND_URL.WEATHER(weather.id);
   const weatherParams = {
     city: weather.city,
     lat: weather.lat,
@@ -34,15 +33,15 @@ export const updateWeather = (
   };
 
   const [lineUserJson, weatherJson] = await Promise.all([
-    put(lineUserUrl, lineUserParams),
-    put(weatherUrl, weatherParams),
+    callLineUserUpdate(lineUser.id, lineUserParams),
+    callWeatherUpdate(weather.id, weatherParams as updateWeatherAttr),
   ]);
 
-  console.log("lineUserJson", lineUserJson);
-  console.log("weatherJson", weatherJson);
+  if ("error" in lineUserJson) return;
+  if ("error" in weatherJson) return;
 
-  const lineUserAttr = serializeLineUser(lineUserJson);
-  const weatherAttr = serializeWeather(weatherJson);
+  const lineUserAttr = serializeLineUser(lineUserJson.data);
+  const weatherAttr = serializeWeather(weatherJson.data);
 
   dispatch(
     lineUserActions.updateValue.done({ result: lineUserAttr, params: {} })

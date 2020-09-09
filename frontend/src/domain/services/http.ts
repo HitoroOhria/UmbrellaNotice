@@ -10,9 +10,6 @@ export const get = async (baseUrl: string, queryParams?: object) => {
 
   const resJson = await fetch(url, { headers }).then((res) => res.json());
 
-  console.log("reqUrl", url);
-  console.log("resJson", resJson);
-
   return resJson;
 };
 
@@ -34,6 +31,9 @@ export const put = async (url: string, params: object) => {
     Accept: "application/json",
     "Content-Type": "application/json",
   };
+
+  console.log("reqUrl", url);
+  console.log("body", body);
 
   return await fetch(url, { method, body, headers }).then((res) => res.json());
 };

@@ -4,32 +4,31 @@ import lineUserActions from "./actions";
 import weatherActions from "../weather/actions";
 
 import { loadingAlert, openAlert } from "../../domain/services/alert";
-import { BACKEND_URL } from "../../domain/services/url";
-import { get, post } from "../../domain/services/http";
 import {
+  callUserShow,
+  callUserRelateLineUser,
+  callUserReleaseLineUser,
   serializeLineUser,
   serializeWeather,
-} from "../../domain/services/serialize";
+} from "../../domain/services/backendApi";
 
 export const relateUser = (email: string, serialNumber: string) => async (
   dispatch: Dispatch
 ) => {
   loadingAlert(dispatch);
 
-  const url = BACKEND_URL.USER(email, "relate_line_user");
-  const params = { inherit_token: serialNumber };
-  const json = await post(url, params);
+  const json = await callUserRelateLineUser(email, serialNumber);
 
-  if (json.error) {
+  if ("error" in json) {
     openAlert(dispatch, "error", ["シリアル番号が間違っています。"]);
   } else {
-    const url = BACKEND_URL.USER(email);
-    const queryParams = { embed: "line_user.weather" };
+    const json = await callUserShow(email, "line_user.weather");
 
-    const json = await get(url, queryParams);
+    if ("error" in json) return;
+    if (!json.included) return;
 
-    const lineUser = serializeLineUser(json.line_user);
-    const weather = serializeWeather(json.line_user.weather);
+    const lineUser = serializeLineUser(json.included[0]);
+    const weather = serializeWeather(json.included[1]);
 
     dispatch(lineUserActions.relateUser.done({ result: lineUser, params: {} }));
     dispatch(weatherActions.relateUser.done({ result: weather, params: {} }));
@@ -40,9 +39,7 @@ export const relateUser = (email: string, serialNumber: string) => async (
 export const releaseUser = (email: string) => async (dispatch: Dispatch) => {
   loadingAlert(dispatch);
 
-  const url = BACKEND_URL.USER(email, "release_line_user");
-
-  await post(url);
+  await callUserReleaseLineUser(email);
 
   dispatch(lineUserActions.releaseUser.done({ result: {}, params: {} }));
   openAlert(dispatch, "success", ["連携を解除しました！"]);
