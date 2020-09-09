@@ -1,11 +1,12 @@
 /** @jsx jsx */
 import { FC, useEffect } from "react";
+import { GetServerSideProps } from "next";
 import { jsx } from "@emotion/core";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../domain/entity/rootState";
 
 import Amplify, { I18n } from "aws-amplify";
-import { onAuthUIStateChange } from "@aws-amplify/ui-components";
+import { onAuthUIStateChange, AuthState } from "@aws-amplify/ui-components";
 import {
   AmplifyAuthenticator,
   AmplifySignUp,
@@ -22,19 +23,24 @@ import PasswordInput from "../components/PasswordInput";
 import Button from "../components/Button";
 import Switch from "../components/Switch";
 import Dialog from "../components/Dialog";
+import Paper from "../components/Paper";
 
 import userActions from "../store/user/actions";
-import lineUserActions from "../store/lineUser/actions";
-import weahterActions from "../store/weather/actions";
-import dialogActinos from "../store/dialog/actions";
-import cognitoActions from "../store/cognito/actions";
-
 import {
+  fetchData,
   changeCognitoUserPassword,
   updateCognitoUser,
 } from "../store/user/effects";
+import lineUserActions from "../store/lineUser/actions";
+import { relateUser, releaseUser } from "../store/lineUser/effects";
+import weahterActions from "../store/weather/actions";
+import { updateWeather } from "../store/weather/effects";
+import dialogActinos from "../store/dialog/actions";
+import cognitoActions from "../store/cognito/actions";
+import { signIn } from "../store/cognito/effects";
 
 import { UserState } from "../domain/entity/user";
+import { LineUserState } from "../domain/entity/lineUser";
 import { WeatherState } from "../domain/entity/weather";
 import { ExCognitoUser } from "../domain/entity/cognito";
 
@@ -45,11 +51,18 @@ import {
 } from "../domain/services/amplify";
 import { USER_LABEL } from "../domain/services/user";
 import { WEATHER_LABEL } from "../domain/services/weather";
+import { INFO_TEXT } from "../domain/services/information";
+import { TEST_USER } from "../domain/services/testUser";
+import { openAlert } from "../domain/services/alert";
 
 // Amplify Setting
 Amplify.configure(AMPLIFY_CONFIGURE);
 I18n.putVocabularies(AMPLIFY_DICT);
 I18n.setLanguage("ja");
+
+export const getServerSideProps: GetServerSideProps = async (_context) => {
+  return { props: {} };
+};
 
 const User: FC = () => {
   const dispatch = useDispatch();
@@ -80,7 +93,7 @@ const User: FC = () => {
           formFields={AMPLIFY_FORM.SIGN_IN}
         />
 
-        {/* Contnet of User Sgined In */}
+        {/* Contnet for User Sgined In */}
         <div>
           <Heading>Profile Edit</Heading>
           <div
@@ -93,29 +106,70 @@ const User: FC = () => {
             <EditUser />
 
             <ItemHeading itemName={"LINE アカウント"} />
-            <EditLineUser />
+            <LineUserRelation />
 
             <ItemHeading itemName={"天気予報"} />
             <EditWeather />
           </div>
         </div>
       </AmplifyAuthenticator>
+      <TestLogIn />
     </Layout>
   );
 };
 
 export default User;
 
+const TestLogIn: FC = () => {
+  const dispatch = useDispatch();
+  const cognitoAuth = useSelector((state: RootState) => state.cognito.auth);
+
+  const signedIn = cognitoAuth === AuthState.SignedIn;
+
+  const handleClick = () => {
+    dispatch(signIn(TEST_USER.EMAIL, TEST_USER.PASSWORD));
+  };
+
+  return (
+    <div
+      css={{
+        margin: "20px auto 0 auto",
+        maxWidth: 460,
+        display: signedIn ? "none" : "block",
+      }}
+    >
+      <Button
+        submitText={"テストユーザーとしてログインする"}
+        onClick={handleClick}
+        contained
+      />
+    </div>
+  );
+};
+
 const EditUser: FC = () => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user);
   const cognitoUser = useSelector((state: RootState) => state.cognito.user);
 
+  useEffect(() => {
+    if (cognitoUser) {
+      dispatch(fetchData(cognitoUser.attributes.email));
+      dispatch(userActions.setUserValue({ email: cognitoUser.attributes.email }));
+    }
+  }, [cognitoUser?.attributes.email]);
+
   const handleChange = (member: Partial<UserState>) =>
     dispatch(userActions.setUserValue(member));
 
-  const handleEmailButtonClick = () =>
+  const handleEmailButtonClick = () => {
+    if (user.email === cognitoUser?.attributes.email)
+      return openAlert(dispatch, "warning", [
+        "同じメールアドレスには変更できません。",
+      ]);
+
     dispatch(dialogActinos.openUserEmailDialog({}));
+  };
 
   const toggleOldShowPassword = () =>
     dispatch(userActions.toggleShowOldPassword({}));
@@ -141,7 +195,7 @@ const EditUser: FC = () => {
         value={user.email}
         onChange={(event) => handleChange({ email: event.target.value })}
       />
-      <Button submitText={"確認する"} onClick={handleEmailButtonClick} />
+      <Button submitText={"変更する"} onClick={handleEmailButtonClick} />
       {/* Old Password */}
       <PasswordInput
         label={USER_LABEL.OLD_PASSWORD}
@@ -175,7 +229,13 @@ const UerEmailDialog: FC = () => {
   const handleClose = () => dispatch(dialogActinos.closeUserEmailDialog({}));
 
   const handleAgree = () => {
-    // sameEmail ? alertSameEmail : updateEmail
+    if (cognitoUser?.attributes.email == TEST_USER.EMAIL) {
+      openAlert(dispatch, "error", [
+        "テストユーザーのため、メールアドレスの変更はできません。",
+      ]);
+      return handleClose();
+    }
+
     dispatch(
       updateCognitoUser(cognitoUser as CognitoUser, {
         email: userEmail,
@@ -187,7 +247,7 @@ const UerEmailDialog: FC = () => {
   return (
     <Dialog
       open={dialogOpen}
-      title={"メールアドレスを変更しますか？"}
+      title={"メールアドレスの変更"}
       onClose={handleClose}
       onNoClick={handleClose}
       onYesClick={handleAgree}
@@ -203,17 +263,33 @@ const UerEmailDialog: FC = () => {
   );
 };
 
-const EditLineUser: FC = () => {
+const LineUserRelation: FC = () => {
   const dispatch = useDispatch();
   const lineUser = useSelector((state: RootState) => state.lineUser);
 
+  const cognitoUserEmail = useSelector(
+    (state: RootState) => state.cognito.user?.attributes.email
+  );
+
   const handleChange = (serialNumber: string) => {
-    dispatch(lineUserActions.setSerialNumber(serialNumber));
+    dispatch(lineUserActions.setValue({ serialNumber }));
   };
 
-  return lineUser.related ? (
-    <div css={{ textAlign: "center" }}>
-      <Button submitText={"連携済みです！"} contained />
+  const handleRelateClick = () => {
+    cognitoUserEmail &&
+      dispatch(relateUser(cognitoUserEmail, lineUser.serialNumber));
+  };
+
+  const handleReleaseClick = () => {
+    cognitoUserEmail && dispatch(releaseUser(cognitoUserEmail));
+  };
+
+  return lineUser.relatedUser ? (
+    <div css={{ marginTop: 20 }}>
+      <Paper>
+        <p>LINEアカウントと連携済みです！</p>
+      </Paper>
+      <Button submitText={"連携を解除する"} onClick={handleReleaseClick} />
     </div>
   ) : (
     <div>
@@ -221,43 +297,59 @@ const EditLineUser: FC = () => {
         label={"シリアル番号"}
         value={lineUser.serialNumber}
         onChange={(event) => handleChange(event.target.value)}
+        info
+        text={INFO_TEXT.SERIAL_NUMBER}
       />
-      <Button submitText={"連携する"} />
+      <Button submitText={"連携する"} onClick={handleRelateClick} />
     </div>
   );
 };
 
 const EditWeather: FC = () => {
   const dispatch = useDispatch();
+  const lineUser = useSelector((state: RootState) => state.lineUser);
   const weather = useSelector((state: RootState) => state.weather);
 
-  const handleChange = (member: Partial<WeatherState>) =>
-    dispatch(weahterActions.setWeatherValue(member));
+  const handleLineUserChange = (member: Partial<LineUserState>) => {
+    dispatch(lineUserActions.setValue(member));
+  };
 
-  const toggleChecked = () => dispatch(weahterActions.toggleSilentNotice({}));
+  const handleWeatherChange = (member: Partial<WeatherState>) =>
+    dispatch(weahterActions.setValue(member));
 
-  return (
+  const toggleChecked = () => dispatch(lineUserActions.toggleSilentNotice({}));
+
+  const handleClick = () => {
+    dispatch(updateWeather(lineUser, weather));
+  };
+
+  return lineUser.relatedUser ? (
     <div>
       <Input
         label={WEATHER_LABEL.LOCATION}
-        value={weather.location}
-        onChange={(event) => handleChange({ location: event.target.value })}
+        value={weather.city}
+        onChange={(event) => handleWeatherChange({ city: event.target.value })}
       />
       <DateInput
         label={WEATHER_LABEL.NOTICE_TIME}
-        value={weather.noticeTime}
+        value={lineUser.noticeTime}
         idPref={"line_user"}
-        onChange={(event) => handleChange({ noticeTime: event.target.value })}
+        onChange={(event) =>
+          handleLineUserChange({ noticeTime: event.target.value })
+        }
       />
       <Switch
         label={WEATHER_LABEL.SILENT_NOTICE}
-        checked={weather.silentNotice}
+        checked={lineUser.silentNotice}
         onChange={toggleChecked}
       />
-      <Button
-        submitText={"変更する"}
-        // onClick={handleSave}
-      />
+      <Button submitText={"変更する"} onClick={handleClick} />
+    </div>
+  ) : (
+    <div css={{ marginTop: 20 }}>
+      <Paper>
+        <p>LINEアカウントと連携してください！</p>
+      </Paper>
     </div>
   );
 };

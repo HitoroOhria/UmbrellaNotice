@@ -6,8 +6,11 @@
 
 LINE公式アカウントにて、毎朝設定した地域の天気予報を取得し、雨が降る場合のみ通知を送信するアプリケーションです。
 
- - [Web ホームページ](https://www.umbrellanotice.work)
- - [LINE 公式アカウント](https://lin.ee/Q28r1Nv)
+ - [Web ホームページ](https://www.umbrellanotice.work){:target="_blank"}
+ - [LINE 公式アカウント](https://lin.ee/Q28r1Nv){:target="_blank"}
+
+Webはテストユーザーログインで、LINE公式アカウントは登録無しでサクッと利用できます。<br>
+ぜひ遊びに来てください！:coffee:
 
 ## アプリケーションの画面
 
@@ -23,13 +26,12 @@ LINE公式アカウントにて、毎朝設定した地域の天気予報を取�
 
 ## クラウドアーキテクチャ
 
-![クラウドアーキテクチャ](https://user-images.githubusercontent.com/60952535/92186763-c79fdc80-ee92-11ea-8a76-ef5b5e8d59ca.png)
+![クラウドアーキテクチャ](https://user-images.githubusercontent.com/60952535/92228785-605e4880-eee3-11ea-8c89-f67bbb326b14.png)
 
 ## 特に見ていただきたい点
 
 - ### インフラ面
     - Dockerを使い、ECS(EC2)/ECRで本番環境をスケーラブルに運用している点。
-    - スケーラビリティ向上のため、コンテナイメージからライブラリ群を切り出し、超軽量で本番運用している点。
     - Terraformを使い、本番環境インフラをコードで管理している点。
     - CDNを使い、アセットファイルを高速配信している点、
     - CircleCIを使い、CI/CDパイプラインを構築している点。
@@ -38,8 +40,8 @@ LINE公式アカウントにて、毎朝設定した地域の天気予報を取�
     - 外部API（OpenWeatherMapAPI,GeocodingAPI）を利用し、機能を追加している点。
     - Sidekiqを採用し、大規模アクセスを考慮した非同期処理を実装している点。
     - APIパラメータのバリデーションを別クラスに切り出し、可読性・保守性を向上している点。
-    - 配信用のLINEメッセージを動的に作成できる[独自ライブラリ](https://github.com/HirotoOhria/line_message_creator)を作成し、組み込んでいる点。
-    - E2Eテストにて高カバレッジ(95.14%)を実現できている点。
+    - 配信用のLINEメッセージを動的に作成できる[独自ライブラリ](https://github.com/HirotoOhria/line_message_creator){:target="_blank"}を作成し、組み込んでいる点。
+    - E2Eテストにて高カバレッジ(98.17%)を実現できている点。
 
 - ### フロントエンド面
     - Next.jsを採用し、SSRを実装している点。
@@ -93,6 +95,7 @@ LINE公式アカウントにて、毎朝設定した地域の天気予報を取�
         - Redux
         - Redux Thunk
         - Amplify
+   - Next.js
 
 - **バックエンド**
    - Unicorn

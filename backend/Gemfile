@@ -10,6 +10,7 @@ gem 'unicorn',  '5.4.1'
 gem 'unicorn-worker-killer'
 gem 'puma',     '~> 4.1'
 gem 'bootsnap', '>= 1.4.2', require: false
+gem 'tzinfo-data'
 gem 'rjb'
 gem 'zipang'
 gem 'romkan'
@@ -23,10 +24,11 @@ gem 'line_message_creator'
 # gem 'rack-cors'
 
 group :development, :test do
+  gem 'debase'
+  gem 'ruby-debug-ide'
   gem 'pry-rails'
-  gem 'pry-doc'
   gem 'pry-remote'
-  gem 'pry-byebug'
+  gem 'pry-doc'
   gem 'rails-erd'
   gem 'brakeman'
 end
@@ -49,5 +51,3 @@ group :test do
   gem 'bullet'
   gem 'simplecov', require: false
 end
-
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]

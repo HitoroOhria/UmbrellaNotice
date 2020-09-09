@@ -16,7 +16,7 @@ class LineUserValidator < ApplicationValidator
 
   validates :silent_notice,
             inclusion: {
-              in: %w[true false],
+              in: [true, false, 'true', 'false'],
               message: ->(obj, _data) { obj.error_msg[:SILENT_NOTICE][:VALIDATE] }
             },
             if: :silent_notice

@@ -102,6 +102,11 @@ jobs:
           dockerfile:            ./docker/next/Dockerfile.pro
           repo:                  umbrellanotice-next
           tag:                   "${CIRCLE_SHA1}"
+          extra-build-args:      "--build-arg CIRCLE_SHA1=$CIRCLE_SHA1 \
+                                  --build-arg REACT_APP_AMPLIFY_REGION=$REACT_APP_AMPLIFY_REGION \
+                                  --build-arg REACT_APP_AMPLIFY_USER_POOL_ID=$REACT_APP_AMPLIFY_USER_POOL_ID \
+                                  --build-arg REACT_APP_AMPLIFY_WEB_CLIENT_ID=$REACT_APP_AMPLIFY_WEB_CLIENT_ID \
+                                  --build-arg REACT_APP_AMPLIFY_IDENTITY_POOL_ID=$REACT_APP_AMPLIFY_IDENTITY_POOL_ID"
 
   Push-assets-to-S3:
     working_directory: ~/umbrellanotice
@@ -119,7 +124,7 @@ jobs:
           name: Build next-app
           command: |
             sudo npm install
-            npm run-script build
+            npm run build
           working_directory: ~/umbrellanotice/frontend
       - aws-s3/sync:
           arguments: |
@@ -132,26 +137,26 @@ jobs:
           aws-access-key-id:     AWS_ACCESS_KEY_ID_S3_ASSETS_PUSHER
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY_S3_ASSETS_PUSHER
 
-  Run-install-node-modules-task:
-    docker:
-      - image: 'circleci/python:3.7.1'
-    environment:
-      AWS_PAGER: ""
-    steps:
-      - setup_remote_docker
-      - aws-cli/install
-      - aws-cli/setup:
-          aws-region:            AWS_REGION
-          aws-access-key-id:     AWS_ACCESS_KEY_ID_ECS_ECR_USER
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
+#  Run-install-node-modules-task:
+#    docker:
+#      - image: 'circleci/python:3.7.1'
+#    environment:
+#      AWS_PAGER: ""
+#    steps:
+#      - setup_remote_docker
+#      - aws-cli/install
+#      - aws-cli/setup:
+#          aws-region:            AWS_REGION
+#          aws-access-key-id:     AWS_ACCESS_KEY_ID_ECS_ECR_USER
+#          aws-secret-access-key: AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
 #      - aws-ecs/update-task-definition:
 #          family:                       umbrellanotice_install_node_modules
 #          container-image-name-updates: "container=install_node_modules,tag=${CIRCLE_SHA1}"
-      - aws-ecs/run-task:
-          cluster:         $AWS_ECS_ARN
-          task-definition: umbrellanotice_install_node_modules
-          awsvpc:          false
-          launch-type:     EC2
+#      - aws-ecs/run-task:
+#          cluster:            $AWS_ECS_ARN
+#          task-definition:    umbrellanotice_install_node_modules
+#          subnet-ids:         $AWS_FARGATE_SUBNET_IDS
+#          security-group-ids: $AWS_FARGATE_SG_IDS
 
   Push-rails-image:
     docker:
@@ -203,10 +208,10 @@ jobs:
           family:                       umbrellanotice_db_migrate
           container-image-name-updates: "container=db_migrate,tag=${CIRCLE_SHA1}"
       - aws-ecs/run-task:
-          cluster:         $AWS_ECS_ARN
-          task-definition: umbrellanotice_db_migrate
-          awsvpc:          false
-          launch-type:     EC2
+          cluster:            $AWS_ECS_ARN
+          task-definition:    umbrellanotice_db_migrate
+          subnet-ids:         $AWS_FARGATE_SUBNET_IDS
+          security-group-ids: $AWS_FARGATE_SG_IDS
 
 orbs:
   aws-cli: circleci/aws-cli@1.3.0
@@ -242,16 +247,16 @@ workflows:
             branches:
               only: master
 
-      - Run-install-node-modules-task:
-          requires:
-            - Push-next-image
-          filters:
-            branches:
-              only: master
+#      - Run-install-node-modules-task:
+#          requires:
+#            - Push-next-image
+#          filters:
+#            branches:
+#              only: master
 
       - Push-rails-image:
-          requires:
-            - RuboCop
+#          requires:
+#            - Run-install-node-modules-task
           filters:
             branches:
               only: master
@@ -274,7 +279,7 @@ workflows:
       - aws-ecs/deploy-service-update:
           name:                         Update-nginx-container-of-ECS
           family:                       'umbrellanotice_task'
-          service-name:                 'umbrellanotice-rails'
+          service-name:                 'app-1a'
           cluster-name:                 $AWS_ECS_ARN
           aws-access-key-id:            $AWS_ACCESS_KEY_ID_ECS_ECR_USER
           aws-secret-access-key:        $AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
@@ -288,41 +293,32 @@ workflows:
       - aws-ecs/deploy-service-update:
           name:                         Update-next-container-of-ECS
           family:                       'umbrellanotice_task'
-          service-name:                 'umbrellanotice-rails'
+          service-name:                 'app-1a'
           cluster-name:                 $AWS_ECS_ARN
           aws-access-key-id:            $AWS_ACCESS_KEY_ID_ECS_ECR_USER
           aws-secret-access-key:        $AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
           container-image-name-updates: "container=next,tag=${CIRCLE_SHA1}"
           requires:
-            - Run-db-migrate-task
-            - Push-assets-to-S3
-            - Push-nginx-image
-            - Push-rails-image
+            - Update-nginx-container-of-ECS
 
       - aws-ecs/deploy-service-update:
-          name:                         Update-umbrellanotice-container-of-ECS
+          name:                         Update-rails-container-of-ECS
           family:                       'umbrellanotice_task'
-          service-name:                 'umbrellanotice-rails'
+          service-name:                 'app-1a'
           cluster-name:                 $AWS_ECS_ARN
           aws-access-key-id:            $AWS_ACCESS_KEY_ID_ECS_ECR_USER
           aws-secret-access-key:        $AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
-          container-image-name-updates: "container=umbrellanotice,tag=${CIRCLE_SHA1}"
+          container-image-name-updates: "container=rails,tag=${CIRCLE_SHA1}"
           requires:
-            - Run-db-migrate-task
-            - Push-assets-to-S3
-            - Push-nginx-image
-            - Push-rails-image
+            - Update-next-container-of-ECS
 
       - aws-ecs/deploy-service-update:
           name:                         Update-sidekiq-container-of-ECS
           family:                       'umbrellanotice_redis'
-          service-name:                 'umbrellanotice-sidekiq'
+          service-name:                 'sidekiq--1a'
           cluster-name:                 $AWS_ECS_ARN
           aws-access-key-id:            $AWS_ACCESS_KEY_ID_ECS_ECR_USER
           aws-secret-access-key:        $AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
           container-image-name-updates: "container=sidekiq,tag=${CIRCLE_SHA1}"
           requires:
-            - Run-db-migrate-task
-            - Push-assets-to-S3
-            - Push-nginx-image
-            - Push-rails-image
+            - Update-rails-container-of-ECS

@@ -13,6 +13,7 @@ services:
       MYSQL_ROOT_PASSWORD: password
     volumes:
       - ./backend:/rails-app
+      - bundler-libs:/rails-app/vendor/bundle
       - public-data:/rails-app/public
       - log-data:/rails-app/log
       - socket-data:/rails-app/tmp/sockets
@@ -27,8 +28,12 @@ services:
     build:
       context: ./backend
       dockerfile: ./docker/rails/Dockerfile
+    environment:
+      TZ: Asia/Tokyo
+      MYSQL_ROOT_PASSWORD: password
     volumes:
       - ./backend:/rails-app
+      - bundler-libs:/rails-app/vendor/bundle
       - public-data:/rails-app/public
       - log-data:/rails-app/log
       - socket-data:/rails-app/tmp/sockets
@@ -68,12 +73,12 @@ services:
     build:
       context: ./frontend
       dockerfile: ./docker/next/Dockerfile
+    environment:
+      CHOKIDAR_USEPOLLING: 'true'
     volumes:
       - ./frontend:/next-app:cached
       - node-modules:/next-app/node_modules
       - yarn-cache:/usr/local/share/.cache/yarn/v6
-    ports:
-      - 3000:3000
     tty: true
     stdin_open: true
 
@@ -82,4 +87,5 @@ volumes:
   log-data:
   socket-data:
   node-modules:
+  bundler-libs:
   yarn-cache:

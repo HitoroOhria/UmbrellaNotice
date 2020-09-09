@@ -5,7 +5,7 @@ class Api::V1::LineUsersController < ApplicationController
     return render_400(line_user_validator) if line_user_validator.invalid?
     return render_404(line_user_validator) unless (@line_user = line_user_validator.find_by_id)
 
-    render_200(@line_user, params[:embed].to_s) # change '' if params[:embed] is nil.
+    render_200(@line_user, params)
   end
 
   # PUT /api/v1/line_users/:id

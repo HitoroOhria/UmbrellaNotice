@@ -1,5 +1,15 @@
 export type WeatherState = {
-  location: string;
-  noticeTime: string;
-  silentNotice: boolean;
+  id: number;
+  city: string;
+  lat: Number | undefined;
+  lon: Number | undefined;
 };
+
+export type ApiResWeather = {
+  id: number;
+  city: string;
+  lat: number;
+  lon: number;
+};
+
+export type UpdateWatherAttr = Omit<WeatherState, "id">;

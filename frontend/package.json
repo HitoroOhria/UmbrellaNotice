@@ -26,6 +26,7 @@
     "husky": "^4.2.5",
     "lint-staged": "^10.2.0",
     "lodash": "^4.17.15",
+    "query-string": "^6.13.1",
     "next": "^9.5.3",
     "next-images": "^1.4.1",
     "react": "^16.13.1",
@@ -47,7 +48,7 @@
     "debug": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start -p 3000",
-    "prod": "NODE_ENV=production next start -p 3000",
+    "prodStart": "NODE_ENV=production next start -p 3000",
     "type-check": "tsc"
   },
   "eslintConfig": {

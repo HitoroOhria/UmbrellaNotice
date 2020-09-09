@@ -19,7 +19,7 @@ const DateInput: FC<Props> = ({ label, value, idPref, onChange }) => {
       id={`${idPref}-time`}
       label={label}
       type="time"
-      defaultValue={value}
+      value={value}
       onChange={onChange}
       InputLabelProps={{ shrink: true }}
       inputProps={{ step: 300 }} // 5 min

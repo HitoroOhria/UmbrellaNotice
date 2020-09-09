@@ -1,6 +1,5 @@
 FROM ruby:2.7.1-alpine
 
-ENV ENV              /root/.aliases
 ENV ENTRYKIT_VERSION 0.4.0
 ENV JAVA_HOME        /usr/lib/jvm/java-11-openjdk
 ENV PATH             $JAVA_HOME/bin:/rails-app/bin:$PATH
@@ -23,23 +22,23 @@ RUN apk --update add \
        mysql-dev \
        less
 
-ADD ./docker/rails/aliases.sh /root/.aliases
+ADD ./docker/rails/aliases.sh /root/.profile
 
 # copy dirctory for up container with no bind in CircleCI.
 ADD . /rails-app
 WORKDIR /rails-app
 
 RUN bundle config set without 'production' \
-  && bundle config set path '/rails-app/vendor/bundle'
+  && bundle config set path '/rails-app/vendor/bundle' \
+  && bundle install
 
 ENTRYPOINT [ \
   "switch", \
         "sidekiq=bundle exec sidekiq -q sidekiq", "--", \
-  "prehook", "bundle install", "--", \
+  "prehook", "echo sleep 45 seconds for finish MySql container set up.", "--", \
+  "prehook", "sleep 45", "--", \
+  "prehook", "echo finish sleep.", "--", \
   "prehook", "bundle exec rails db:create", "--", \
   "prehook", "bundle exec rails db:migrate", "--", \
-  "prehook", "bundle exec rails db:seed", "--", \
-  "switch", \
-        "light_mode=bundle exec rails s -p 80", "--", \
   "prehook", "development=bundle exec unicorn_rails -c /rails-app/config/unicorn.rb -E development", "--" \
 ]

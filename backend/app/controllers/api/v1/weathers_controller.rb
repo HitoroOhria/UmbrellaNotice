@@ -5,7 +5,7 @@ class Api::V1::WeathersController < ApplicationController
     return render_400(weather_validator) if weather_validator.invalid?
     return render_404(weather_validator) unless (@weather = weather_validator.find_by_id)
 
-    render_200(@weather, params[:embed].to_s) # change '' if params[:embed] is nil.
+    render_200(@weather, params)
   end
 
   # PUT /api/v1/weathers/:id

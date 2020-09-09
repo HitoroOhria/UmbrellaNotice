@@ -3,21 +3,17 @@ require 'rails_helper'
 RSpec.describe "Api::V1::LineUsers", type: :request do
   let(:error_msg)    { ERROR_MSG[:LINE_USER] }
   let(:update_attrs) { UPDATE_ATTRS[:LINE_USER] }
+  let(:success_json) { { 'success' => true } }
 
   # Define line_user.
-  let(:success_response) {
+  let(:line_user_data) {
     {
-      'id' => line_user.id,
-      'notice_time' => line_user.notice_time,
-      'silent_notice' => line_user.silent_notice
-    }
-  }
-
-  # Define user if used.
-  let(:user_response) {
-    {
-      'id' => user.id,
-      'email' => user.email
+      'id' => line_user.id.to_s,
+      'type' => 'lineUser',
+      'attributes' => {
+        'noticeTime' => line_user.notice_time,
+        'silentNotice' => line_user.silent_notice
+      }
     }
   }
 
@@ -28,7 +24,7 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
     }
   }
 
-  subject { response }
+  subject { JSON.parse(response.body)['data']&.slice("id", "type", "attributes") }
 
   describe '#show' do
     let!(:line_user) { create(:line_user) }
@@ -41,25 +37,14 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
 
     describe '正常系' do
       context 'embedがnilのとき' do
-        it { is_expected.to have_http_status 200 }
+        it "HTTPステータスコード200を返すこと" do
+          expect(response).to have_http_status 200
+        end
 
         it 'idに対応したLineLineUserモデル属性のJSONを返すこと' do
-          expect(JSON.parse(response.body)).to eq success_response
+          is_expected.to eq line_user_data
         end
       end
-
-      # TODO: Why response.body['user'] = nil ?
-      # context 'embedがuserのとき' do
-      #   let(:embed) { 'user' }
-      #   let!(:user) { create(:user, line_user: line_user) }
-      #
-      #   it { is_expected.to have_http_status 200 }
-      #
-      #   it 'UserとLineUserの属性のJSONを返すこと' do
-      #     success_response['user'] = user_response
-      #     expect(JSON.parse(response.body)).to eq success_response
-      #   end
-      # end
     end
 
     describe '異常系' do
@@ -69,7 +54,9 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
           { 'id' => [error_msg[:ID][:NOT_FOUND][id]] }
         }
 
-        it { is_expected.to have_http_status 404 }
+        it "HTTPステータスコード404を返すこと" do
+          expect(response).to have_http_status 404
+        end
 
         it 'エラーレスポンスを返すこと' do
           expect(JSON.parse(response.body)).to eq error_response
@@ -96,22 +83,41 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
       describe 'notice_time' do
         let(:notice_time) { '19:00' }
 
-        it { is_expected.to have_http_status 200 }
+        it "HTTPステータスコード200を返すこと" do
+          expect(response).to have_http_status 200
+        end
 
         it '更新後のLineUserモデルの属性のJSONを返すこと' do
           line_user.notice_time = notice_time
-          expect(JSON.parse(response.body)).to eq success_response
+          is_expected.to eq line_user_data
         end
       end
 
       describe 'silent_notice' do
-        let(:silent_notice) { 'false' }
+        let(:silent_notice) { !line_user.silent_notice }
 
-        it { is_expected.to have_http_status 200 }
+        it "HTTPステータスコード200を返すこと" do
+          expect(response).to have_http_status 200
+        end
 
         it '更新後のLineUserモデルの属性のJSONを返すこと' do
           line_user.silent_notice = false
-          expect(JSON.parse(response.body)).to eq success_response
+          is_expected.to eq line_user_data
+        end
+      end
+
+      describe 'notice_time&silent_notice' do
+        let(:notice_time)   { '19:00' }
+        let(:silent_notice) { !line_user.silent_notice }
+
+        it "HTTPステータスコード200を返すこと" do
+          expect(response).to have_http_status 200
+        end
+
+        it '更新後のLineUserモデルの属性のJSONを返すこと' do
+          line_user.notice_time   = notice_time
+          line_user.silent_notice = false
+          is_expected.to eq line_user_data
         end
       end
     end
@@ -125,7 +131,9 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
             }
           }
 
-          it { is_expected.to have_http_status 400 }
+          it "HTTPステータスコード400を返すこと" do
+            expect(response).to have_http_status 400
+          end
 
           it 'エラーレスポンスを返すこと' do
             expect(JSON.parse(response.body)).to eq error_response
@@ -140,7 +148,9 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
             { 'notice_time' => [error_msg[:NOTICE_TIME][:VALIDATE]] }
           }
 
-          it { is_expected.to have_http_status 400 }
+          it "HTTPステータスコード400を返すこと" do
+            expect(response).to have_http_status 400
+          end
 
           it 'エラーレスポンスを返すこと' do
             expect(JSON.parse(response.body)).to eq error_response
@@ -155,7 +165,9 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
             { 'silent_notice' => [error_msg[:SILENT_NOTICE][:VALIDATE]] }
           }
 
-          it { is_expected.to have_http_status 400 }
+          it "HTTPステータスコード400を返すこと" do
+            expect(response).to have_http_status 400
+          end
 
           it 'エラーレスポンスを返すこと' do
             expect(JSON.parse(response.body)).to eq error_response
@@ -174,7 +186,9 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
     end
 
     describe '正常系' do
-      it { is_expected.to have_http_status 204 }
+      it "HTTPステータスコード204を返すこと" do
+        expect(response).to have_http_status 204
+      end
 
       it 'レスポンスボディは空であること' do
         expect(response.body).to be_empty
@@ -188,7 +202,9 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
           { 'id' => [error_msg[:ID][:NOT_FOUND][id]] }
         }
 
-        it { is_expected.to have_http_status 404 }
+        it "HTTPステータスコード404を返すこと" do
+          expect(response).to have_http_status 404
+        end
 
         it 'エラーレスポンスを返すこと' do
           expect(JSON.parse(response.body)).to eq error_response

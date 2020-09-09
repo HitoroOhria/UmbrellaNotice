@@ -21,6 +21,9 @@ module "base" {
 }
 
 ////TODO: not terraform conversion.
+//alienation:
+//  - target-group
+//
 //container:
 //  - ecs
 //  - rcr

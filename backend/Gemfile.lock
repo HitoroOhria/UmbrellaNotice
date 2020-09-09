@@ -69,7 +69,6 @@ GEM
     bullet (6.1.0)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
-    byebug (11.1.3)
     case_transform (0.2)
       activesupport
     choice (0.2.0)
@@ -78,6 +77,9 @@ GEM
     connection_pool (2.2.3)
     crass (1.0.6)
     database_cleaner (1.8.5)
+    debase (0.2.4.1)
+      debase-ruby_core_source (>= 0.10.2)
+    debase-ruby_core_source (0.10.10)
     diff-lcs (1.4.4)
     docile (1.3.2)
     erubi (1.9.0)
@@ -115,7 +117,7 @@ GEM
     mimemagic (0.3.5)
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
-    minitest (5.14.1)
+    minitest (5.14.2)
     msgpack (1.3.3)
     mysql2 (0.5.3)
     nio4r (2.5.2)
@@ -127,9 +129,6 @@ GEM
     pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    pry-byebug (3.9.0)
-      byebug (~> 11.0)
-      pry (~> 0.13.0)
     pry-doc (1.1.0)
       pry (~> 0.11)
       yard (~> 0.9.11)
@@ -240,6 +239,8 @@ GEM
       unicode-display_width (>= 1.4.0, < 2.0)
     rubocop-ast (0.3.0)
       parser (>= 2.7.1.4)
+    ruby-debug-ide (0.7.2)
+      rake (>= 0.8.1)
     ruby-graphviz (1.2.5)
       rexml
     ruby-progressbar (1.10.1)
@@ -269,6 +270,8 @@ GEM
     thread_safe (0.3.6)
     tzinfo (1.2.7)
       thread_safe (~> 0.1)
+    tzinfo-data (1.2020.1)
+      tzinfo (>= 1.0.0)
     unicode-display_width (1.7.0)
     unicorn (5.4.1)
       kgio (~> 2.6)
@@ -295,13 +298,13 @@ DEPENDENCIES
   brakeman
   bullet
   database_cleaner
+  debase
   factory_bot_rails
   faker
   line-bot-api
   line_message_creator
   listen (~> 3.2)
   mysql2 (>= 0.4.4)
-  pry-byebug
   pry-doc
   pry-rails
   pry-remote
@@ -316,6 +319,7 @@ DEPENDENCIES
   rspec-rails
   rspec-sidekiq
   rubocop
+  ruby-debug-ide
   sidekiq
   simplecov
   spring

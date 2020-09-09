@@ -1,5 +1,0 @@
-alias r='rails'
-alias rs='rspec'
-alias be='bundle exec'
-alias ber='bundle exec rials'
-alias bers='bundle exec rspec'

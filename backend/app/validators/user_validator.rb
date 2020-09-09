@@ -91,6 +91,14 @@ class UserValidator < ApplicationValidator
     add_error(:inherit_token, error_msg[:INHERIT_TOKEN][:NOT_FOUND][inherit_token])
   end
 
+  def release_line_user
+    return unless (user = find_by_email)
+    return unless (line_user = user.line_user)
+
+    line_user.user = nil
+    line_user.save!
+  end
+
   private
 
   # fetch errors form User when user.update.
