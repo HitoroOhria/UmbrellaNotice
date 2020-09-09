@@ -1,5 +1,6 @@
 FROM ruby:2.7.1-alpine
 
+ENV ENV              /root/.aliases
 ENV ENTRYKIT_VERSION 0.4.0
 ENV JAVA_HOME        /usr/lib/jvm/java-11-openjdk
 ENV PATH             $JAVA_HOME/bin:/rails-app/bin:$PATH
@@ -22,7 +23,7 @@ RUN apk --update add \
        mysql-dev \
        less
 
-ADD ./docker/rails/aliases.sh /root/.profile
+ADD ./docker/rails/aliases.sh /root/.aliases
 
 # copy dirctory for up container with no bind in CircleCI.
 ADD . /rails-app

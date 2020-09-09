@@ -1,7 +1,5 @@
 #!/bin/sh
 
-alias r='rails'
-alias rs='rspec'
-alias be='bundle exec'
-alias ber='bundle exec rials'
-alias bers='bundle exec rspec'
+alias r='bundle exec rails'
+alias rs='bundle exec rspec'
+alias remote='bundle exec pry-remote -p 4000'
