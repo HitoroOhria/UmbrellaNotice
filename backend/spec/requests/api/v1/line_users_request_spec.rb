@@ -94,13 +94,28 @@ RSpec.describe "Api::V1::LineUsers", type: :request do
       end
 
       describe 'silent_notice' do
-        let(:silent_notice) { 'false' }
+        let(:silent_notice) { !line_user.silent_notice }
 
         it "HTTPステータスコード200を返すこと" do
           expect(response).to have_http_status 200
         end
 
         it '更新後のLineUserモデルの属性のJSONを返すこと' do
+          line_user.silent_notice = false
+          is_expected.to eq line_user_data
+        end
+      end
+
+      describe 'notice_time&silent_notice' do
+        let(:notice_time)   { '19:00' }
+        let(:silent_notice) { !line_user.silent_notice }
+
+        it "HTTPステータスコード200を返すこと" do
+          expect(response).to have_http_status 200
+        end
+
+        it '更新後のLineUserモデルの属性のJSONを返すこと' do
+          line_user.notice_time   = notice_time
           line_user.silent_notice = false
           is_expected.to eq line_user_data
         end
