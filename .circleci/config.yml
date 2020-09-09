@@ -150,6 +150,8 @@ jobs:
 #          aws-access-key-id:     AWS_ACCESS_KEY_ID_ECS_ECR_USER
 #          aws-secret-access-key: AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
 #      - aws-ecs/update-task-definition:
+#          aws-access-key-id:     AWS_ACCESS_KEY_ID_ECS_ECR_USER
+#          aws-secret-access-key: AWS_SECRET_ACCESS_KEY_ECS_ECR_USER
 #          family:                       umbrellanotice_install_node_modules
 #          container-image-name-updates: "container=install_node_modules,tag=${CIRCLE_SHA1}"
 #      - aws-ecs/run-task:
@@ -199,6 +201,7 @@ jobs:
       - aws-ecs/run-task:
           cluster:               $AWS_ECS_ARN
           task-definition:       umbrellanotice_db_migrate
+          platform-version:      "1.3.0"
           subnet-ids:            $AWS_FARGATE_SUBNET_IDS
           security-group-ids:    $AWS_FARGATE_SG_IDS
 
