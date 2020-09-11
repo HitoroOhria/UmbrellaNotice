@@ -17,15 +17,13 @@ import {
 } from "services/backendApi";
 import { loadingAlert, openAlert } from "services/alert";
 
-export const fetchData = (email: string) => async (
-  dispatch: Dispatch
-) => {
+export const fetchData = (email: string) => async (dispatch: Dispatch) => {
   const json = await callUserShow(email, "line_user.weather");
 
   if ("error" in json) {
     await callUserCreate(email);
-
     const json = await callUserShow(email);
+
     if ("error" in json) return;
 
     const user = serializeUser(json.data);
@@ -37,9 +35,7 @@ export const fetchData = (email: string) => async (
     const weather = serializeWeather(json.included[1]);
 
     dispatch(userActions.fetchUser.done({ result: user, params: {} }));
-    dispatch(
-      lineUserActions.relateUser.done({ result: lineUser, params: {} })
-    );
+    dispatch(lineUserActions.relateUser.done({ result: lineUser, params: {} }));
     dispatch(weatherActions.fetchWeather.done({ result: weather, params: {} }));
   } else {
     const user = serializeUser(json.data);

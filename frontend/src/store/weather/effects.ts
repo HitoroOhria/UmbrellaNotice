@@ -37,17 +37,20 @@ export const updateWeather = (
     callWeatherUpdate(weather.id, weatherParams as updateWeatherAttr),
   ]);
 
-  if ("error" in lineUserJson) return;
-  if ("error" in weatherJson) return;
+  if ("error" in lineUserJson || "error" in weatherJson) {
+    openAlert(dispatch, "error", [
+      "無効な市名です。入力内容をご確認ください。",
+    ]);
+  } else {
+    const lineUserAttr = serializeLineUser(lineUserJson.data);
+    const weatherAttr = serializeWeather(weatherJson.data);
 
-  const lineUserAttr = serializeLineUser(lineUserJson.data);
-  const weatherAttr = serializeWeather(weatherJson.data);
-
-  dispatch(
-    lineUserActions.updateValue.done({ result: lineUserAttr, params: {} })
-  );
-  dispatch(
-    weatherActions.updateValue.done({ result: weatherAttr, params: {} })
-  );
-  openAlert(dispatch, "success", ["更新に成功しました！"]);
+    dispatch(
+      lineUserActions.updateValue.done({ result: lineUserAttr, params: {} })
+    );
+    dispatch(
+      weatherActions.updateValue.done({ result: weatherAttr, params: {} })
+    );
+    openAlert(dispatch, "success", ["更新に成功しました！"]);
+  }
 };
