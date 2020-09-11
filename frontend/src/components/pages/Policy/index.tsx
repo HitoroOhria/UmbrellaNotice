@@ -6,6 +6,8 @@ import Layout from "@/organisms/Layout";
 import ArticleLayout from "@/organisms/ArticleLayout";
 import Heading from "@/organisms/Heading";
 
+import { OUTSIDE_URL } from "constants/url";
+
 import { PolicyProps } from "types/policy";
 
 const Policy: FC<PolicyProps> = ({ displayArticle }) => {
