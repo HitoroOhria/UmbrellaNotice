@@ -9,7 +9,7 @@ type Props = {
 const Heading: FC<Props> = ({ children }) => {
   return (
     <h1 css={{ fontWeight: "lighter", textAlign: "center" }}>
-      <span css={{ paddingBottom: 10, borderBottom: "2px solid #ccc" }}>
+      <span css={{ paddingBottom: 10, borderBottom: "2px solid #7e8a97" }}>
         {children}
       </span>
     </h1>
