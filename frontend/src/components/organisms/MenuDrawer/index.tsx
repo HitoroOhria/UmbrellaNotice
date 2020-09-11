@@ -46,10 +46,10 @@ const MenuDrawer: FC<MenuDrawerProps> = ({menuDrawer, onClose, onLinkClick}) => 
         </div>
         {/* TODO: signedIn ? Profile : Sign in / Sifgn out  */}
         {/* Menu List */}
-        <div css={{ margin: "20px 25px 0 25px" }}>
+        <nav css={{ margin: "20px 25px 0 25px" }}>
           <ul css={{ listStyle: "none outside" }}>
+            {/* Parent List Items */}
             {MENU_DRAWER_ITEMS.map((LIST_ITEM) => (
-              // Parent List Item
               <li key={LIST_ITEM.NAME}>
                 <h2 css={{ marginTop: 10, color: "mediumaquamarine" }}>
                   {LIST_ITEM.NAME}
@@ -61,8 +61,8 @@ const MenuDrawer: FC<MenuDrawerProps> = ({menuDrawer, onClose, onLinkClick}) => 
                       listStyle: "none outside",
                     }}
                   >
+                    {/* Child List Items */}
                     {LIST_ITEM.ITEMS.map((CHILD_ITEM) => (
-                      // Child List Item
                       <li key={CHILD_ITEM.NAME}>
                         <h3
                           css={{
@@ -99,7 +99,7 @@ const MenuDrawer: FC<MenuDrawerProps> = ({menuDrawer, onClose, onLinkClick}) => 
               </li>
             ))}
           </ul>
-        </div>
+        </nav>
       </div>
     </Drawer>
   );

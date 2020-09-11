@@ -15,7 +15,7 @@ const Home: FC = () => {
   return (
     <Layout unHeaderOffset>
       {/* TopView */}
-      <div
+      <section
         css={css`
           height: 100vh;
           background-image: url(${topViewImage});
@@ -42,7 +42,7 @@ const Home: FC = () => {
             <p>万が一のときでも、雨に濡れないために。</p>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Content */}
       <div
@@ -51,7 +51,7 @@ const Home: FC = () => {
           margin: "100px auto 0 auto",
         }}
       >
-        <div css={{ marginTop: 20, textAlign: "center" }}>
+        <section css={{ marginTop: 20, textAlign: "center" }}>
           <Heading>簡単2ステップで開始</Heading>
           <div css={{ marginTop: 40 }}>
             <p>UmbrellaNoticeはLINE公式アカウントから通知を送信します。</p>
@@ -96,8 +96,8 @@ const Home: FC = () => {
               LINE 公式アカウントをフォロー
             </Button>
           </div>
-        </div>
-        <div css={{ marginTop: 70, textAlign: "center" }}>
+        </section>
+        <section css={{ marginTop: 70, textAlign: "center" }}>
           <Heading>もう雨に濡れませんように</Heading>
           <div css={{ marginTop: 40, p: { lineHeight: 2.7 } }}>
             <p>
@@ -123,7 +123,7 @@ const Home: FC = () => {
             </p>
             <p>UmbrellaNoticeから 通知が来た日のみ傘を持てば良いのです。</p>
           </div>
-        </div>
+        </section>
       </div>
     </Layout>
   );
