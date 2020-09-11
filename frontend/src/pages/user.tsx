@@ -1,9 +1,8 @@
 /** @jsx jsx */
-import { FC, useEffect } from "react";
+import { FC, useEffect, MouseEvent } from "react";
 import { GetServerSideProps } from "next";
 import { jsx } from "@emotion/core";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "types/rootState";
 
 import Amplify, { I18n } from "aws-amplify";
 import { onAuthUIStateChange, AuthState } from "@aws-amplify/ui-components";
@@ -26,10 +25,11 @@ import dialogActinos from "store/dialog/actions";
 import cognitoActions from "store/cognito/actions";
 import { signIn } from "store/cognito/effects";
 
-import { UserState } from "types/user";
-import { LineUserState } from "types/lineUser";
-import { WeatherState } from "types/weather";
-import { ExCognitoUser } from "types/cognito";
+import { RootState } from "types/store";
+import { UserState } from "types/store";
+import { LineUserState } from "types/store";
+import { WeatherState } from "types/store";
+import { ExCognitoUser } from "types/store";
 
 import { AMPLIFY_DICT, AMPLIFY_CONFIGURE } from "constants/amplify";
 import { TEST_USER } from "constants/testUser";
@@ -92,6 +92,8 @@ const UserPage: FC = () => {
 
     dispatch(dialogActinos.openUserEmailDialog({}));
   };
+
+  const handleMouseDownPassword = (event: MouseEvent) => event.preventDefault();
 
   const toggleOldShowPasswordIcon = () =>
     dispatch(userActions.toggleShowOldPassword({}));
@@ -157,6 +159,7 @@ const UserPage: FC = () => {
       onLineUserChange={handleLineUserChange}
       onWeatherChange={handleWeatherChange}
       // UserEditor
+      onMouseDownPasswod={handleMouseDownPassword}
       onOldPasswordIconClick={toggleOldShowPasswordIcon}
       onNewPasswordIconClick={toggleNewShowPasswordIcon}
       onChangeEmailClick={handleChangeEmailClick}

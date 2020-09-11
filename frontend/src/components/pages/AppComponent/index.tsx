@@ -7,7 +7,7 @@ import Footer from "@/organisms/Footer";
 import Alert from "@/organisms/Alert";
 import MenuDrawer from "@/organisms/MenuDrawer";
 
-import { AppProps } from "types/app";
+import { AppProps } from "types/components/pages";
 
 const App: FC<AppProps> = ({
   children,

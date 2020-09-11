@@ -1,17 +1,12 @@
 /** @jsx jsx */
-import { FC, ChangeEvent } from "react";
+import { FC } from "react";
 import { jsx } from "@emotion/core";
 
 import { TextField } from "@material-ui/core";
 
-type Props = {
-  label: string;
-  value: string;
-  idPref: string;
-  onChange: (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => any;
-};
+import { DateInputProps } from "types/components/organisms";
 
-const DateInput: FC<Props> = ({ label, value, idPref, onChange }) => {
+const DateInput: FC<DateInputProps> = ({ label, value, idPref, onChange }) => {
   return (
     <TextField
       style={{ margin: "12px 0" }}

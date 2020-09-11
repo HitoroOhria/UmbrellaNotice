@@ -20,7 +20,7 @@ import ItemHeading from "@/organisms/ItemHeading";
 
 import { AMPLIFY_FORM } from "constants/amplify";
 
-import { UserProps } from "types/user";
+import { UserProps } from "types/components/pages";
 
 const User: FC<UserProps> = ({
   user,
@@ -31,6 +31,7 @@ const User: FC<UserProps> = ({
   onWeatherChange,
 
   // UserEditor
+  onMouseDownPasswod,
   onOldPasswordIconClick,
   onNewPasswordIconClick,
   onChangeEmailClick,
@@ -69,7 +70,7 @@ const User: FC<UserProps> = ({
         />
 
         {/* Contnet for User Sgined In */}
-        <div>
+        <section>
           <Heading>Profile Edit</Heading>
           <div
             css={{
@@ -77,35 +78,42 @@ const User: FC<UserProps> = ({
               margin: "40px auto 0 auto",
             }}
           >
-            <ItemHeading itemName={"ユーザー"} />
-            <UserEditor
-              user={user}
-              onUserChange={onUserChange}
-              onChangeEmailClick={onChangeEmailClick}
-              onOldPasswordIconClick={onOldPasswordIconClick}
-              onNewPasswordIconClick={onNewPasswordIconClick}
-              onChangePasswordClick={onChangePasswordClick}
-            />
+            <section>
+              <ItemHeading itemName={"ユーザー"} />
+              <UserEditor
+                user={user}
+                onUserChange={onUserChange}
+                onChangeEmailClick={onChangeEmailClick}
+                onMouseDownPasswod={onMouseDownPasswod}
+                onOldPasswordIconClick={onOldPasswordIconClick}
+                onNewPasswordIconClick={onNewPasswordIconClick}
+                onChangePasswordClick={onChangePasswordClick}
+              />
+            </section>
 
-            <ItemHeading itemName={"LINE アカウント"} />
-            <LineUserRelator
-              lineUser={lineUser}
-              onLineUserChange={onLineUserChange}
-              onReleaseUserClick={onReleaseUserClick}
-              onRelateUserClick={onRelateUserClick}
-            />
+            <section>
+              <ItemHeading itemName={"LINE アカウント"} />
+              <LineUserRelator
+                lineUser={lineUser}
+                onLineUserChange={onLineUserChange}
+                onReleaseUserClick={onReleaseUserClick}
+                onRelateUserClick={onRelateUserClick}
+              />
+            </section>
 
-            <ItemHeading itemName={"天気予報"} />
-            <WeatherEditor
-              lineUser={lineUser}
-              weather={weather}
-              onLineUserChange={onLineUserChange}
-              onWeatherChange={onWeatherChange}
-              onSilentNoticeChange={onSilentNoticeChange}
-              onWeatherEditorClick={onWeatherEditorClick}
-            />
+            <section>
+              <ItemHeading itemName={"天気予報"} />
+              <WeatherEditor
+                lineUser={lineUser}
+                weather={weather}
+                onLineUserChange={onLineUserChange}
+                onWeatherChange={onWeatherChange}
+                onSilentNoticeChange={onSilentNoticeChange}
+                onWeatherEditorClick={onWeatherEditorClick}
+              />
+            </section>
           </div>
-        </div>
+        </section>
         <UserEmailDialog
           userEmail={user.email}
           userEmailDialogOpen={userEmailDialogOpen}

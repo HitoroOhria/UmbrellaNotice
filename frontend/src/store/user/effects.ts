@@ -6,7 +6,7 @@ import userActions from "./actions";
 import lineUserActions from "store/lineUser/actions";
 import weatherActions from "store/weather/actions";
 
-import { AmplifyError } from "types/amplify";
+import { AmplifyError } from "types/services/amplify";
 
 import {
   callUserShow,

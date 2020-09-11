@@ -5,7 +5,7 @@ import { jsx } from "@emotion/core";
 import MuiAlert from "@material-ui/lab/Alert";
 import { Snackbar, CircularProgress } from "@material-ui/core";
 
-import { AlertProps } from "types/alert";
+import { AlertProps } from "types/components/organisms";
 
 const Alert: FC<AlertProps> = ({ alert, onClose }) => {
   return alert.isLoading ? (

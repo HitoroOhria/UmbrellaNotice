@@ -1,4 +1,4 @@
-import { MenuDrawerItem } from "types/menuDrawer";
+import { MenuDrawerItem } from "types/constants";
 import { PATH_NAME, OUTSIDE_URL } from "constants/url";
 
 export const MENU_DRAWER_ITEMS: MenuDrawerItem[] = [

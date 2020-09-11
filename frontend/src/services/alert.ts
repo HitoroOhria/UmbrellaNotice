@@ -1,6 +1,6 @@
 import { Dispatch } from "redux";
 
-import { AlertState } from "types/alert";
+import { AlertState } from "types/store";
 import alertActions from "store/alert/actions";
 
 export const loadingAlert = (dispatch: Dispatch) => {

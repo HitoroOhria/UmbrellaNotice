@@ -6,7 +6,7 @@ import { jsx } from "@emotion/core";
 import { Button, IconButton } from "@material-ui/core";
 import { Menu } from "@material-ui/icons";
 
-import { HeaderProps } from "types/header";
+import { HeaderProps } from "types/components/organisms";
 
 const Header: FC<HeaderProps> = ({
   signedIn,

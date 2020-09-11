@@ -2,11 +2,11 @@
 import { FC } from "react";
 import { jsx } from "@emotion/core";
 
-import { ArticleLayoutProps } from "types/articleLayout";
+import { ArticleLayoutProps } from "types/components/organisms";
 
 const Dialog: FC<ArticleLayoutProps> = ({ children }) => {
   return (
-    <div
+    <article
       css={{
         width: "80%",
         margin: "40px auto 0 auto",
@@ -17,7 +17,7 @@ const Dialog: FC<ArticleLayoutProps> = ({ children }) => {
       }}
     >
       {children}
-    </div>
+    </article>
   );
 };
 

@@ -1,7 +1,7 @@
 import { reducerWithInitialState } from "typescript-fsa-reducers";
 import cognitoActinos from "./actions";
 import { AuthState } from "@aws-amplify/ui-components";
-import { CognitoState } from "types/cognito";
+import { CognitoState } from "types/store";
 
 const initState: CognitoState = {
   auth: AuthState.SignedOut,

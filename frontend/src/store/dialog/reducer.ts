@@ -1,6 +1,6 @@
 import { reducerWithInitialState } from "typescript-fsa-reducers";
 import dialogActions from "./actions";
-import { DialogState } from "types/dialog";
+import { DialogState } from "types/store";
 
 const initState: DialogState = {
   isUserEmailDialogOpen: false,

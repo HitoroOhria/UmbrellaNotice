@@ -8,7 +8,7 @@ import Paper from "@/organisms/Paper";
 
 import { INFO_TEXT } from "constants/information";
 
-import { LineUserRelatorProps } from "types/user";
+import { LineUserRelatorProps } from "types/components/pages";
 
 const LineUserRelator: FC<LineUserRelatorProps> = ({
   lineUser,

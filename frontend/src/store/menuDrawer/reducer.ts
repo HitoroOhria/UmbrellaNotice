@@ -1,6 +1,6 @@
 import { reducerWithInitialState } from "typescript-fsa-reducers";
 import menuDrawerActions from "./actions";
-import { MenuDrawerState } from "types/menuDrawer";
+import { MenuDrawerState } from "types/store";
 
 const initState: MenuDrawerState = {
   isOpen: false,

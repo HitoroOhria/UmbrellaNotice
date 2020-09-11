@@ -4,7 +4,7 @@ import { jsx } from "@emotion/core";
 
 import Dialog from "@/organisms/Dialog";
 
-import { UserEmailDialogProps } from "types/user";
+import { UserEmailDialogProps } from "types/components/pages";
 
 const UserEmailDialog: FC<UserEmailDialogProps> = ({
   userEmail,
