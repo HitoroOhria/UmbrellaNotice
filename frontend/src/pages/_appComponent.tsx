@@ -19,9 +19,9 @@ const AppComponent: FC<{ children: ReactNode }> = ({ children }) => {
   const dispatch = useDispatch();
 
   const home = useSelector((state: RootState) => state.home);
-  const cognitoAuth = useSelector((state: RootState) => state.cognito.auth);
   const alert = useSelector((state: RootState) => state.alert);
   const menuDrawer = useSelector((state: RootState) => state.menuDrawer);
+  const cognitoAuth = useSelector((state: RootState) => state.cognito.auth);
 
   const signedIn = cognitoAuth === AuthState.SignedIn;
 
@@ -32,9 +32,7 @@ const AppComponent: FC<{ children: ReactNode }> = ({ children }) => {
 
   const handleSginOutClick = () => dispatch(signOut());
 
-  const handleAlertClose = () => {
-    dispatch(alertActions.closeAlert({}));
-  };
+  const handleAlertClose = () => dispatch(alertActions.closeAlert({}));
 
   const handleMenuLinkClick = () => {
     handleMenuDrawerClose();
