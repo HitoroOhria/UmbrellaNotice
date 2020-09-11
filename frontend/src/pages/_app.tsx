@@ -21,6 +21,10 @@ const App = ({ Component, pageProps }: AppProps) => {
 export default App;
 
 const globalStyle = css`
+  body {
+    background-color: #F0E3D0;
+  }
+
   p {
     line-height: 1.7;
   }
