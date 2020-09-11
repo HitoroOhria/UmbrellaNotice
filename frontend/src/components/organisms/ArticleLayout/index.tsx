@@ -2,7 +2,7 @@
 import { FC } from "react";
 import { jsx } from "@emotion/core";
 
-import { ArticleLayoutProps } from "types/articleLayout";
+import { ArticleLayoutProps } from "types/components/organisms";
 
 const Dialog: FC<ArticleLayoutProps> = ({ children }) => {
   return (

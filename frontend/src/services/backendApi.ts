@@ -13,7 +13,7 @@ import {
   updateUserAttr,
   updateLineUserAttr,
   updateWeatherAttr,
-} from "types/backendApi";
+} from "types/services/backendApi";
 
 export const callUserCreate = async (
   email: string

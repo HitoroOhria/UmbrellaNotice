@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { FC, ChangeEvent } from "react";
+import { FC } from "react";
 import { jsx } from "@emotion/core";
 
 import {
@@ -12,15 +12,9 @@ import {
 
 import Information from "@/atoms/information";
 
-type Props = {
-  label: string;
-  value: string;
-  onChange: (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => any;
-  info?: boolean;
-  text?: string;
-};
+import { InputProps } from "types/components/organisms";
 
-const Input: FC<Props> = ({ label, value, onChange, info, text }) => {
+const Input: FC<InputProps> = ({ label, value, onChange, info, text }) => {
   return info && text ? (
     <FormControl style={{ margin: "12px 0" }} fullWidth>
       <InputLabel htmlFor="standard-adornment-password">{label}</InputLabel>

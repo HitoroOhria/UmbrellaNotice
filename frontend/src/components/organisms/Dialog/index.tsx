@@ -1,26 +1,26 @@
 /** @jsx jsx */
-import { FC, ReactNode } from "react";
+import { FC } from "react";
 import { jsx } from "@emotion/core";
 
 import {
-    Button,
-    Dialog as FDialog,
-    DialogTitle,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-  } from "@material-ui/core/";
+  Button,
+  Dialog as FDialog,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+} from "@material-ui/core/";
 
-type Props = {
-  open: boolean;
-  title: string;
-  children: ReactNode;
-  onClose: () => any;
-  onNoClick: () => any;
-  onYesClick: () => any;
-};
+import { DialogProps } from "types/components/organisms";
 
-const Dialog: FC<Props> = ({ open, title, children, onClose, onNoClick, onYesClick }) => {
+const Dialog: FC<DialogProps> = ({
+  open,
+  title,
+  children,
+  onClose,
+  onNoClick,
+  onYesClick,
+}) => {
   return (
     <FDialog
       open={open}
@@ -28,9 +28,7 @@ const Dialog: FC<Props> = ({ open, title, children, onClose, onNoClick, onYesCli
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">
-        {title}
-      </DialogTitle>
+      <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
           {children}

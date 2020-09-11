@@ -9,9 +9,13 @@ import { Close } from "@material-ui/icons";
 import { OUTSIDE_URL } from "constants/url";
 import { MENU_DRAWER_ITEMS } from "constants/menuDrawer";
 
-import { MenuDrawerProps } from "types/menuDrawer";
+import { MenuDrawerProps } from "types/components/organisms";
 
-const MenuDrawer: FC<MenuDrawerProps> = ({menuDrawer, onClose, onLinkClick}) => {
+const MenuDrawer: FC<MenuDrawerProps> = ({
+  menuDrawer,
+  onClose,
+  onLinkClick,
+}) => {
   return (
     <Drawer anchor="right" open={menuDrawer.isOpen} onClose={onClose}>
       <div css={{ margin: "0 25px" }}>

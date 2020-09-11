@@ -3,9 +3,8 @@ import { Dispatch } from "redux";
 import weatherActions from "./actions";
 import lineUserActions from "store/lineUser/actions";
 
-import { LineUserState } from "types/lineUser";
-import { WeatherState } from "types/weather";
-import { updateWeatherAttr } from "types/backendApi";
+import { LineUserState, WeatherState } from "types/store";
+import { updateWeatherAttr } from "types/services/backendApi";
 
 import { loadingAlert, openAlert } from "services/alert";
 import {

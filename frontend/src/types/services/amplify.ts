@@ -1,17 +1,7 @@
-import { AuthState } from "@aws-amplify/ui-components";
-import { CognitoUser } from "amazon-cognito-identity-js";
-
-export type ExCognitoUser = CognitoUser & {
-  attributes: {
-    email: string;
-    email_verified: boolean;
-    sub: string;
-  };
-};
-
-export type CognitoState = {
-  auth: AuthState;
-  user: ExCognitoUser | undefined;
+export type AmplifyError = {
+  code: string; // e.g. "InvalidParameterException"
+  message: string; // e.g. "Invalid email address format."
+  name: string; // e.g. "InvalidParameterException"
 };
 
 // CognitoUser = {

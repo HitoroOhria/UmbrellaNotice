@@ -5,7 +5,7 @@ import HeaderOffset from "@/organisms/HeaderOffset";
 
 import { createTitle } from "services/layout";
 
-import { LayoutProps } from "types/layout";
+import { LayoutProps } from "types/components/organisms";
 
 const Layout: FC<LayoutProps> = ({ children, title, unHeaderOffset }) => (
   <div>

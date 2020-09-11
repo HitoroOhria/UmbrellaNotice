@@ -6,7 +6,7 @@ import Layout from "@/organisms/Layout";
 import ArticleLayout from "@/organisms/ArticleLayout";
 import Heading from "@/organisms/Heading";
 
-import { TermsProps } from "types/terms";
+import { TermsProps } from "types/components/pages";
 
 const Policy: FC<TermsProps> = ({ displayArticle }) => {
   return (

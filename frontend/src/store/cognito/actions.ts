@@ -1,6 +1,6 @@
 import actionCreatorFactory from "typescript-fsa";
 import { AuthState } from "@aws-amplify/ui-components";
-import { ExCognitoUser } from "types/cognito";
+import { ExCognitoUser } from "types/store";
 
 const actionCreator = actionCreatorFactory();
 

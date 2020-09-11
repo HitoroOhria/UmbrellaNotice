@@ -20,7 +20,7 @@ import ItemHeading from "@/organisms/ItemHeading";
 
 import { AMPLIFY_FORM } from "constants/amplify";
 
-import { UserProps } from "types/user";
+import { UserProps } from "types/components/pages";
 
 const User: FC<UserProps> = ({
   user,
@@ -31,6 +31,7 @@ const User: FC<UserProps> = ({
   onWeatherChange,
 
   // UserEditor
+  onMouseDownPasswod,
   onOldPasswordIconClick,
   onNewPasswordIconClick,
   onChangeEmailClick,
@@ -83,6 +84,7 @@ const User: FC<UserProps> = ({
                 user={user}
                 onUserChange={onUserChange}
                 onChangeEmailClick={onChangeEmailClick}
+                onMouseDownPasswod={onMouseDownPasswod}
                 onOldPasswordIconClick={onOldPasswordIconClick}
                 onNewPasswordIconClick={onNewPasswordIconClick}
                 onChangePasswordClick={onChangePasswordClick}

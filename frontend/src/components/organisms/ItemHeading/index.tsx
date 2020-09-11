@@ -2,7 +2,7 @@
 import { FC } from "react";
 import { jsx } from "@emotion/core";
 
-import { ItemHeadingProps } from "types/itemHeading";
+import { ItemHeadingProps } from "types/components/organisms";
 
 const ItemHeading: FC<ItemHeadingProps> = ({ itemName }) => {
   return (

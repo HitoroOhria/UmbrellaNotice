@@ -1,14 +1,12 @@
 /** @jsx jsx */
-import { FC, ReactNode } from "react";
+import { FC } from "react";
 import { jsx } from "@emotion/core";
 
 import { Paper as FPaper } from "@material-ui/core";
 
-type Props = {
-  children: ReactNode;
-};
+import { PaperProps } from "types/components/organisms";
 
-const Paper: FC<Props> = ({ children }) => {
+const Paper: FC<PaperProps> = ({ children }) => {
   return (
     <FPaper elevation={3}>
       <div

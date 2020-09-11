@@ -13,7 +13,7 @@ import App from "@/pages/AppComponent";
 
 import { MenuIconOnTopView } from "services/header";
 
-import { RootState } from "types/rootState";
+import { RootState } from "types/store";
 
 const AppComponent: FC<{ children: ReactNode }> = ({ children }) => {
   const dispatch = useDispatch();

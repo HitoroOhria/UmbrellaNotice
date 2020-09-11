@@ -1,6 +1,6 @@
 import { isProd } from "constants/app";
 import { ORIGIN } from "constants/url";
-import { Resource } from "types/backendApi";
+import { Resource } from "types/services/backendApi";
 
 const makeCreateBackendUrl = (resource: Resource) => {
   const origin = isProd ? ORIGIN.PROD : ORIGIN.DEV;

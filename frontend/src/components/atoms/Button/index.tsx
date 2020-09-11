@@ -4,13 +4,9 @@ import { jsx } from "@emotion/core";
 
 import { Button as FButton } from "@material-ui/core";
 
-type Props = {
-  submitText: string;
-  contained?: boolean;
-  onClick?: () => any;
-};
+import { ButtonProps } from "types/components/atoms";
 
-const Button: FC<Props> = ({ submitText, onClick, contained }) => {
+const Button: FC<ButtonProps> = ({ submitText, onClick, contained }) => {
   return (
     <div css={{ textAlign: "center" }}>
       <FButton

@@ -1,6 +1,6 @@
 import { reducerWithInitialState } from "typescript-fsa-reducers";
 import weatherActions from "./actions";
-import { WeatherState } from "types/weather";
+import { WeatherState } from "types/store";
 
 const initState: WeatherState = {
   id: 0,

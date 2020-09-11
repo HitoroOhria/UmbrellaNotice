@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import { FC, ChangeEvent, MouseEvent } from "react";
+import { FC } from "react";
 import { jsx } from "@emotion/core";
 
 import {
@@ -11,23 +11,16 @@ import {
 } from "@material-ui/core";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 
-type Props = {
-  label: string;
-  showPassword: boolean;
-  value: string;
-  onChange: (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => any;
-  onIconClick: () => any;
-};
+import { PasswordInputProps } from "types/components/organisms";
 
-const PsswordInput: FC<Props> = ({
+const PsswordInput: FC<PasswordInputProps> = ({
   label,
   showPassword,
   value,
   onChange,
   onIconClick,
+  onMouseDownPassword,
 }) => {
-  const handleMouseDownPassword = (event: MouseEvent) => event.preventDefault();
-
   return (
     <FormControl style={{ margin: "12px 0" }} fullWidth>
       <InputLabel htmlFor="standard-adornment-password">{label}</InputLabel>
@@ -41,7 +34,7 @@ const PsswordInput: FC<Props> = ({
             <IconButton
               aria-label="toggle password visibility"
               onClick={onIconClick}
-              onMouseDown={(event) => handleMouseDownPassword(event)}
+              onMouseDown={(event) => onMouseDownPassword(event)}
             >
               {showPassword ? <Visibility /> : <VisibilityOff />}
             </IconButton>

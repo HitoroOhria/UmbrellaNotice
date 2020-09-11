@@ -1,12 +1,10 @@
 /** @jsx jsx */
-import { FC, ReactNode } from "react";
+import { FC } from "react";
 import { jsx } from "@emotion/core";
 
-type Props = {
-  children: ReactNode;
-};
+import { HeadingProps } from "types/components/organisms";
 
-const Heading: FC<Props> = ({ children }) => {
+const Heading: FC<HeadingProps> = ({ children }) => {
   return (
     <h1 css={{ fontWeight: "lighter", textAlign: "center" }}>
       <span css={{ paddingBottom: 10, borderBottom: "2px solid #7e8a97" }}>

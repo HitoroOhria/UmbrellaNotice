@@ -1,7 +1,7 @@
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import thunk from "redux-thunk";
 
-import { RootState } from "types/rootState";
+import { RootState } from "types/store";
 
 import alertReducer from "store/alert/reducer";
 import menuDrawerReucer from "store/menuDrawer/reducer";

@@ -5,12 +5,12 @@ import { jsx } from "@emotion/core";
 import Button from "@/atoms/Button";
 import Switch from "@/atoms/Switch";
 import Input from "@/organisms/Input";
-import DateInput from "@/organisms/DataInput";
+import DateInput from "@/organisms/DateInput";
 import Paper from "@/organisms/Paper";
 
 import { WEATHER_LABEL } from "constants/weather";
 
-import { WeatherEditorProps } from "types/user";
+import { WeatherEditorProps } from "types/components/pages";
 
 const WeatherEditor: FC<WeatherEditorProps> = ({
   lineUser,

@@ -8,7 +8,7 @@ import Heading from "@/organisms/Heading";
 
 import { OUTSIDE_URL } from "constants/url";
 
-import { PolicyProps } from "types/policy";
+import { PolicyProps } from "types/components/pages";
 
 const Policy: FC<PolicyProps> = ({ displayArticle }) => {
   return (
