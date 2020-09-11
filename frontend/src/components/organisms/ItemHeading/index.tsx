@@ -2,22 +2,15 @@
 import { FC } from "react";
 import { jsx } from "@emotion/core";
 
-import { Typography } from "@material-ui/core";
+import { ItemHeadingProps } from "types/itemHeading";
 
-type Props = {
-  itemName: string;
-};
-
-const ItemHeading: FC<Props> = ({ itemName }: Props) => {
+const ItemHeading: FC<ItemHeadingProps> = ({ itemName }) => {
   return (
-    <Typography
-      style={{ margin: "32px 0 8px 0" }}
-      variant="h4"
-      component="h2"
-      color="primary"
+    <h2
+      css={{ margin: "32px 0 8px 0", color: "#30475e", fontWeight: "lighter" }}
     >
       {itemName}
-    </Typography>
+    </h2>
   );
 };
 
