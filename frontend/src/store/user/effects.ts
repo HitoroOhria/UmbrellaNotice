@@ -3,9 +3,10 @@ import { Auth } from "aws-amplify";
 import { CognitoUser } from "amazon-cognito-identity-js";
 
 import userActions from "./actions";
-import lineUserActions from "../lineUser/actions";
+import lineUserActions from "store/lineUser/actions";
+import weatherActions from "store/weather/actions";
 
-import { AmplifyError } from "../../domain/entity/amplify";
+import { AmplifyError } from "types/amplify";
 
 import {
   callUserShow,
@@ -13,9 +14,8 @@ import {
   serializeUser,
   serializeLineUser,
   serializeWeather,
-} from "../../domain/services/backendApi";
-import { loadingAlert, openAlert } from "../../domain/services/alert";
-import weatherActions from "../weather/actions";
+} from "services/backendApi";
+import { loadingAlert, openAlert } from "services/alert";
 
 export const fetchData = (email: string) => async (
   dispatch: Dispatch

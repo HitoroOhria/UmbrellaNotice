@@ -1,16 +1,16 @@
 import { Dispatch } from "redux";
 
 import lineUserActions from "./actions";
-import weatherActions from "../weather/actions";
+import weatherActions from "store/weather/actions";
 
-import { loadingAlert, openAlert } from "../../domain/services/alert";
+import { loadingAlert, openAlert } from "services/alert";
 import {
   callUserShow,
   callUserRelateLineUser,
   callUserReleaseLineUser,
   serializeLineUser,
   serializeWeather,
-} from "../../domain/services/backendApi";
+} from "services/backendApi";
 
 export const relateUser = (email: string, serialNumber: string) => async (
   dispatch: Dispatch
@@ -24,8 +24,8 @@ export const relateUser = (email: string, serialNumber: string) => async (
   } else {
     const json = await callUserShow(email, "line_user.weather");
 
-    if ("error" in json) return;
-    if (!json.included) return;
+    console.log("json", json);
+    if ("error" in json || !json.included) return;
 
     const lineUser = serializeLineUser(json.included[0]);
     const weather = serializeWeather(json.included[1]);

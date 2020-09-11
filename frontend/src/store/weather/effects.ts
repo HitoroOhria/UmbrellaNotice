@@ -1,19 +1,19 @@
 import { Dispatch } from "redux";
 
 import weatherActions from "./actions";
-import lineUserActions from "../lineUser/actions";
+import lineUserActions from "store/lineUser/actions";
 
-import { loadingAlert, openAlert } from "../../domain/services/alert";
+import { LineUserState } from "types/lineUser";
+import { WeatherState } from "types/weather";
+import { updateWeatherAttr } from "types/backendApi";
+
+import { loadingAlert, openAlert } from "services/alert";
 import {
   callLineUserUpdate,
   callWeatherUpdate,
   serializeLineUser,
   serializeWeather,
-} from "../../domain/services/backendApi";
-
-import { LineUserState } from "../../domain/entity/lineUser";
-import { WeatherState } from "../../domain/entity/weather";
-import { updateWeatherAttr } from "../../domain/entity/backendApi";
+} from "services/backendApi";
 
 export const updateWeather = (
   lineUser: LineUserState,

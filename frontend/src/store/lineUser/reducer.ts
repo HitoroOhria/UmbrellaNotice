@@ -1,6 +1,6 @@
 import { reducerWithInitialState } from "typescript-fsa-reducers";
 import lineUserActions from "./actions";
-import { LineUserState } from "../../domain/entity/lineUser";
+import { LineUserState } from "types/lineUser";
 
 const initState: LineUserState = {
   id: 0,

@@ -1,7 +1,7 @@
 import { Dispatch } from "redux";
 import { Auth } from "aws-amplify";
 
-import { openAlert } from "../../domain/services/alert";
+import { openAlert } from "services/alert";
 
 export const signIn = (email: string, password: string) => async (dispatch: Dispatch) => {
   await Auth.signIn(email, password).then(() => {

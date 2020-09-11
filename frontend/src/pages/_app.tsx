@@ -3,13 +3,17 @@ import { AppProps } from "next/app";
 import { Provider } from "react-redux";
 import { css, Global } from "@emotion/core";
 
-import store from "../store";
+import AppComponent from "./_appComponent";
+
+import store from "store/index";
 
 const App = ({ Component, pageProps }: AppProps) => {
   return (
     <Provider store={store}>
       <Global styles={globalStyle} />
-      <Component {...pageProps} />
+      <AppComponent>
+        <Component {...pageProps} />
+      </AppComponent>
     </Provider>
   );
 };

@@ -1,6 +1,6 @@
 import { reducerWithInitialState } from "typescript-fsa-reducers";
 import homeActions from "./actions";
-import { HomeState } from "../../domain/entity/home";
+import { HomeState } from "types/home";
 
 const initState: HomeState = {
   isHomePage: false,

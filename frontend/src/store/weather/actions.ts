@@ -1,5 +1,5 @@
 import actionCreatorFactory from "typescript-fsa";
-import { WeatherState, UpdateWatherAttr } from "../../domain/entity/weather";
+import { WeatherState, UpdateWatherAttr } from "types/weather";
 
 const actionCreator = actionCreatorFactory();
 
