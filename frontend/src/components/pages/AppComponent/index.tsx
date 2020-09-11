@@ -11,13 +11,19 @@ import { AppProps } from "types/app";
 
 const App: FC<AppProps> = ({
   children,
+
+  // Header
   signedIn,
   menuIconOnTopView,
   onLogoClick,
   onMenuIconClick,
   onSginOutClick,
+
+  // Alert
   alert,
   onAlertClose,
+
+  // MenuDrawer
   menuDrawer,
   onMenuLinkClick,
   onMenuDrawerClose,

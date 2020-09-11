@@ -23,6 +23,8 @@ const AppComponent: FC<{ children: ReactNode }> = ({ children }) => {
   const alert = useSelector((state: RootState) => state.alert);
   const menuDrawer = useSelector((state: RootState) => state.menuDrawer);
 
+  const signedIn = cognitoAuth === AuthState.SignedIn;
+
   const handleLogoClick = () => window.scrollTo(0, 0);
 
   const handleMenuIconClick = () =>
@@ -44,13 +46,16 @@ const AppComponent: FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <App
-      signedIn={cognitoAuth === AuthState.SignedIn}
+      // Header
+      signedIn={signedIn}
       menuIconOnTopView={MenuIconOnTopView(home)}
       onLogoClick={handleLogoClick}
       onMenuIconClick={handleMenuIconClick}
       onSginOutClick={handleSginOutClick}
+      // Alert
       alert={alert}
       onAlertClose={handleAlertClose}
+      // MenuDrawer
       menuDrawer={menuDrawer}
       onMenuLinkClick={handleMenuLinkClick}
       onMenuDrawerClose={handleMenuDrawerClose}
