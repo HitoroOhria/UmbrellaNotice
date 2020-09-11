@@ -17,7 +17,7 @@ import {
 } from "services/backendApi";
 import { loadingAlert, openAlert } from "services/alert";
 
-export const fetchData = (email: string) => async (dispatch: Dispatch) => {
+export const fetchAllData = (email: string) => async (dispatch: Dispatch) => {
   const json = await callUserShow(email, "line_user.weather");
 
   if ("error" in json) {

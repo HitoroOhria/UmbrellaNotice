@@ -14,7 +14,7 @@ import User from "@/pages/User";
 
 import userActions from "store/user/actions";
 import {
-  fetchData,
+  fetchAllData,
   changeCognitoUserPassword,
   updateCognitoUser,
 } from "store/user/effects";
@@ -67,7 +67,7 @@ const UserPage: FC = () => {
 
   useEffect(() => {
     if (cognitoUser) {
-      dispatch(fetchData(cognitoUser.attributes.email));
+      dispatch(fetchAllData(cognitoUser.attributes.email));
       dispatch(userActions.setValue({ email: cognitoUser.attributes.email }));
     }
   }, [cognitoUser?.attributes.email]);
