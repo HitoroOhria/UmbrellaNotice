@@ -3,7 +3,7 @@ import {
   LineUserState,
   RelateUserByLineUserAttr,
   UpdateLineUserAttr,
-} from "../../domain/entity/lineUser";
+} from "types/lineUser";
 
 const actionCreator = actionCreatorFactory();
 

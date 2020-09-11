@@ -1,6 +1,6 @@
 import { reducerWithInitialState } from "typescript-fsa-reducers";
 import alertActions from "./actions";
-import { AlertState } from "../../domain/entity/alert";
+import { AlertState } from "types/alert";
 
 const initState: AlertState = {
   isLoading: false,

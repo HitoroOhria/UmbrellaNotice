@@ -1,6 +1,6 @@
 import { reducerWithInitialState } from "typescript-fsa-reducers";
 import userActions from "./actions";
-import { UserState } from "../../domain/entity/user";
+import { UserState } from "types/user";
 
 const initState: UserState = {
   id: 0,
@@ -12,7 +12,7 @@ const initState: UserState = {
 };
 
 const userReucer = reducerWithInitialState(initState)
-  .case(userActions.setUserValue, (preState, payload) => ({
+  .case(userActions.setValue, (preState, payload) => ({
     ...preState,
     ...payload,
   }))

@@ -1,5 +1,5 @@
 import actionCreatorFactory from "typescript-fsa";
-import { AlertState } from "../../domain/entity/alert";
+import { AlertState } from "types/alert";
 
 const actionCreator = actionCreatorFactory();
 
