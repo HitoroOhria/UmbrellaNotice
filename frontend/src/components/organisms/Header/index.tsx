@@ -10,8 +10,6 @@ import { HeaderProps } from 'types/components/organisms';
 
 import { mediaQuery } from 'services/css';
 
-import { MEDIA_QUERIES } from 'constants/css';
-
 const Header: FC<HeaderProps> = ({
   signedIn,
   menuIconOnTopView,
@@ -76,15 +74,9 @@ const Header: FC<HeaderProps> = ({
         {signedIn && (
           <Button
             style={{
-              minWidth: 0,
-              maxWidth: 32,
               color: '#fff',
               margin: '0',
               padding: '0',
-              [MEDIA_QUERIES[0]]: {
-                margin: '0 15px 0 0',
-                padding: '8px 11px',
-              },
             }}
             size='large'
             onClick={onSginOutClick}

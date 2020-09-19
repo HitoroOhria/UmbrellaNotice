@@ -18,7 +18,7 @@ Webはテストユーザーログインで、LINE公式アカウントは登録�
 
 - ### Webホームページ
 
-![Webホームページ](https://user-images.githubusercontent.com/60952535/91653921-b005d400-eadf-11ea-90f5-99f4961d89ad.png)
+![Webホームページ](https://user-images.githubusercontent.com/60952535/93661860-42bde100-fa96-11ea-9320-de6572b073e1.png)
 
 - ### Line 公式アカウント
 
