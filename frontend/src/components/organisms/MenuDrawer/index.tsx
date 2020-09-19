@@ -11,6 +11,8 @@ import { MENU_DRAWER_ITEMS } from "constants/menuDrawer";
 
 import { MenuDrawerProps } from "types/components/organisms";
 
+import { mediaQuery } from 'services/css';
+
 const MenuDrawer: FC<MenuDrawerProps> = ({
   menuDrawer,
   onClose,
@@ -32,11 +34,11 @@ const MenuDrawer: FC<MenuDrawerProps> = ({
           <Link href="/">
             <a>
               <img
-                css={{
-                  width: 50,
-                  height: 45,
+                css={mediaQuery({
+                  width: [34, 50],
+                  height: [30, 45],
                   marginTop: 7,
-                }}
+                })}
                 src="/images/appLogo.png"
                 alt="logo"
                 onClick={onLinkClick}
