@@ -44,11 +44,27 @@ const Home: FC = () => {
             <br />
             あなたに。
           </h1>
-          <div css={mediaQuery({ margin: ['10% 0 0 25%', '10% 0 0 20px'] })}>
+          <div css={mediaQuery({ margin: ['10% 0 0 25%', '6% 0 0 20px'] })}>
             <p>雨が降る日のみ、LINE通知を送信するアプリケーションです。</p>
             <p>もう傘を忘れて雨に濡れることはありません。</p>
             <p>雨を避けるために天気予報をチェックする必要もありません。</p>
             <p>万が一のときでも、雨に濡れないために。</p>
+          </div>
+          <div
+            css={mediaQuery({
+              margin: ['20% 0 0 0', '10% 0 0 11%'],
+              textAlign: ['center', 'start'],
+            })}
+          >
+            <Button
+              style={{ backgroundColor: 'rgba(255,255,255,0.38)' }}
+              variant='outlined'
+              color='default'
+              href={OUTSIDE_URL.LINE.FOLLOW}
+              target='_blank'
+            >
+              LINE 公式アカウントをフォローしてはじめる
+            </Button>
           </div>
         </div>
       </section>
@@ -68,31 +84,32 @@ const Home: FC = () => {
               面倒なアカウント登録を行う必要はなく、2ステップで利用できます。
             </p>
           </div>
-          <div css={mediaQuery({textAlign: ['center', '']})}>
-          <ul
-            css={{
-              marginTop: 10,
-              textAlign: 'left',
-              display: 'inline-block',
-              listStyleType: 'none',
-              listStypePosition: 'outside',
-            }}
-          >
-            {SPTEP_CONTENTS.map((content, idx) => (
-              <li css={{ margin: '0 auto' }} key={content}>
-                <span
-                  css={{
-                    marginRight: 5,
-                    fontFamily: 'Lemonada',
-                    fontSize: '1.5rem',
-                  }}
-                >
-                  {idx + 1}.
-                </span>
-                {content}
-              </li>
-            ))}
-          </ul></div>
+          <div css={mediaQuery({ textAlign: ['center', ''] })}>
+            <ul
+              css={{
+                marginTop: 10,
+                textAlign: 'left',
+                display: 'inline-block',
+                listStyleType: 'none',
+                listStypePosition: 'outside',
+              }}
+            >
+              {SPTEP_CONTENTS.map((content, idx) => (
+                <li css={{ margin: '0 auto' }} key={content}>
+                  <span
+                    css={{
+                      marginRight: 5,
+                      fontFamily: 'Lemonada',
+                      fontSize: '1.5rem',
+                    }}
+                  >
+                    {idx + 1}.
+                  </span>
+                  {content}
+                </li>
+              ))}
+            </ul>
+          </div>
           <p css={{ marginTop: 20 }}>
             登録した位置情報を元に、雨が降る場合のみ通知を行います。
           </p>
@@ -109,7 +126,9 @@ const Home: FC = () => {
         </section>
         <section css={mediaQuery({ marginTop: 70, textAlign: ['', 'center'] })}>
           <Heading>もう雨に濡れませんように</Heading>
-          <div css={mediaQuery({ marginTop: 40, p: { lineHeight: ['', 2.7] } })}>
+          <div
+            css={mediaQuery({ marginTop: 40, p: { lineHeight: ['', 2.7] } })}
+          >
             <p>
               このアプリケーションは、製作者が出先で雨に濡れたこと経験から作成しました。
             </p>

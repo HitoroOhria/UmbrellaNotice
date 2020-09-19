@@ -27,6 +27,7 @@ const globalStyle = mediaQuery({
   body: { backgroundColor: '#F0E3D0' },
   p: { lineHeight: 1.7, fontSize: ['1.3rem', '1rem'] },
   li: { lineHeight: 1.7, fontSize: ['1.3rem', '1rem'] },
+  a: { span: { fontSize: ['1.3rem', '1rem'] } },
   'amplify-authenticator': {
     display: 'flex',
     justifyContent: 'center',
