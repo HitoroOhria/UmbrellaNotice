@@ -3,7 +3,7 @@ import { FC } from 'react';
 import { jsx } from '@emotion/core';
 
 import { Button } from '@material-ui/core';
-import topViewImage from 'public/images/topViewImage.png';
+import topViewImage from 'public/images/topViewImage.jpg';
 
 import Layout from '@/organisms/Layout';
 import Heading from '@/organisms/Heading';
