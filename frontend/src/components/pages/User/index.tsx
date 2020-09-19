@@ -74,6 +74,7 @@ const User: FC<UserProps> = ({
           <Heading>Profile Edit</Heading>
           <div
             css={{
+              width: '80%',
               maxWidth: 400,
               margin: "40px auto 0 auto",
             }}
