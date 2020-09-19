@@ -24,7 +24,7 @@ export default App;
 
 const globalStyle = mediaQuery({
   html: { fontSize: [10, 16] },
-  body: { backgroundColor: '#F0E3D0' },
+  body: { fontFamily: 'sans-serif', backgroundColor: '#F0E3D0' },
   p: { lineHeight: 1.7, fontSize: ['1.3rem', '1rem'] },
   li: { lineHeight: 1.7, fontSize: ['1.3rem', '1rem'] },
   a: { span: { fontSize: ['1.3rem', '1rem'] } },
